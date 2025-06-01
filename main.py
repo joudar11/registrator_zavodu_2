@@ -1,7 +1,9 @@
 from playwright.sync_api import sync_playwright
 import time
 from datetime import datetime, timedelta
-from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD
+import smtplib
+from email.message import EmailMessage
+from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD, GOOGLE_P, GOOGLE_U
 
 divider = "=" * 30
 
@@ -99,11 +101,32 @@ def registrace():
         page.click(SELECTOR_SQUAD)
         page.check(SELECTOR_CHECKBOX_GDPR)
         page.click(SELECTOR_TLACITKO_REGISTRACE)
-
         print("✅ Registrace dokončena.")
         time.sleep(60)
         # browser.close()  # nech otevřené pro kontrolu
 
+
+def posli_email():
+    msg = EmailMessage()
+    msg['Subject'] = '✅ LOS Registrace proběhla'
+    msg['From'] = GOOGLE_U
+    msg['To'] = LOGIN
+    msg.set_content(f"""Registrace na LOS proběhla úspěšně.
+                    
+    Divize: {DIVIZE}
+    Squad: {SQUAD}
+    URL závodu: {URL}""")
+
+    # Přihlašovací údaje
+    uzivatel = GOOGLE_U
+    heslo = GOOGLE_P
+
+    # Odeslání e-mailu
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(uzivatel, heslo)
+        smtp.send_message(msg)
+
 # --- SPUŠTĚNÍ ---
 if __name__ == "__main__":
     registrace()
+    posli_email()
