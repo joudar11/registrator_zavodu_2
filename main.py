@@ -23,7 +23,7 @@ SELECTOR_CHECKBOX_GDPR = r"#gdpr"
 SELECTOR_TLACITKO_REGISTRACE = r"#regform > div.flex.flex-col.items-center.justify-center > button"
 
 def get_summary():
-    print(f"\n{divider}")
+    print(f"\n{divider}\n")
     print("Budou použity následující údaje:")
     print(f"""
     Jméno: {JMENO}\n
