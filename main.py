@@ -102,6 +102,7 @@ def registrace():
         page.check(SELECTOR_CHECKBOX_GDPR)
         page.click(SELECTOR_TLACITKO_REGISTRACE)
         print("✅ Registrace dokončena.")
+        posli_email()
         time.sleep(60)
         # browser.close()  # nech otevřené pro kontrolu
 
@@ -129,4 +130,3 @@ def posli_email():
 # --- SPUŠTĚNÍ ---
 if __name__ == "__main__":
     registrace()
-    posli_email()
