@@ -1,6 +1,6 @@
 # Automatická registrace na LOS závod
 
-Vylepšený [sript](https://github.com/joudar11/registrator_zavodu), který nepoužívá inputy v konzoli, ale bere si údaje ze souboru.
+Vylepšený [skript](https://github.com/joudar11/registrator_zavodu), který nepoužívá inputy v konzoli, ale bere si údaje ze souboru.
 
 Tento skript v Pythonu využívá knihovnu **Playwright** k automatické registraci na LOS závod v přesný čas. Součástí je i automatické odeslání potvrzovacího e-mailu a informování přítelkyně.
 
