@@ -152,7 +152,6 @@ def registrace():
         nazev_zavodu = page.inner_text(SELECTOR_NAZEV)
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
-            print(f"✅ Shrnutí odesláno na {LOGIN}.")
             informuj_pritelkyni()
         input("Stiskni ENTER pro zavření browseru...")
         return True
@@ -173,6 +172,7 @@ def posli_email():
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(uzivatel, heslo)
         smtp.send_message(msg)
+    print(f"✅ Shrnutí odesláno na {LOGIN}.")
 
 def informuj_pritelkyni():
     msg = EmailMessage()
