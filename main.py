@@ -162,7 +162,7 @@ def posli_email():
     msg['Subject'] = '✅ LOS Registrace proběhla'
     msg['From'] = GOOGLE_U
     msg['To'] = LOGIN
-    msg.set_content(f"""Registrace na LOS {nazev_zavodu} proběhla úspěšně.\n{get_summary()}\n    Čas odeslání formuláře: {finished}\n\n    Datum závodu: {datum_zavodu}\n\n\n\n    😎😎😎""")
+    msg.set_content(f"""Registrace na závod {nazev_zavodu} proběhla úspěšně.\n{get_summary()}\n    Čas odeslání formuláře: {finished}\n\n    Datum závodu: {datum_zavodu}\n\n\n\n    😎😎😎""")
 
     # Přihlašovací údaje
     uzivatel = GOOGLE_U
