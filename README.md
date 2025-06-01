@@ -47,4 +47,3 @@ Při správném nastavení skript:
 ## 📧 Notifikace
 
 Skript používá `smtplib` k odeslání emailu přes Gmail. Nezapomeň povolit "přístup méně zabezpečených aplikací" nebo použít App Passwords.
-A
