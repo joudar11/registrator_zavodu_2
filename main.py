@@ -4,13 +4,13 @@ from datetime import datetime, timedelta
 
 divider = "=" * 30
 # --- ÚDAJE K VYPLNĚNÍ ---
-JMENO = "Kryštof Klika"
-CISLO_DOKLADU = "ZP262518"
-CLENSKE_ID = "VZGxUDEf"  # nebo None, pokud nemáš
+JMENO = None
+CISLO_DOKLADU = None
+CLENSKE_ID = None  # nebo None, pokud nemáš
 DIVIZE = "Pistole"  # bude vybráno v dropdownu
 URL = "https://www.loslex.cz/contest/353"
-LOGIN = "krystofklika@pm.me"
-HESLO = "E9JESU(na;TAC:TC<r93"
+LOGIN = None
+HESLO = None
 # DATUM_CAS_REGISTRACE = None 
 DATUM_CAS_REGISTRACE ="2025-06-02 10:00:00"
 SQUAD = "1"
