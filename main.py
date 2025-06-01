@@ -103,7 +103,7 @@ def registrace():
         page.click(SELECTOR_TLACITKO_REGISTRACE)
         print("✅ Registrace dokončena.")
         posli_email()
-        time.sleep(60)
+        input("Stiskni ENTER pro zavření browseru...")
         # browser.close()  # nech otevřené pro kontrolu
 
 
