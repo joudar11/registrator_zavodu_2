@@ -3,6 +3,7 @@ import time
 from datetime import datetime, timedelta
 import smtplib
 from email.message import EmailMessage
+import random
 from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD, GOOGLE_P, GOOGLE_U
 
 divider = "=" * 30
@@ -101,6 +102,9 @@ def registrace():
         page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE)
         page.click(SELECTOR_SQUAD)
         page.check(SELECTOR_CHECKBOX_GDPR)
+        delay = random.uniform(2, 4)
+        print(f"⏳ Čekám {delay:.2f} sekundy...")
+        time.sleep(delay)
         page.click(SELECTOR_TLACITKO_REGISTRACE)
 
         print("✅ Registrace dokončena.")
