@@ -10,6 +10,7 @@ from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DA
 divider = "=" * 30
 finished = None
 datum_zavodu = None
+nazev_zavodu = None
 
 # --- SELEKTORY (uprav dle potřeby) ---
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
@@ -30,8 +31,8 @@ SELECTOR_INPUT_POZNAMKA = "#note"
 SELECTOR_CHECKBOX_ROZHODCI = "#referee"
 SELECTOR_CHECKBOX_STAVITEL = "#builder"
 SELECTOR_CHECKBOX_ZACATECNIK = "#rookie"
-SELECTOR_DATUM = "body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.grid.grid-cols-auto.lg\:grid-cols-fitfirst.gap-x-2.lg\:gap-x-4.gap-y-2 > div:nth-child(10)"
-
+SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.grid.grid-cols-auto.lg\:grid-cols-fitfirst.gap-x-2.lg\:gap-x-4.gap-y-2 > div:nth-child(10)"
+SELECTOR_NAZEV = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.justify-center.items-baseline.text-xl.font-bold.flex"
 
 def get_summary():
     summary = f"""\n\nÚdaje použité při registraci:\n
@@ -147,6 +148,8 @@ def registrace():
         page.wait_for_selector(SELECTOR_DATUM)
         global datum_zavodu
         datum_zavodu = page.inner_text(SELECTOR_DATUM)
+        global nazev_zavodu
+        nazev_zavodu = page.inner_text(SELECTOR_NAZEV)
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
             print(f"✅ Shrnutí odesláno na {LOGIN}.")
@@ -160,7 +163,7 @@ def posli_email():
     msg['Subject'] = '✅ LOS Registrace proběhla'
     msg['From'] = GOOGLE_U
     msg['To'] = LOGIN
-    msg.set_content(f"""Registrace na LOS proběhla úspěšně.\n{get_summary()}\n    Čas odeslání formuláře: {finished}\n\n    Datum závodu: {datum_zavodu}\n\n\n\n    😎😎😎""")
+    msg.set_content(f"""Registrace na LOS {nazev_zavodu} proběhla úspěšně.\n{get_summary()}\n    Čas odeslání formuláře: {finished}\n\n    Datum závodu: {datum_zavodu}\n\n\n\n    😎😎😎""")
 
     # Přihlašovací údaje
     uzivatel = GOOGLE_U
@@ -176,7 +179,7 @@ def informuj_pritelkyni():
     msg['Subject'] = '🔫 Tvůj kluk pojede na závod'
     msg['From'] = GOOGLE_U
     msg['To'] = PRITELKYNE
-    msg.set_content(f"""Tvůj kluk se právě svým úžasným Python skriptem přihlásil na závod {datum_zavodu}.\n\nBude potřebovat držet palce.\n\nMiluju tě. ❤️\n\n\n(Automaticky generovaný email)""")
+    msg.set_content(f"""Tvůj kluk se právě svým úžasným Python skriptem přihlásil na závod {nazev_zavodu}, který proběhne {datum_zavodu}.\n\nBude potřebovat držet palce.\n\nMiluju tě. ❤️\n\n\n(Automaticky generovaný email)""")
 
     # Přihlašovací údaje
     uzivatel = GOOGLE_U
