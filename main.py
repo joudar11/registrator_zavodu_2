@@ -101,7 +101,7 @@ def registrace():
         page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE)
         page.click(SELECTOR_SQUAD)
         page.check(SELECTOR_CHECKBOX_GDPR)
-        # page.click(SELECTOR_TLACITKO_REGISTRACE)
+        page.click(SELECTOR_TLACITKO_REGISTRACE)
 
         print("✅ Registrace dokončena.")
         if DATUM_CAS_REGISTRACE is not None:
