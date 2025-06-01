@@ -1,19 +1,9 @@
 from playwright.sync_api import sync_playwright
 import time
 from datetime import datetime, timedelta
+from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD
 
 divider = "=" * 30
-# --- ÚDAJE K VYPLNĚNÍ ---
-JMENO = None
-CISLO_DOKLADU = None
-CLENSKE_ID = None  # nebo None, pokud nemáš
-DIVIZE = "Pistole"  # bude vybráno v dropdownu
-URL = "https://www.loslex.cz/contest/353"
-LOGIN = None
-HESLO = None
-# DATUM_CAS_REGISTRACE = None 
-DATUM_CAS_REGISTRACE ="2025-06-02 10:00:00"
-SQUAD = "1"
 
 # --- SELEKTORY (uprav dle potřeby) ---
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
@@ -34,6 +24,7 @@ def get_summary():
     print(f"\n{divider}")
     print("Budou použity následující údaje:")
     print(f"""
+    Jméno: {JMENO}\n
     Číslo ZP: {CISLO_DOKLADU}\n
     LEX ID: {CLENSKE_ID}\n
     Divize: {DIVIZE}\n
