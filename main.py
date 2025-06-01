@@ -113,7 +113,6 @@ def registrace():
         input("Stiskni ENTER pro zavření browseru...")
         # browser.close()  # nech otevřené pro kontrolu
 
-
 def posli_email():
     msg = EmailMessage()
     msg['Subject'] = '✅ LOS Registrace proběhla'
