@@ -141,6 +141,11 @@ def registrace():
         print(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
         page.click(SELECTOR_TLACITKO_REGISTRACE)
+        try:
+            page.wait_for_load_state("load", timeout=5000)
+        except TimeoutError:
+            print("❌ Stránka nenalezla tlačítko registrace.")
+            return False
         global finished
         finished = datetime.now()
 
@@ -153,6 +158,7 @@ def registrace():
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
             informuj_pritelkyni()
+        input("Stiskni ENTER pro zavření browseru a ukončení...")
         return True
         # browser.close()  # nech otevřené pro kontrolu
 
@@ -194,6 +200,5 @@ def informuj_pritelkyni():
 if __name__ == "__main__":
     while True:
         if registrace():
-            input("Stiskni ENTER pro ukončení...")
             break
         print("❌ Pokus o registraci selhal. Zkouším znovu...")
