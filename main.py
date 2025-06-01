@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 import smtplib
 from email.message import EmailMessage
 import random
-from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD, GOOGLE_P, GOOGLE_U, MZ, ZACATECNIK, STAVITEL, ROZHODCI, POZNAMKA
+from playwright.sync_api import TimeoutError
+from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD, GOOGLE_P, GOOGLE_U, MZ, ZACATECNIK, STAVITEL, ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE
 
 divider = "=" * 30
 finished = None
@@ -89,7 +90,11 @@ def registrace():
             # Refresh
             print("🔄 Refreshuji stránku...")
             page.reload()
-            page.wait_for_load_state("load")
+            try:
+                page.wait_for_load_state("load", timeout=5000)
+            except TimeoutError:
+                print("❌ Stránka nenalezla tlačítko registrace.")
+                return False
 
         else:
             # Režim bez časování → rovnou přihlášení
@@ -100,7 +105,11 @@ def registrace():
             page.fill(SELECTOR_INPUT_HESLO, HESLO)
             page.click(SELECTOR_TLACITKO_LOGIN)
 
-        page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE)
+        try:
+            page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
+        except TimeoutError:
+            print("❌ Stránka nenalezla tlačítko registrace.")
+            return False
         # Společná část registrace
         # page.fill(SELECTOR_INPUT_JMENO, JMENO)
         page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU)
@@ -141,9 +150,9 @@ def registrace():
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
             print(f"✅ Shrnutí odesláno na {LOGIN}.")
-            informuj_amalku()
-            print("✅ Amálka informována.")
+            informuj_pritelkyni()
         input("Stiskni ENTER pro zavření browseru...")
+        return True
         # browser.close()  # nech otevřené pro kontrolu
 
 def posli_email():
@@ -162,11 +171,11 @@ def posli_email():
         smtp.login(uzivatel, heslo)
         smtp.send_message(msg)
 
-def informuj_amalku():
+def informuj_pritelkyni():
     msg = EmailMessage()
     msg['Subject'] = '🔫 Tvůj kluk pojede na závod'
     msg['From'] = GOOGLE_U
-    msg['To'] = "amalieberkova@gmail.com"
+    msg['To'] = PRITELKYNE
     msg.set_content(f"""Tvůj kluk se právě svým úžasným Python skriptem přihlásil na závod {datum_zavodu}.\n\nBude potřebovat držet palce.\n\nMiluju tě. ❤️\n\n\n(Automaticky generovaný email)""")
 
     # Přihlašovací údaje
@@ -177,7 +186,10 @@ def informuj_amalku():
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(uzivatel, heslo)
         smtp.send_message(msg)
+    print(f"✅ {JMENO_PRITELKYNE} informována.")
 
 # --- SPUŠTĚNÍ ---
 if __name__ == "__main__":
-    registrace()
+    while not registrace():
+        print("❌ Pokus o registraci selhal. Zkouším znovu...")
+        registrace()
