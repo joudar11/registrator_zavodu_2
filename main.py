@@ -104,7 +104,8 @@ def registrace():
         # page.click(SELECTOR_TLACITKO_REGISTRACE)
 
         print("✅ Registrace dokončena.")
-        # posli_email()
+        if DATUM_CAS_REGISTRACE is not None:
+            posli_email()
         input("Stiskni ENTER pro zavření browseru...")
         # browser.close()  # nech otevřené pro kontrolu
 
