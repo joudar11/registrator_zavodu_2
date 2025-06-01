@@ -184,7 +184,7 @@ def informuj_pritelkyni():
     msg['Subject'] = '🔫 Tvůj kluk pojede na závod'
     msg['From'] = GOOGLE_U
     msg['To'] = PRITELKYNE
-    msg.set_content(f"""Tvůj kluk se právě svým úžasným Python skriptem přihlásil na závod {nazev_zavodu}, který proběhne {datum_zavodu}.\n\nBude potřebovat držet palce.\n\nMiluju tě. ❤️\n\n\n(Automaticky generovaný email)""")
+    msg.set_content(f"""Tvůj kluk se svým úžasným Python skriptem právě přihlásil na závod {nazev_zavodu}, který proběhne {datum_zavodu}.\n\nBude potřebovat držet palce.\n\nMiluju tě. ❤️\n\n\n(Automaticky generovaný email)""")
 
     # Přihlašovací údaje
     uzivatel = GOOGLE_U
