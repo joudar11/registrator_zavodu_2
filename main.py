@@ -6,6 +6,7 @@ from email.message import EmailMessage
 from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD, GOOGLE_P, GOOGLE_U
 
 divider = "=" * 30
+MIMO_ZAVOD = False
 
 # --- SELEKTORY (uprav dle potřeby) ---
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
@@ -64,7 +65,7 @@ def registrace():
             # Přihlášení
             print("🔐 Přihlašuji se...")
             page.click(SELECTOR_TLACITKO_PRIHLASIT)
-            time.sleep(0.5)
+            page.wait_for_selector(SELECTOR_INPUT_LOGIN)
             page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
             page.fill(SELECTOR_INPUT_HESLO, HESLO)
             page.click(SELECTOR_TLACITKO_LOGIN)
@@ -77,18 +78,18 @@ def registrace():
             # Refresh
             print("🔄 Refreshuji stránku...")
             page.reload()
-            time.sleep(0.5)
+            page.wait_for_load_state("load")
 
         else:
             # Režim bez časování → rovnou přihlášení
             print("⚡ Přihlašuji se a rovnou registruji (bez časování)...")
             page.click(SELECTOR_TLACITKO_PRIHLASIT)
-            time.sleep(0.5)
+            page.wait_for_selector(SELECTOR_INPUT_LOGIN)
             page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
             page.fill(SELECTOR_INPUT_HESLO, HESLO)
             page.click(SELECTOR_TLACITKO_LOGIN)
-            time.sleep(0.5)
 
+        page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE)
         # Společná část registrace
         # page.fill(SELECTOR_INPUT_JMENO, JMENO)
         page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU)
@@ -100,9 +101,10 @@ def registrace():
         page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE)
         page.click(SELECTOR_SQUAD)
         page.check(SELECTOR_CHECKBOX_GDPR)
-        page.click(SELECTOR_TLACITKO_REGISTRACE)
+        # page.click(SELECTOR_TLACITKO_REGISTRACE)
+
         print("✅ Registrace dokončena.")
-        posli_email()
+        # posli_email()
         input("Stiskni ENTER pro zavření browseru...")
         # browser.close()  # nech otevřené pro kontrolu
 
