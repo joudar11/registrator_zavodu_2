@@ -130,7 +130,7 @@ def registrace():
         delay = random.uniform(2, 3)
         print(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
-        #page.click(SELECTOR_TLACITKO_REGISTRACE)
+        page.click(SELECTOR_TLACITKO_REGISTRACE)
         global finished
         finished = datetime.now()
 
@@ -164,7 +164,7 @@ def posli_email():
 
 def informuj_amalku():
     msg = EmailMessage()
-    msg['Subject'] = 'Tvůj kluk pojede na závod'
+    msg['Subject'] = '🔫 Tvůj kluk pojede na závod'
     msg['From'] = GOOGLE_U
     msg['To'] = "amalieberkova@gmail.com"
     msg.set_content(f"""Tvůj kluk se právě svým úžasným Python skriptem přihlásil na závod {datum_zavodu}.\n\nBude potřebovat držet palce.\n\nMiluju tě. ❤️\n\n\n(Automaticky generovaný email)""")
