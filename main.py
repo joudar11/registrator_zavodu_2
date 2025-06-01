@@ -153,7 +153,6 @@ def registrace():
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
             informuj_pritelkyni()
-        input("Stiskni ENTER pro zavření browseru...")
         return True
         # browser.close()  # nech otevřené pro kontrolu
 
@@ -193,6 +192,8 @@ def informuj_pritelkyni():
 
 # --- SPUŠTĚNÍ ---
 if __name__ == "__main__":
-    while not registrace():
+    while True:
+        if registrace():
+            input("Stiskni ENTER pro ukončení...")
+            break
         print("❌ Pokus o registraci selhal. Zkouším znovu...")
-        registrace()
