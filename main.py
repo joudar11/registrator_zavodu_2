@@ -56,11 +56,15 @@ def registrace():
     print(divider)
     print(get_summary())
     print(divider)
+
+    # Zahájení práce s prohlížečem
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
         page = browser.new_page()
+
+        # Pokud je server LOSu down, operace selže, funkce se ukončí a jede se od začátku, dokud server nebude odpovídat
         try:
-            page.goto(URL, timeout=15000)  # timeout můžeš snížit třeba na 15 s
+            page.goto(URL, timeout=15000) 
         except Exception as e:
             print(f"❌ Nelze načíst stránku závodu. Server buď neodpovídá, nebo nejsi připojen k internetu.\n\n{e}")
             return False
@@ -92,7 +96,7 @@ def registrace():
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
 
-            # Refresh
+            # Refresh po začátku registrace
             print("🔄 Refreshuji stránku...")
             page.reload()
             try:
@@ -110,37 +114,34 @@ def registrace():
             page.fill(SELECTOR_INPUT_HESLO, HESLO)
             page.click(SELECTOR_TLACITKO_LOGIN)
 
+        # Kontrola, že server odpovídá - 5s. Pokud ne, funkce selže a jede se od začátku.
         try:
             page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
         except TimeoutError:
             print("❌ Stránka nenalezla tlačítko registrace.")
             return False
-        # Společná část registrace
-        # page.fill(SELECTOR_INPUT_JMENO, JMENO)
-        page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU)
+        
 
+        # Společná část registrace
+        page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU)
         if CLENSKE_ID:
             page.check(SELECTOR_CHECKBOX_CLEN)
             page.fill(SELECTOR_INPUT_CLENSKE_ID, CLENSKE_ID)
-
         if POZNAMKA:
             page.fill(SELECTOR_INPUT_POZNAMKA, POZNAMKA)
-
         if ROZHODCI:
             page.check(SELECTOR_CHECKBOX_ROZHODCI)
-
         if ZACATECNIK:
             page.check(SELECTOR_CHECKBOX_ZACATECNIK)
-
         if MZ:
             page.check(SELECTOR_CHECKBOX_MZ)
-        
         if STAVITEL:
             page.check(SELECTOR_CHECKBOX_STAVITEL)
-
         page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE)
         page.click(SELECTOR_SQUAD)
         page.check(SELECTOR_CHECKBOX_GDPR)
+
+        # Uložení údajů ze závodu do globálních proměnných pro odeslání na mail.
         global datum_zavodu
         try:
             datum_zavodu = page.inner_text(SELECTOR_DATUM, timeout=5000)
@@ -154,24 +155,25 @@ def registrace():
             print(f"⚠️ Nepodařilo se získat název závodu: {e}")
             nazev_zavodu = "neznámý název"
 
+        # Čekání a odeslání registrace v náhodném intervalu + uložení času kliknutí do globální proměnné
         delay = random.uniform(2, 3)
         print(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
-        page.click(SELECTOR_TLACITKO_REGISTRACE)
-
-        MAX_WAIT = 5  # vteřin
-        start_time = time.time()
-
-        while not page.url.startswith("https://www.loslex.cz/contest/registration"):
-            if time.time() - start_time > MAX_WAIT:
-                print(f"❌ Registrace pravděpodobně selhala – URL se nezměnila do {MAX_WAIT} sekund.\nAktuální URL: {page.url}")
-                return False
-            time.sleep(0.1)
+        # page.click(SELECTOR_TLACITKO_REGISTRACE)
+        page.goto("https://www.loslex.cz/contest/registration/10297")
         global finished
         finished = datetime.now()
 
+        # Kontrola, že registrace proběhla (zobrazila se stránka registrace)
+        max_wait = 5  # vteřin
+        start_time = time.time()
+        while not page.url.startswith("https://www.loslex.cz/contest/registration"):
+            if time.time() - start_time > max_wait:
+                print(f"❌ Registrace pravděpodobně selhala – URL se nezměnila do {max_wait} sekund.\nAktuální URL: {page.url}")
+                return False
+            time.sleep(0.1)
+        
         print("✅ Registrace dokončena.")
-
 
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
