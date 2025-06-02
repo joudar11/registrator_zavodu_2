@@ -164,7 +164,7 @@ def registrace():
         finished = datetime.now()
 
         # Kontrola, že registrace proběhla (zobrazila se stránka registrace)
-        max_wait = 5  # vteřin
+        max_wait = 8  # vteřin
         start_time = time.time()
         while not page.url.startswith("https://www.loslex.cz/contest/registration"):
             if time.time() - start_time > max_wait:
