@@ -141,20 +141,6 @@ def registrace():
         page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE)
         page.click(SELECTOR_SQUAD)
         page.check(SELECTOR_CHECKBOX_GDPR)
-        delay = random.uniform(2, 3)
-        print(f"⏳ Čekám {delay:.2f} sekundy...")
-        time.sleep(delay)
-        page.click(SELECTOR_TLACITKO_REGISTRACE)
-        try:
-            page.wait_for_selector(SELECTOR_DATUM, timeout=5000)
-        except TimeoutError:
-            print("❌ Registrace pravděpodobně selhala – nepodařilo se načíst datum závodu.")
-            return False
-        global finished
-        finished = datetime.now()
-
-        print("✅ Registrace dokončena.")
-        page.wait_for_selector(SELECTOR_DATUM)
         global datum_zavodu
         try:
             datum_zavodu = page.inner_text(SELECTOR_DATUM, timeout=5000)
@@ -167,6 +153,26 @@ def registrace():
         except Exception as e:
             print(f"⚠️ Nepodařilo se získat název závodu: {e}")
             nazev_zavodu = "neznámý název"
+
+        delay = random.uniform(2, 3)
+        print(f"⏳ Čekám {delay:.2f} sekundy...")
+        time.sleep(delay)
+        #page.click(SELECTOR_TLACITKO_REGISTRACE)
+        page.goto("https://www.loslex.cz/contest/registration/10297")
+
+        MAX_WAIT = 5  # vteřin
+        start_time = time.time()
+
+        while not page.url.startswith("https://www.loslex.cz/contest/registration"):
+            if time.time() - start_time > MAX_WAIT:
+                print(f"❌ Registrace pravděpodobně selhala – URL se nezměnila do {MAX_WAIT} sekund.\nAktuální URL: {page.url}")
+                return False
+            time.sleep(0.1)
+        global finished
+        finished = datetime.now()
+
+        print("✅ Registrace dokončena.")
+
 
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
