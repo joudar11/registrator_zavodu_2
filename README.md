@@ -1,35 +1,39 @@
 # Automatická registrace na LOS závod
 
-Vylepšený [skript](https://github.com/joudar11/registrator_zavodu), který nepoužívá inputy v konzoli, ale bere si údaje ze souboru.
+Vylepšený [skript](https://github.com/joudar11/registrator_zavodu), který automaticky provádí registraci na závod LOS Lex pomocí knihovny Playwright. Nevyžaduje žádné zadávání údajů v konzoli – vše si načítá z konfiguračního souboru `data.py`.
 
-Tento skript v Pythonu využívá knihovnu **Playwright** k automatické registraci na LOS závod v přesný čas. Součástí je i automatické odeslání potvrzovacího e-mailu a informování přítelkyně.
+Součástí je:
+- časovaná registrace s přesností na sekundy
+- automatické přihlášení do systému
+- odeslání potvrzovacího e-mailu
+- notifikace přítelkyni ❤️
 
 ## 📦 Požadavky
 
 - Python 3.9+
 - `playwright`
-- Google účet s možností přihlašování přes aplikace (pro SMTP)
-- Vytvořený soubor `data.py` s následujícími proměnnými:
+- Gmail s aktivním přihlášením pomocí App Passwords (SMTP)
+- Konfigurační soubor `data.py` s následujícím obsahem:
 
 ```python
 JMENO = "..."                # Jméno závodníka
 CISLO_DOKLADU = "..."        # Číslo ZP
 CLENSKE_ID = "..."           # LEX ID (volitelné)
-DIVIZE = "..."               # Název divize (shodný s výběrem na webu)
-URL = "..."                  # URL závodu
+DIVIZE = "..."               # Název divize přesně dle výběru na webu
+URL = "..."                  # URL konkrétního závodu
 LOGIN = "..."                # Email pro přihlášení i notifikace
-HESLO = "..."                # Heslo
-DATUM_CAS_REGISTRACE = "2025-06-15 20:00:00"  # Čas zahájení registrace nebo None, pokud má registrace proběhnout okamžitě
-SQUAD = "2"                  # Číslo squadu (Musí být string)
-GOOGLE_P = "..."             # Heslo k Gmailu pro SMTP (pomocí App passwords funkce v Google účtu)
+HESLO = "..."                # Heslo do systému LOS Lex
+DATUM_CAS_REGISTRACE = "2025-06-15 20:00:00"  # nebo None pro okamžitou registraci. Formát musí být RRRR-MM-DD HH:MM:SS
+SQUAD = 2                    # Číslo squadu
+GOOGLE_P = "..."             # Gmail App Password pro SMTP
 GOOGLE_U = "..."             # Gmail odesílatele
-MZ = True                    # Zaškrtnutí mimo závod
+MZ = True                    # Mimo závod
 ZACATECNIK = False           # Začátečník
 STAVITEL = False             # Stavitel
 ROZHODCI = False             # Rozhodčí
-POZNAMKA = ""                # Volitelná poznámka
+POZNAMKA = "..."             # Poznámka (volitelné) - Může být None
 PRITELKYNE = "..."           # Email přítelkyně
-JMENO_PRITELKYNE = "..."     # Jméno přítelkyně v prvním pádu
+JMENO_PRITELKYNE = "..."     # Křestní jméno přítelkyně v prvním pádu
 ```
 
 ## ▶️ Spuštění
@@ -38,12 +42,16 @@ JMENO_PRITELKYNE = "..."     # Jméno přítelkyně v prvním pádu
 python main.py
 ```
 
-Při správném nastavení skript:
-- počká na přesný čas přihlášení
-- přihlásí se na závod
-- odešle potvrzovací email
-- informuje přítelkyni ❤️
+### Funkce skriptu
+
+✅ Načte stránku závodu  
+✅ Přihlásí se do systému v určený čas  
+✅ Automaticky vyplní registrační formulář  
+✅ Ověří přesměrování na stránku úspěšné registrace  
+✅ Odešle potvrzení na email  
+✅ Informuje přítelkyni, že jedeš střílet 😎❤️ (Pošle jí na email datum závodu a název.)
 
 ## 📧 Notifikace
 
-Skript používá `smtplib` k odeslání emailu přes Gmail. Nezapomeň povolit "přístup méně zabezpečených aplikací" nebo použít App Passwords.
+Skript používá `smtplib` pro odesílání přes SMTP (Gmail).  
+Je potřeba mít zapnuté [dvoufázové ověření](https://myaccount.google.com/security) a vytvořený [App Password](https://support.google.com/accounts/answer/185833).
