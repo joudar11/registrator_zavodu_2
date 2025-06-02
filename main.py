@@ -144,7 +144,7 @@ def registrace():
         delay = random.uniform(2, 3)
         print(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
-        #page.click(SELECTOR_TLACITKO_REGISTRACE)
+        page.click(SELECTOR_TLACITKO_REGISTRACE)
         try:
             page.wait_for_selector(SELECTOR_DATUM, timeout=5000)
         except TimeoutError:
