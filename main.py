@@ -157,8 +157,7 @@ def registrace():
         delay = random.uniform(2, 3)
         print(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
-        #page.click(SELECTOR_TLACITKO_REGISTRACE)
-        page.goto("https://www.loslex.cz/contest/registration/10297")
+        page.click(SELECTOR_TLACITKO_REGISTRACE)
 
         MAX_WAIT = 5  # vteřin
         start_time = time.time()
