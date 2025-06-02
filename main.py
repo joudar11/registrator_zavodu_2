@@ -155,6 +155,7 @@ def registrace():
         datum_zavodu = page.inner_text(SELECTOR_DATUM)
         global nazev_zavodu
         nazev_zavodu = page.inner_text(SELECTOR_NAZEV)
+
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
             informuj_pritelkyni()
@@ -167,7 +168,19 @@ def posli_email():
     msg['Subject'] = '✅ LOS Registrace proběhla'
     msg['From'] = GOOGLE_U
     msg['To'] = LOGIN
-    msg.set_content(f"""Registrace na závod {nazev_zavodu} proběhla úspěšně.\n{get_summary()}\n    Čas odeslání formuláře: {finished}\n\n    Datum závodu: {datum_zavodu}\n\n\n\n    😎😎😎""")
+    msg.set_content(
+    f"""Registrace na závod proběhla úspěšně.
+
+Závod: {nazev_zavodu}
+Datum závodu: {datum_zavodu}
+
+Čas odeslání formuláře: {finished}
+
+{get_summary()
+    .replace("\n\n", "\n")
+    .replace("    ", "")
+    .replace("registraci:", "registraci:\n")}"""
+)
 
     # Přihlašovací údaje
     uzivatel = GOOGLE_U
