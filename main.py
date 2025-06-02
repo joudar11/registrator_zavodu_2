@@ -181,7 +181,7 @@ def registrace():
         # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
         max_wait = 120  # sekund
         start_time = time.time()
-        print(f"Čekám {max_wait} sekund. Následně se ukončím.")
+        print(f"⏳ Čekám {max_wait} sekund. Následně se ukončím.")
         while True:
             if time.time() - start_time > max_wait:
                 return True
