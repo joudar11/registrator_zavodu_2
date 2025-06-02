@@ -177,8 +177,18 @@ def registrace():
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
             informuj_pritelkyni()
-        input("Stiskni ENTER pro zavření browseru a ukončení...")
-        return True
+
+        # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
+        max_wait = 120  # sekund
+        start_time = time.time()
+        print(f"Čekám {max_wait} sekund. Následně se ukončím.")
+        while True:
+            if time.time() - start_time > max_wait:
+                return True
+            time.sleep(1)
+        
+        # input("Stiskni ENTER pro zavření browseru a ukončení...")
+        # return True
         # browser.close()  # nech otevřené pro kontrolu
 
 def posli_email():
