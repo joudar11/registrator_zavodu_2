@@ -74,8 +74,8 @@ def registrace():
             try:
                 cas_registrace = datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S")
             except ValueError:
-                print("❌ DATUM_CAS_REGISTRACE má špatný formát. Použij RRRR-MM-DD HH:MM:SS.")
-                return
+                print("❌ DATUM_CAS_REGISTRACE má špatný formát. Použij RRRR-MM-DD HH:MM:SS. Ukončuji program.")
+                return True
 
             cas_prihlaseni = cas_registrace - timedelta(seconds=30)
 
@@ -96,13 +96,13 @@ def registrace():
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
 
-            # Refresh po začátku registrace
+            # Refresh po spuštění registrace
             print("🔄 Refreshuji stránku...")
             page.reload()
             try:
                 page.wait_for_load_state("load", timeout=5000)
             except TimeoutError:
-                print("❌ Stránka nenalezla tlačítko registrace.")
+                print("❌ Stránku registrace se nepodařilo načíst.")
                 return False
 
         else:
