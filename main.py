@@ -59,7 +59,11 @@ def registrace():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
         page = browser.new_page()
-        page.goto(URL)
+        try:
+            page.goto(URL, timeout=15000)  # timeout můžeš snížit třeba na 15 s
+        except Exception as e:
+            print(f"❌ Nelze načíst stránku závodu. Server buď neodpovídá, nebo nejsi připojen k internetu.\n\n{e}")
+            return False
 
         # Pokud je čas zadán → časovaný režim
         if DATUM_CAS_REGISTRACE is not None:
@@ -140,7 +144,7 @@ def registrace():
         delay = random.uniform(2, 3)
         print(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
-        page.click(SELECTOR_TLACITKO_REGISTRACE)
+        #page.click(SELECTOR_TLACITKO_REGISTRACE)
         try:
             page.wait_for_load_state("load", timeout=5000)
         except TimeoutError:
