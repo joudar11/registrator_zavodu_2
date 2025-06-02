@@ -146,9 +146,9 @@ def registrace():
         time.sleep(delay)
         #page.click(SELECTOR_TLACITKO_REGISTRACE)
         try:
-            page.wait_for_load_state("load", timeout=5000)
+            page.wait_for_selector(SELECTOR_DATUM, timeout=5000)
         except TimeoutError:
-            print("❌ Stránka nenalezla tlačítko registrace.")
+            print("❌ Registrace pravděpodobně selhala – nepodařilo se načíst datum závodu.")
             return False
         global finished
         finished = datetime.now()
@@ -156,9 +156,17 @@ def registrace():
         print("✅ Registrace dokončena.")
         page.wait_for_selector(SELECTOR_DATUM)
         global datum_zavodu
-        datum_zavodu = page.inner_text(SELECTOR_DATUM)
+        try:
+            datum_zavodu = page.inner_text(SELECTOR_DATUM, timeout=5000)
+        except Exception as e:
+            print(f"⚠️ Nepodařilo se získat datum závodu: {e}")
+            datum_zavodu = "neznámé datum"
         global nazev_zavodu
-        nazev_zavodu = page.inner_text(SELECTOR_NAZEV)
+        try:
+            nazev_zavodu = page.inner_text(SELECTOR_NAZEV, timeout=5000)
+        except Exception as e:
+            print(f"⚠️ Nepodařilo se získat název závodu: {e}")
+            nazev_zavodu = "neznámý název"
 
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
