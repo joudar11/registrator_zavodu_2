@@ -21,7 +21,7 @@ Součástí je:
 ```python
 JMENO = "..."                # Jméno závodníka
 CISLO_DOKLADU = "..."        # Číslo ZP
-CLENSKE_ID = "..."           # LEX ID (volitelné)
+CLENSKE_ID = "..."           # LEX ID (volitelné - pokud nemáš, napiš None)
 DIVIZE = "..."               # Název divize přesně dle výběru na webu
 URL = "..."                  # URL konkrétního závodu
 LOGIN = "..."                # Email pro přihlášení i notifikace
