@@ -63,6 +63,14 @@ def print_and_log(action: str):
     with open(f"logs/log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
         f.write(f"[{datetime.now()}] {action}\n")
 
+def prihlasit(page):
+    print_and_log("🔐 Přihlašuji se...")
+    page.click(SELECTOR_TLACITKO_PRIHLASIT)
+    page.wait_for_selector(SELECTOR_INPUT_LOGIN)
+    page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
+    page.fill(SELECTOR_INPUT_HESLO, HESLO)
+    page.click(SELECTOR_TLACITKO_LOGIN)
+
 def registrace():
     global DIVIZE_local
     print(divider)
@@ -97,11 +105,7 @@ def registrace():
 
             # Přihlášení
             print_and_log("🔐 Přihlašuji se...")
-            page.click(SELECTOR_TLACITKO_PRIHLASIT)
-            page.wait_for_selector(SELECTOR_INPUT_LOGIN)
-            page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
-            page.fill(SELECTOR_INPUT_HESLO, HESLO)
-            page.click(SELECTOR_TLACITKO_LOGIN)
+            prihlasit(page)
 
             cilovy_cas = cas_registrace + timedelta(seconds=0.5)
             print_and_log(f"⏳ Čekám na čas registrace: {cilovy_cas}")
@@ -120,11 +124,7 @@ def registrace():
         else:
             # Režim bez časování → rovnou přihlášení
             print_and_log("⚡ Přihlašuji se a rovnou registruji (bez časování)...")
-            page.click(SELECTOR_TLACITKO_PRIHLASIT)
-            page.wait_for_selector(SELECTOR_INPUT_LOGIN)
-            page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
-            page.fill(SELECTOR_INPUT_HESLO, HESLO)
-            page.click(SELECTOR_TLACITKO_LOGIN)
+            prihlasit(page)
 
         # Kontrola, že server odpovídá - 5s. Pokud ne, funkce selže a jede se od začátku.
         try:
@@ -188,7 +188,8 @@ def registrace():
         delay = random.uniform(2, 3)
         print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
-        page.click(SELECTOR_TLACITKO_REGISTRACE)
+        # page.click(SELECTOR_TLACITKO_REGISTRACE)
+        page.goto("https://www.loslex.cz/contest/registration/10297")
         global finished
         finished = datetime.now()
 
