@@ -47,15 +47,15 @@ python main.py
 
 ### Funkce skriptu
 
-✅ Načte stránku závodu
-✅ Přihlásí se do systému v určený čas
-✅ Automaticky vyplní registrační formulář
-✅ Pokud zvolená divize neexistuje, zvolí první možnou dostupnou
-✅ Zaznamená každý pokus do textového logu (adresář logs/)
-✅ Opakuje registraci až 50× v případě selhání
-✅ Ověří přesměrování na stránku úspěšné registrace
-✅ Odešle potvrzení na email
-✅ Informuje přítelkyni, že jedeš střílet 😎❤️ (Pošle jí na email datum závodu a název.)
+- ✅ Načte stránku závodu
+- ✅ Přihlásí se do systému v určený čas
+- ✅ Automaticky vyplní registrační formulář
+- ✅ Pokud zvolená divize neexistuje, zvolí první možnou dostupnou
+- ✅ Zaznamená každý pokus do textového logu (adresář logs/)
+- ✅ Opakuje registraci až 50× v případě selhání
+- ✅ Ověří přesměrování na stránku úspěšné registrace
+- ✅ Odešle potvrzení na email
+- ✅ Informuje přítelkyni, že jedeš střílet 😎❤️ (Pošle jí na email datum závodu a název.)
 
 ## 📧 Notifikace
 
