@@ -69,7 +69,11 @@ def get_summary():
 
 def print_and_log(action: str):
     print(action)
-    os.makedirs("logs", exist_ok=True)
+    try:
+        os.makedirs("logs", exist_ok=True)
+    except Exception as e:
+        print(f"❌ Nelze vytvořit složku logs: {e}")
+        return
     with open(f"logs/log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
         f.write(f"[{datetime.now()}] {action}\n")
 
