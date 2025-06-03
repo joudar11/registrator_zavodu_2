@@ -230,7 +230,8 @@ def registrace():
         print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
         try:
-            page.click(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
+            page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
+            page.click(SELECTOR_TLACITKO_REGISTRACE)
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace: {e}")
             return False
