@@ -186,14 +186,14 @@ def registrace():
         try:
             page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE_local, timeout=500)
         except Exception:
-            print_and_log(f"⚠️ Nepodařilo se vybrat zvolenou divizi - vybírám první možnou divizi.")
+            print_and_log(f"⚠️ Nepodařilo se vybrat divizi {DIVIZE} - vybírám první možnou divizi.")
             try:
                 moznosti = page.locator(f"{SELECTOR_SELECT_DIVIZE} option")
                 prvni_moznost = moznosti.nth(1).get_attribute("value")
                 if prvni_moznost:
                     prvni_moznost_hodnota = moznosti.nth(1).text_content()
                     page.select_option(SELECTOR_SELECT_DIVIZE, value=prvni_moznost)
-                    print_and_log(f"⚠️ Zvolena první možná divize: {prvni_moznost_hodnota}")
+                    print_and_log(f"⚠️ Zvolena první dostupná divize: {prvni_moznost_hodnota}")
                     DIVIZE_local = prvni_moznost_hodnota
             except Exception as inner_e:
                 print_and_log(f"❌ Nepodařilo se vybrat první možnou divizi: {inner_e}")
@@ -231,7 +231,8 @@ def registrace():
         time.sleep(delay)
         try:
             page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
-            page.click(SELECTOR_TLACITKO_REGISTRACE)
+            # page.click(SELECTOR_TLACITKO_REGISTRACE)
+            page.goto("https://www.loslex.cz/contest/registration/10297")
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace: {e}")
             return False
