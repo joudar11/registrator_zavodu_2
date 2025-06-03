@@ -74,10 +74,20 @@ def print_and_log(action: str):
         f.write(f"[{datetime.now()}] {action}\n")
 
 def prihlasit(page):
-    page.click(SELECTOR_TLACITKO_PRIHLASIT)
-    page.wait_for_selector(SELECTOR_INPUT_LOGIN)
-    page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
-    page.fill(SELECTOR_INPUT_HESLO, HESLO)
+    try:
+        page.click(SELECTOR_TLACITKO_PRIHLASIT)
+    except Exception as e:
+        print_and_log(f"❌ Nelze kliknout na tlačítko pro zobrazení přihlášení: {e}")
+        return False
+
+    try:
+        page.wait_for_selector(SELECTOR_INPUT_LOGIN)
+        page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
+        page.fill(SELECTOR_INPUT_HESLO, HESLO)
+    except Exception as e:
+        print_and_log(f"❌ Nepodařilo se vyplnit přihlašovací údaje: {e}")
+        return False
+
     try:
         page.wait_for_selector(SELECTOR_TLACITKO_LOGIN, state="visible", timeout=10000)
         page.click(SELECTOR_TLACITKO_LOGIN)
@@ -182,11 +192,20 @@ def registrace():
                     print_and_log(f"⚠️ Zvolena první možná divize: {prvni_moznost_hodnota}")
                     DIVIZE_local = prvni_moznost_hodnota
             except Exception as inner_e:
-                print_and_log(f"Nepodařilo se vybrat výchozí možnost: {inner_e}")
+                print_and_log(f"❌ Nepodařilo se vybrat první možnou divizi: {inner_e}")
                 return False
         
-        page.click(SELECTOR_SQUAD)
-        page.check(SELECTOR_CHECKBOX_GDPR)
+        try:
+            page.click(SELECTOR_SQUAD)
+        except Exception as e:
+            print_and_log(f"❌ Nepodařilo se vybrat squad {SQUAD}: {e}")
+            return False
+        
+        try:
+            page.check(SELECTOR_CHECKBOX_GDPR)
+        except Exception as e:
+            print_and_log(f"❌ Nepodařilo se zaškrtnout souhlas s GDPR: {e}")
+            return False
 
         # Uložení údajů ze závodu do globálních proměnných pro odeslání na mail.
         global datum_zavodu
@@ -282,10 +301,14 @@ def informuj_pritelkyni():
     heslo = GOOGLE_P
 
     # Odeslání e-mailu
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(uzivatel, heslo)
-        smtp.send_message(msg)
-    print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
+
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(uzivatel, heslo)
+            smtp.send_message(msg)
+        print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
+    except Exception as e:
+        print_and_log(f"❌ Nepodařilo se informovat přítelkyni: {e}")
 
 if __name__ == "__main__":
     # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná
