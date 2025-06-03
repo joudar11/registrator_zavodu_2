@@ -139,7 +139,7 @@ def registrace():
             # Refresh po spuštění registrace
             print_and_log("🔄 Refreshuji stránku...")
             try:
-                page.reload(wait_until="domcontentloaded", timeout=5000)
+                page.goto(URL, wait_until="domcontentloaded", timeout=5000)
             except TimeoutError:
                 print_and_log("❌ Timeout při refreshi stránky – pokračuju dál.")
                 return False
@@ -225,7 +225,8 @@ def registrace():
         delay = random.uniform(2, 3)
         print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
-        page.click(SELECTOR_TLACITKO_REGISTRACE)
+        # page.click(SELECTOR_TLACITKO_REGISTRACE)
+        page.goto("https://www.loslex.cz/contest/registration/10297")
         global finished
         finished = datetime.now()
 
