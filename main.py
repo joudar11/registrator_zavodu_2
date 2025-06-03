@@ -12,6 +12,7 @@ finished = None
 datum_zavodu = None
 nazev_zavodu = None
 SQUAD = str(SQUAD)
+REG_URL = "https://www.loslex.cz/contest/registration"
 
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
 SELECTOR_INPUT_LOGIN = r"#login"
@@ -74,6 +75,7 @@ def registrace():
             try:
                 cas_registrace = datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S")
             except ValueError:
+                # Toto je jediná instance selhání programu, která funkci nespustí znovu. Opětovné spuštění by nemělo smysl, jelikož chyba je ve vadném vstupu.
                 print("❌ DATUM_CAS_REGISTRACE má špatný formát. Použij RRRR-MM-DD HH:MM:SS. Ukončuji program.")
                 return True
 
@@ -166,7 +168,7 @@ def registrace():
         # Kontrola, že registrace proběhla (zobrazila se stránka registrace)
         max_wait = 8  # vteřin
         start_time = time.time()
-        while not page.url.startswith("https://www.loslex.cz/contest/registration"):
+        while not page.url.startswith(REG_URL):
             if time.time() - start_time > max_wait:
                 print(f"❌ Registrace pravděpodobně selhala – URL se nezměnila do {max_wait} sekund.\nAktuální URL: {page.url}")
                 return False
