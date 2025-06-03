@@ -8,6 +8,7 @@ from playwright.sync_api import TimeoutError
 import os
 from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD, GOOGLE_P, GOOGLE_U, MZ, ZACATECNIK, STAVITEL, ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE
 
+LIMIT = 50 # Po tomto počtu neúspěšných pokusů se program ukončí
 divider = "=" * 30
 finished = None
 datum_zavodu = None
@@ -214,6 +215,8 @@ def registrace():
             if time.time() - start_time > max_wait:
                 return True
             time.sleep(1)
+
+        return True # Toto volání je prakticky zbytečné, jde pouze o pojistku, kdyby selhala čekací funkce výše.
         
         # input("Stiskni ENTER pro zavření browseru a ukončení...")
         # return True
@@ -268,7 +271,12 @@ def informuj_pritelkyni():
 if __name__ == "__main__":
     # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná
     POKUS_TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
-    while True:
+    cislo_pokusu = 1
+    while cislo_pokusu <= LIMIT:
+        print_and_log(f"🔁 Pokus o registraci č. {cislo_pokusu} z {LIMIT}")
         if registrace():
             break
         print_and_log("❌ Pokus o registraci selhal. Zkouším znovu...")
+        cislo_pokusu += 1
+    if cislo_pokusu > LIMIT:
+        print_and_log(f"❌ Registrace selhala i po {LIMIT} pokusech. Skript končí.")
