@@ -27,7 +27,7 @@ SELECTOR_SELECT_DIVIZE = r"#contest_division_id"
 SELECTOR_SQUAD = f"#squad-{SQUAD}"
 SELECTOR_CHECKBOX_GDPR = r"#gdpr"
 SELECTOR_TLACITKO_REGISTRACE = r"#regform > div.flex.flex-col.items-center.justify-center > button"
-SELECTOR_CHECKBOX_MZ = r"#notcomp"
+SELECTOR_CHECKBOX_MZ = r'#notcomp[type="checkbox"]'
 SELECTOR_INPUT_POZNAMKA = r"#note"
 SELECTOR_CHECKBOX_ROZHODCI = r"#referee"
 SELECTOR_CHECKBOX_STAVITEL = r"#builder"
@@ -135,11 +135,28 @@ def registrace():
             page.check(SELECTOR_CHECKBOX_ROZHODCI)
         if ZACATECNIK:
             page.check(SELECTOR_CHECKBOX_ZACATECNIK)
-        if MZ:
+        if MZ and not page.locator(SELECTOR_CHECKBOX_MZ).is_checked():
             page.check(SELECTOR_CHECKBOX_MZ)
         if STAVITEL:
             page.check(SELECTOR_CHECKBOX_STAVITEL)
-        page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE)
+
+        # Ošetření neplatné divize. Pokud zvolená divize není v závodu, bude zvolena první možná divize. Závodník si následně registraci upraví, ale nepřijde o místo v závodě.
+        try:
+            page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE, timeout=500)
+        except Exception:
+            print(f"⚠️ Nepodařilo se vybrat zvolenou divizi\n⚠️ Vybírám první možnou divizi.")
+            try:
+                moznosti = page.locator(f"{SELECTOR_SELECT_DIVIZE} option")
+                prvni_moznost = moznosti.nth(1).get_attribute("value")
+                if prvni_moznost:
+                    prvni_moznost_hodnota = moznosti.nth(1).text_content()
+                    page.select_option(SELECTOR_SELECT_DIVIZE, value=prvni_moznost)
+                    print(f"⚠️ Zvolena první možná divize: {prvni_moznost_hodnota}")
+                    global DIVIZE
+                    DIVIZE = prvni_moznost_hodnota
+            except Exception as inner_e:
+                print(f"Nepodařilo se vybrat výchozí možnost: {inner_e}")
+        
         page.click(SELECTOR_SQUAD)
         page.check(SELECTOR_CHECKBOX_GDPR)
 
