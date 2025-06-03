@@ -149,6 +149,7 @@ def registrace():
                 print_and_log("❌ Timeout při refreshi stránky – pokračuji dál.")
                 return False
             
+            # Čekání po refreshi
             try:
                 page.wait_for_load_state("load", timeout=5000)
             except TimeoutError:
@@ -204,7 +205,8 @@ def registrace():
             except Exception as inner_e:
                 print_and_log(f"❌ Nepodařilo se vybrat první možnou divizi: {inner_e}")
                 return False
-        
+            
+        # Výběr squadu
         try:
             page.click(SELECTOR_SQUAD)
         except Exception as e:
@@ -215,7 +217,8 @@ def registrace():
             except Exception as inner_e:
                 print_and_log(f"❌ Nepodařilo se zvolit squad 1: {e}")
                 return False
-        
+            
+        # Zaškrtnutí souhlasu s GDPR
         try:
             page.check(SELECTOR_CHECKBOX_GDPR)
         except Exception as e:
@@ -247,6 +250,7 @@ def registrace():
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace: {e}")
             return False
+        
         global finished
         finished = datetime.now()
 
