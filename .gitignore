@@ -1,4 +1,7 @@
-__pycache__/data.cpython-312.pyc
+data.*
 data*
-icon.ico
+__pycache__/
+*.pyc
 log*
+icon.ico
+logs/

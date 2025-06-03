@@ -5,6 +5,7 @@ import smtplib
 from email.message import EmailMessage
 import random
 from playwright.sync_api import TimeoutError
+import os
 from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD, GOOGLE_P, GOOGLE_U, MZ, ZACATECNIK, STAVITEL, ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE
 
 divider = "=" * 30
@@ -58,7 +59,8 @@ def get_summary():
 
 def print_and_log(action: str):
     print(action)
-    with open(f"log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
+    os.makedirs("logs", exist_ok=True)
+    with open(f"logs/log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
         f.write(f"[{datetime.now()}] {action}\n")
 
 def registrace():
@@ -199,14 +201,14 @@ def registrace():
                 return False
             time.sleep(0.1)
         
-        print_and_log(f"✅ Registrace na {nazev_zavodu} {datum_zavodu} dokončena.")
+        print_and_log(f"✅ Registrace na závod {nazev_zavodu} - {datum_zavodu} dokončena.")
 
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
             informuj_pritelkyni()
 
         # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
-        max_wait = 120  # sekund
+        max_wait = 10  # sekund
         start_time = time.time()
         print_and_log(f"⏳ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
         while True:
