@@ -13,6 +13,8 @@ datum_zavodu = None
 nazev_zavodu = None
 SQUAD = str(SQUAD)
 REG_URL = "https://www.loslex.cz/contest/registration"
+DIVIZE_local = DIVIZE
+POKUS_TIME = None
 
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
 SELECTOR_INPUT_LOGIN = r"#login"
@@ -40,7 +42,7 @@ def get_summary():
     Jméno: {JMENO}\n
     Číslo ZP: {CISLO_DOKLADU}\n
     LEX ID: {CLENSKE_ID}\n
-    Divize: {DIVIZE}\n
+    Divize: {DIVIZE_local}\n
     Squad: {SQUAD}\n
     URL závodu: {URL}\n
     Login: {LOGIN}\n
@@ -53,11 +55,16 @@ def get_summary():
     """
     return summary
 
+def print_and_log(action: str):
+    print(action)
+    with open(f"log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
+        f.write(f"[{datetime.now()}] {action}\n")
+
 def registrace():
+    global DIVIZE_local
     print(divider)
     print(get_summary())
     print(divider)
-
     # Zahájení práce s prohlížečem
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -67,7 +74,7 @@ def registrace():
         try:
             page.goto(URL, timeout=15000) 
         except Exception as e:
-            print(f"❌ Nelze načíst stránku závodu. Server buď neodpovídá, nebo nejsi připojen k internetu.\n\n{e}")
+            print_and_log(f"❌ Nelze načíst stránku závodu. Server buď neodpovídá, nebo nejsi připojen k internetu.\n\n{e}")
             return False
 
         # Pokud je čas zadán → časovaný režim
@@ -76,17 +83,17 @@ def registrace():
                 cas_registrace = datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S")
             except ValueError:
                 # Toto je jediná instance selhání programu, která funkci nespustí znovu. Opětovné spuštění by nemělo smysl, jelikož chyba je ve vadném vstupu.
-                print("❌ DATUM_CAS_REGISTRACE má špatný formát. Použij RRRR-MM-DD HH:MM:SS. Ukončuji program.")
+                print_and_log("❌ DATUM_CAS_REGISTRACE má špatný formát. Použij RRRR-MM-DD HH:MM:SS. Ukončuji program.")
                 return True
 
             cas_prihlaseni = cas_registrace - timedelta(seconds=30)
 
-            print(f"⏳ Čekám na čas přihlášení: {cas_prihlaseni}")
+            print_and_log(f"⏳ Čekám na čas přihlášení: {cas_prihlaseni}")
             while datetime.now() < cas_prihlaseni:
                 time.sleep(0.1)
 
             # Přihlášení
-            print("🔐 Přihlašuji se...")
+            print_and_log("🔐 Přihlašuji se...")
             page.click(SELECTOR_TLACITKO_PRIHLASIT)
             page.wait_for_selector(SELECTOR_INPUT_LOGIN)
             page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
@@ -94,22 +101,22 @@ def registrace():
             page.click(SELECTOR_TLACITKO_LOGIN)
 
             cilovy_cas = cas_registrace + timedelta(seconds=0.5)
-            print(f"⏳ Čekám na čas registrace: {cilovy_cas}")
+            print_and_log(f"⏳ Čekám na čas registrace: {cilovy_cas}")
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
 
             # Refresh po spuštění registrace
-            print("🔄 Refreshuji stránku...")
+            print_and_log("🔄 Refreshuji stránku...")
             page.reload()
             try:
                 page.wait_for_load_state("load", timeout=5000)
             except TimeoutError:
-                print("❌ Stránku registrace se nepodařilo načíst.")
+                print_and_log("❌ Stránku registrace se nepodařilo načíst.")
                 return False
 
         else:
             # Režim bez časování → rovnou přihlášení
-            print("⚡ Přihlašuji se a rovnou registruji (bez časování)...")
+            print_and_log("⚡ Přihlašuji se a rovnou registruji (bez časování)...")
             page.click(SELECTOR_TLACITKO_PRIHLASIT)
             page.wait_for_selector(SELECTOR_INPUT_LOGIN)
             page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
@@ -120,7 +127,7 @@ def registrace():
         try:
             page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
         except TimeoutError:
-            print("❌ Stránka nenalezla tlačítko registrace.")
+            print_and_log("❌ Stránka nenalezla tlačítko registrace.")
             return False
         
 
@@ -142,20 +149,20 @@ def registrace():
 
         # Ošetření neplatné divize. Pokud zvolená divize není v závodu, bude zvolena první možná divize. Závodník si následně registraci upraví, ale nepřijde o místo v závodě.
         try:
-            page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE, timeout=500)
+            page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE_local, timeout=500)
         except Exception:
-            print(f"⚠️ Nepodařilo se vybrat zvolenou divizi\n⚠️ Vybírám první možnou divizi.")
+            print_and_log(f"⚠️ Nepodařilo se vybrat zvolenou divizi - vybírám první možnou divizi.")
             try:
                 moznosti = page.locator(f"{SELECTOR_SELECT_DIVIZE} option")
                 prvni_moznost = moznosti.nth(1).get_attribute("value")
                 if prvni_moznost:
                     prvni_moznost_hodnota = moznosti.nth(1).text_content()
                     page.select_option(SELECTOR_SELECT_DIVIZE, value=prvni_moznost)
-                    print(f"⚠️ Zvolena první možná divize: {prvni_moznost_hodnota}")
-                    global DIVIZE
-                    DIVIZE = prvni_moznost_hodnota
+                    print_and_log(f"⚠️ Zvolena první možná divize: {prvni_moznost_hodnota}")
+                    DIVIZE_local = prvni_moznost_hodnota
             except Exception as inner_e:
-                print(f"Nepodařilo se vybrat výchozí možnost: {inner_e}")
+                print_and_log(f"Nepodařilo se vybrat výchozí možnost: {inner_e}")
+                return False
         
         page.click(SELECTOR_SQUAD)
         page.check(SELECTOR_CHECKBOX_GDPR)
@@ -165,18 +172,18 @@ def registrace():
         try:
             datum_zavodu = page.inner_text(SELECTOR_DATUM, timeout=5000)
         except Exception as e:
-            print(f"⚠️ Nepodařilo se získat datum závodu: {e}")
+            print_and_log(f"⚠️ Nepodařilo se získat datum závodu: {e}")
             datum_zavodu = "neznámé datum"
         global nazev_zavodu
         try:
             nazev_zavodu = page.inner_text(SELECTOR_NAZEV, timeout=5000)
         except Exception as e:
-            print(f"⚠️ Nepodařilo se získat název závodu: {e}")
+            print_and_log(f"⚠️ Nepodařilo se získat název závodu: {e}")
             nazev_zavodu = "neznámý název"
 
         # Čekání a odeslání registrace v náhodném intervalu + uložení času kliknutí do globální proměnné
         delay = random.uniform(2, 3)
-        print(f"⏳ Čekám {delay:.2f} sekundy...")
+        print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
         page.click(SELECTOR_TLACITKO_REGISTRACE)
         global finished
@@ -187,11 +194,11 @@ def registrace():
         start_time = time.time()
         while not page.url.startswith(REG_URL):
             if time.time() - start_time > max_wait:
-                print(f"❌ Registrace pravděpodobně selhala – URL se nezměnila do {max_wait} sekund.\nAktuální URL: {page.url}")
+                print_and_log(f"❌ Registrace pravděpodobně selhala – URL se nezměnila do {max_wait} sekund.\nAktuální URL: {page.url}")
                 return False
             time.sleep(0.1)
         
-        print("✅ Registrace dokončena.")
+        print_and_log("✅ Registrace dokončena.")
 
         if DATUM_CAS_REGISTRACE is not None:
             posli_email()
@@ -200,7 +207,7 @@ def registrace():
         # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
         max_wait = 120  # sekund
         start_time = time.time()
-        print(f"⏳ Čekám {max_wait} sekund. Následně se ukončím.")
+        print_and_log(f"⏳ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
         while True:
             if time.time() - start_time > max_wait:
                 return True
@@ -237,7 +244,7 @@ Datum závodu: {datum_zavodu}
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(uzivatel, heslo)
         smtp.send_message(msg)
-    print(f"✅ Shrnutí odesláno na {LOGIN}.")
+    print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
 def informuj_pritelkyni():
     msg = EmailMessage()
@@ -254,11 +261,12 @@ def informuj_pritelkyni():
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(uzivatel, heslo)
         smtp.send_message(msg)
-    print(f"✅ {JMENO_PRITELKYNE} informována.")
+    print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
 
 if __name__ == "__main__":
     # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná
+    POKUS_TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
     while True:
         if registrace():
             break
-        print("❌ Pokus o registraci selhal. Zkouším znovu...")
+        print_and_log("❌ Pokus o registraci selhal. Zkouším znovu...")

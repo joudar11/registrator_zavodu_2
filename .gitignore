@@ -1,6 +1,4 @@
-data.py
 __pycache__/data.cpython-312.pyc
-data_cyril.py
-data_testing.py
-data_cyril2.py
+data*
 icon.ico
+log*
