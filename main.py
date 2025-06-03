@@ -203,9 +203,8 @@ def registrace():
         
         print_and_log(f"✅ Registrace na závod {nazev_zavodu} - {datum_zavodu} dokončena.")
 
-        if DATUM_CAS_REGISTRACE is not None:
-            posli_email()
-            informuj_pritelkyni()
+        posli_email()
+        informuj_pritelkyni()
 
         # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
         max_wait = 60  # sekund
