@@ -208,7 +208,7 @@ def registrace():
             informuj_pritelkyni()
 
         # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
-        max_wait = 10  # sekund
+        max_wait = 60  # sekund
         start_time = time.time()
         print_and_log(f"⏳ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
         while True:
