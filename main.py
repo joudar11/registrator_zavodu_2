@@ -73,7 +73,7 @@ def print_and_log(action: str):
     try:
         os.makedirs("logs", exist_ok=True)
     except Exception as e:
-        print(f"❌ Nelze vytvořit složku logs: {e}")
+        print(f"❌ Nelze vytvořit složku logs:\n{e}")
         return
     with open(f"logs/log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
         f.write(f"[{datetime.now()}] {action}\n")
@@ -82,7 +82,7 @@ def prihlasit(page):
     try:
         page.click(SELECTOR_TLACITKO_PRIHLASIT)
     except Exception as e:
-        print_and_log(f"❌ Nelze kliknout na tlačítko pro zobrazení přihlášení: {e}")
+        print_and_log(f"❌ Nelze kliknout na tlačítko pro zobrazení přihlášení:\n{e}")
         return False
 
     try:
@@ -90,7 +90,7 @@ def prihlasit(page):
         page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
         page.fill(SELECTOR_INPUT_HESLO, HESLO)
     except Exception as e:
-        print_and_log(f"❌ Nepodařilo se vyplnit přihlašovací údaje: {e}")
+        print_and_log(f"❌ Nepodařilo se vyplnit přihlašovací údaje:\n{e}")
         return False
 
     try:
@@ -186,7 +186,7 @@ def registrace():
             if STAVITEL:
                 page.check(SELECTOR_CHECKBOX_STAVITEL)
         except Exception as e:
-            print_and_log(f"❌ Nepodařilo se vyplnit registrační formulář: {e}")
+            print_and_log(f"❌ Nepodařilo se vyplnit registrační formulář:\n{e}")
             return False
 
         # Ošetření neplatné divize. Pokud zvolená divize není v závodu, bude zvolena první možná divize. Závodník si následně registraci upraví, ale nepřijde o místo v závodě.
@@ -203,26 +203,27 @@ def registrace():
                     print_and_log(f"⚠️ Zvolena první dostupná divize: {prvni_moznost_hodnota}")
                     DIVIZE_local = prvni_moznost_hodnota
             except Exception as inner_e:
-                print_and_log(f"❌ Nepodařilo se vybrat první možnou divizi: {inner_e}")
+                print_and_log(f"❌ Nepodařilo se vybrat první možnou divizi:\n{inner_e}")
                 return False
             
         # Výběr squadu
         try:
+            page.wait_for_selector(SELECTOR_SQUAD, timeout=1000)
             page.click(SELECTOR_SQUAD)
         except Exception as e:
-            print_and_log(f"⚠️ Nepodařilo se vybrat squad {SQUAD}: {e}")
+            print_and_log(f"⚠️ Nepodařilo se vybrat squad {SQUAD}:\n{e}")
             try:
                 print_and_log(f"⚠️ Zkouším zvolit squad 1.")
                 page.click(SELECTOR_SQUAD1)
             except Exception as inner_e:
-                print_and_log(f"❌ Nepodařilo se zvolit squad 1: {e}")
+                print_and_log(f"❌ Nepodařilo se zvolit squad 1:\n{inner_e}")
                 return False
             
         # Zaškrtnutí souhlasu s GDPR
         try:
             page.check(SELECTOR_CHECKBOX_GDPR)
         except Exception as e:
-            print_and_log(f"❌ Nepodařilo se zaškrtnout souhlas s GDPR: {e}")
+            print_and_log(f"❌ Nepodařilo se zaškrtnout souhlas s GDPR:\n{e}")
             return False
 
         # Uložení údajů ze závodu do globálních proměnných pro odeslání na mail.
@@ -230,14 +231,14 @@ def registrace():
         try:
             datum_zavodu = page.inner_text(SELECTOR_DATUM, timeout=5000)
         except Exception as e:
-            print_and_log(f"⚠️ Nepodařilo se získat datum závodu: {e}")
+            print_and_log(f"⚠️ Nepodařilo se získat datum závodu:\n{e}")
             datum_zavodu = "neznámé datum"
 
         global nazev_zavodu
         try:
             nazev_zavodu = page.inner_text(SELECTOR_NAZEV, timeout=5000)
         except Exception as e:
-            print_and_log(f"⚠️ Nepodařilo se získat název závodu: {e}")
+            print_and_log(f"⚠️ Nepodařilo se získat název závodu:\n{e}")
             nazev_zavodu = "neznámý název"
 
         # Čekání a odeslání registrace v náhodném intervalu + uložení času kliknutí do globální proměnné
@@ -248,7 +249,7 @@ def registrace():
             page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
             page.click(SELECTOR_TLACITKO_REGISTRACE)
         except Exception as e:
-            print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace: {e}")
+            print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace:\n{e}")
             return False
         
         global finished
@@ -273,12 +274,12 @@ def registrace():
         try:
             informuj_pritelkyni()
         except Exception as e:
-            print_and_log(f"❌ Nepodařilo se informovat přítelkyni: {e}")
+            print_and_log(f"❌ Nepodařilo se informovat přítelkyni:\n{e}")
 
         try:
             posli_email()
         except Exception as e:
-            print_and_log(f"❌ Nepodařilo se poslat shrnutí na email: {e}")
+            print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
 
         while True:
             if time.time() - start_time > max_wait:
