@@ -78,7 +78,12 @@ def prihlasit(page):
     page.wait_for_selector(SELECTOR_INPUT_LOGIN)
     page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
     page.fill(SELECTOR_INPUT_HESLO, HESLO)
-    page.click(SELECTOR_TLACITKO_LOGIN)
+    try:
+        page.wait_for_selector(SELECTOR_TLACITKO_LOGIN, state="visible", timeout=10000)
+        page.click(SELECTOR_TLACITKO_LOGIN)
+    except TimeoutError:
+        print_and_log("❌ Tlačítko Přihlásit se nepodařilo kliknout – timeout.")
+        return False
 
 def registrace():
     global DIVIZE_local
@@ -92,7 +97,7 @@ def registrace():
 
         # Pokud je server LOSu down, operace selže, funkce se ukončí a jede se od začátku, dokud server nebude odpovídat
         try:
-            page.goto(URL, timeout=15000) 
+            page.goto(URL, timeout=10000) 
         except Exception as e:
             print_and_log(f"❌ Nelze načíst stránku závodu. Server buď neodpovídá, nebo nejsi připojen k internetu.\n\n{e}")
             return False
@@ -123,7 +128,11 @@ def registrace():
 
             # Refresh po spuštění registrace
             print_and_log("🔄 Refreshuji stránku...")
-            page.reload()
+            try:
+                page.reload(wait_until="domcontentloaded", timeout=5000)
+            except TimeoutError:
+                print_and_log("❌ Timeout při refreshi stránky – pokračuju dál.")
+                return False
             try:
                 page.wait_for_load_state("load", timeout=5000)
             except TimeoutError:
@@ -212,13 +221,12 @@ def registrace():
         
         print_and_log(f"✅ Registrace na závod {nazev_zavodu} - {datum_zavodu} dokončena.")
 
-        posli_email()
-        informuj_pritelkyni()
-
         # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
         max_wait = 60  # sekund
         start_time = time.time()
         print_and_log(f"⏳ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
+        informuj_pritelkyni()
+        posli_email()
         while True:
             if time.time() - start_time > max_wait:
                 return True
@@ -252,6 +260,9 @@ Datum závodu: {datum_zavodu}
     # Přihlašovací údaje
     uzivatel = GOOGLE_U
     heslo = GOOGLE_P
+    
+    with open(f"logs/log-{POKUS_TIME}.txt", "rb") as f:
+        msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registraction LOG.txt")
 
     # Odeslání e-mailu
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
