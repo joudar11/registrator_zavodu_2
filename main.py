@@ -39,6 +39,7 @@ SELECTOR_CHECKBOX_CLEN = r"#lexmember"
 SELECTOR_INPUT_CLENSKE_ID = r"#lexhash"
 SELECTOR_SELECT_DIVIZE = r"#contest_division_id"
 SELECTOR_SQUAD = f"#squad-{SQUAD}"
+SELECTOR_SQUAD1 = r"#squad-1"
 SELECTOR_CHECKBOX_GDPR = r"#gdpr"
 SELECTOR_TLACITKO_REGISTRACE = r"#regform > div.flex.flex-col.items-center.justify-center > button"
 SELECTOR_CHECKBOX_MZ = r'#notcomp[type="checkbox"]'
@@ -145,8 +146,9 @@ def registrace():
             try:
                 page.goto(URL, wait_until="domcontentloaded", timeout=5000)
             except TimeoutError:
-                print_and_log("❌ Timeout při refreshi stránky – pokračuju dál.")
+                print_and_log("❌ Timeout při refreshi stránky – pokračuji dál.")
                 return False
+            
             try:
                 page.wait_for_load_state("load", timeout=5000)
             except TimeoutError:
@@ -167,20 +169,24 @@ def registrace():
         
 
         # Společná část registrace
-        page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU)
-        if CLENSKE_ID:
-            page.check(SELECTOR_CHECKBOX_CLEN)
-            page.fill(SELECTOR_INPUT_CLENSKE_ID, CLENSKE_ID)
-        if POZNAMKA:
-            page.fill(SELECTOR_INPUT_POZNAMKA, POZNAMKA)
-        if ROZHODCI:
-            page.check(SELECTOR_CHECKBOX_ROZHODCI)
-        if ZACATECNIK:
-            page.check(SELECTOR_CHECKBOX_ZACATECNIK)
-        if MZ and not page.locator(SELECTOR_CHECKBOX_MZ).is_checked():
-            page.check(SELECTOR_CHECKBOX_MZ)
-        if STAVITEL:
-            page.check(SELECTOR_CHECKBOX_STAVITEL)
+        try:
+            page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU)
+            if CLENSKE_ID:
+                page.check(SELECTOR_CHECKBOX_CLEN)
+                page.fill(SELECTOR_INPUT_CLENSKE_ID, CLENSKE_ID)
+            if POZNAMKA:
+                page.fill(SELECTOR_INPUT_POZNAMKA, POZNAMKA)
+            if ROZHODCI:
+                page.check(SELECTOR_CHECKBOX_ROZHODCI)
+            if ZACATECNIK:
+                page.check(SELECTOR_CHECKBOX_ZACATECNIK)
+            if MZ and not page.locator(SELECTOR_CHECKBOX_MZ).is_checked():
+                page.check(SELECTOR_CHECKBOX_MZ)
+            if STAVITEL:
+                page.check(SELECTOR_CHECKBOX_STAVITEL)
+        except Exception as e:
+            print_and_log(f"❌ Nepodařilo se vyplnit registrační formulář: {e}")
+            return False
 
         # Ošetření neplatné divize. Pokud zvolená divize není v závodu, bude zvolena první možná divize. Závodník si následně registraci upraví, ale nepřijde o místo v závodě.
         try:
@@ -202,8 +208,13 @@ def registrace():
         try:
             page.click(SELECTOR_SQUAD)
         except Exception as e:
-            print_and_log(f"❌ Nepodařilo se vybrat squad {SQUAD}: {e}")
-            return False
+            print_and_log(f"⚠️ Nepodařilo se vybrat squad {SQUAD}: {e}")
+            try:
+                print_and_log(f"⚠️ Zkouším zvolit squad 1.")
+                page.click(SELECTOR_SQUAD1)
+            except Exception as inner_e:
+                print_and_log(f"❌ Nepodařilo se zvolit squad 1: {e}")
+                return False
         
         try:
             page.check(SELECTOR_CHECKBOX_GDPR)
@@ -218,6 +229,7 @@ def registrace():
         except Exception as e:
             print_and_log(f"⚠️ Nepodařilo se získat datum závodu: {e}")
             datum_zavodu = "neznámé datum"
+
         global nazev_zavodu
         try:
             nazev_zavodu = page.inner_text(SELECTOR_NAZEV, timeout=5000)
@@ -231,8 +243,7 @@ def registrace():
         time.sleep(delay)
         try:
             page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
-            # page.click(SELECTOR_TLACITKO_REGISTRACE)
-            page.goto("https://www.loslex.cz/contest/registration/10297")
+            page.click(SELECTOR_TLACITKO_REGISTRACE)
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace: {e}")
             return False
@@ -254,8 +265,17 @@ def registrace():
         max_wait = 60  # sekund
         start_time = time.time()
         print_and_log(f"⏳ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
-        informuj_pritelkyni()
-        posli_email()
+
+        try:
+            informuj_pritelkyni()
+        except Exception as e:
+            print_and_log(f"❌ Nepodařilo se informovat přítelkyni: {e}")
+
+        try:
+            posli_email()
+        except Exception as e:
+            print_and_log(f"❌ Nepodařilo se poslat shrnutí na email: {e}")
+
         while True:
             if time.time() - start_time > max_wait:
                 return True
@@ -312,13 +332,10 @@ def informuj_pritelkyni():
 
     # Odeslání e-mailu
 
-    try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login(uzivatel, heslo)
-            smtp.send_message(msg)
-        print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
-    except Exception as e:
-        print_and_log(f"❌ Nepodařilo se informovat přítelkyni: {e}")
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(uzivatel, heslo)
+        smtp.send_message(msg)
+    print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
 
 if __name__ == "__main__":
     # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná
