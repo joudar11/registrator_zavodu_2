@@ -1,12 +1,21 @@
-from playwright.sync_api import sync_playwright
-import time
-from datetime import datetime, timedelta
-import smtplib
-from email.message import EmailMessage
-import random
-from playwright.sync_api import TimeoutError
+# --- Standardní knihovny ---
 import os
-from data import JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL, LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD, GOOGLE_P, GOOGLE_U, MZ, ZACATECNIK, STAVITEL, ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE
+import time
+import random
+import smtplib
+from datetime import datetime, timedelta
+from email.message import EmailMessage
+
+# --- Externí knihovny ---
+from playwright.sync_api import sync_playwright, TimeoutError
+
+# --- Lokální moduly ---
+from data import (
+    JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL,
+    LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD,
+    GOOGLE_P, GOOGLE_U, MZ, ZACATECNIK, STAVITEL,
+    ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE
+)
 
 LIMIT = 50 # Po tomto počtu neúspěšných pokusů se program ukončí
 divider = "=" * 30
@@ -65,7 +74,6 @@ def print_and_log(action: str):
         f.write(f"[{datetime.now()}] {action}\n")
 
 def prihlasit(page):
-    print_and_log("🔐 Přihlašuji se...")
     page.click(SELECTOR_TLACITKO_PRIHLASIT)
     page.wait_for_selector(SELECTOR_INPUT_LOGIN)
     page.fill(SELECTOR_INPUT_LOGIN, LOGIN)
