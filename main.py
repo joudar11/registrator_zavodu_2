@@ -229,7 +229,11 @@ def registrace():
         delay = random.uniform(2, 3)
         print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
-        page.click(SELECTOR_TLACITKO_REGISTRACE)
+        try:
+            page.click(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
+        except Exception as e:
+            print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace: {e}")
+            return False
         global finished
         finished = datetime.now()
 
