@@ -3,10 +3,13 @@
 Vylepšený [skript](https://github.com/joudar11/registrator_zavodu), který automaticky provádí registraci na závod LOS Lex pomocí knihovny Playwright. Nevyžaduje žádné zadávání údajů v konzoli – vše si načítá z konfiguračního souboru `data.py`.
 
 Součástí je:
-- časovaná registrace s přesností na sekundy
-- automatické přihlášení do systému
-- odeslání potvrzovacího e-mailu
-- notifikace přítelkyni ❤️
+- Časovaná registrace s přesností na sekundy
+- Automatické přihlášení do systému
+- Odeslání potvrzovacího e-mailu
+- Notifikace přítelkyni ❤️
+- Logování do souboru
+- Automatické opakování registrace při selhání (max. 50 pokusů)
+- Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo následně registraci může upravit.
 
 ## 📦 Požadavky
 
@@ -44,11 +47,14 @@ python main.py
 
 ### Funkce skriptu
 
-✅ Načte stránku závodu  
-✅ Přihlásí se do systému v určený čas  
-✅ Automaticky vyplní registrační formulář  
-✅ Ověří přesměrování na stránku úspěšné registrace  
-✅ Odešle potvrzení na email  
+✅ Načte stránku závodu
+✅ Přihlásí se do systému v určený čas
+✅ Automaticky vyplní registrační formulář
+✅ Pokud zvolená divize neexistuje, zvolí první možnou dostupnou
+✅ Zaznamená každý pokus do textového logu (adresář logs/)
+✅ Opakuje registraci až 50× v případě selhání
+✅ Ověří přesměrování na stránku úspěšné registrace
+✅ Odešle potvrzení na email
 ✅ Informuje přítelkyni, že jedeš střílet 😎❤️ (Pošle jí na email datum závodu a název.)
 
 ## 📧 Notifikace
