@@ -10,6 +10,7 @@ Součástí je:
 - Logování do souboru
 - Automatické opakování registrace při selhání (max. 50 pokusů)
 - Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo a následně registraci může upravit. Stejný postup je uplatněn na squady.
+- Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru. 
 
 ## 📦 Požadavky
 
