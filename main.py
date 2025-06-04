@@ -17,7 +17,7 @@ from data import (
     ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE
 )
 
-LIMIT = 50 # Po tomto počtu neúspěšných pokusů se program ukončí
+LIMIT = 25 # Po tomto počtu neúspěšných pokusů se program ukončí
 divider = "=" * 30
 finished = None
 datum_zavodu = None
@@ -112,10 +112,14 @@ def prihlasit(page):
 def registrace():
     global DIVIZE_local
     global SQUAD_local
+    global datum_zavodu
+    global nazev_zavodu
+    global finished
     global FATAL_ERROR
-    print(divider)
-    print(get_summary())
-    print(divider)
+
+    # Shrnutí načtených údajů
+    print(divider, get_summary(), divider, sep="\n")
+
     # Zahájení práce s prohlížečem
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -134,7 +138,7 @@ def registrace():
             return False
 
         # Pokud je čas zadán → časovaný režim
-        if DATUM_CAS_REGISTRACE is not None:
+        if DATUM_CAS_REGISTRACE:
             try:
                 cas_registrace = datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S")
             except ValueError:
@@ -143,8 +147,8 @@ def registrace():
                 FATAL_ERROR = True
                 return False
 
+            # Přihlášení na registrační web proběhne 30s před spuštěním registrace 
             cas_prihlaseni = cas_registrace - timedelta(seconds=30)
-
             print_and_log(f"⏳ Čekám na čas přihlášení: {cas_prihlaseni}")
             while datetime.now() < cas_prihlaseni:
                 time.sleep(0.1)
@@ -154,12 +158,13 @@ def registrace():
             if not prihlasit(page):
                 return False
 
+            # Uspání skriptu, dokud nenastane čas spuštění registrace
             cilovy_cas = cas_registrace + timedelta(seconds=0.5)
             print_and_log(f"⏳ Čekám na čas registrace: {cilovy_cas}")
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
 
-            # Refresh po spuštění registrace
+            # Refresh po spuštění registrace, aby se zobrazily prvky formuláře
             print_and_log("🔄 Refreshuji stránku...")
             try:
                 page.goto(URL, wait_until="domcontentloaded", timeout=5000)
@@ -167,7 +172,7 @@ def registrace():
                 print_and_log("❌ Timeout při refreshi stránky – pokračuji dál.")
                 return False
             
-            # Čekání po refreshi
+            # Čekání na načtení stránky po refreshi
             try:
                 page.wait_for_load_state("load", timeout=5000)
             except TimeoutError:
@@ -176,11 +181,11 @@ def registrace():
 
         else:
             # Režim bez časování → rovnou přihlášení
-            print_and_log("⚡ Přihlašuji se a rovnou registruji (bez časování)...")
+            print_and_log("⚡ Přihlašuji se a rovnou registruji...")
             if not prihlasit(page):
                 return False
 
-        # Kontrola, že server odpovídá - 5s. Pokud ne, funkce selže a jede se od začátku.
+        # Kontrola, že server odpovídá - 5s. Pokud ne, funkce selže.
         try:
             page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
         except TimeoutError:
@@ -248,14 +253,12 @@ def registrace():
             return False
 
         # Uložení údajů ze závodu do globálních proměnných pro odeslání na mail.
-        global datum_zavodu
         try:
             datum_zavodu = page.inner_text(SELECTOR_DATUM, timeout=5000)
         except Exception as e:
             print_and_log(f"⚠️ Nepodařilo se získat datum závodu:\n{e}")
             datum_zavodu = "neznámé datum"
 
-        global nazev_zavodu
         try:
             nazev_zavodu = page.inner_text(SELECTOR_NAZEV, timeout=5000)
         except Exception as e:
@@ -273,7 +276,6 @@ def registrace():
             print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace:\n{e}")
             return False
         
-        global finished
         finished = datetime.now()
 
         # Kontrola, že registrace proběhla (zobrazila se stránka registrace)
