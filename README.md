@@ -19,7 +19,7 @@ Součástí je:
 - Konfigurační soubor `data.py` s následujícím obsahem:
 
 ```python
-JMENO = "..."                # Jméno závodníka
+JMENO = "..."                # Celé jméno závodníka
 CISLO_DOKLADU = "..."        # Číslo ZP
 CLENSKE_ID = "..."           # LEX ID (volitelné - pokud nemáš, napiš None)
 DIVIZE = "..."               # Název divize přesně dle výběru na webu
@@ -35,7 +35,7 @@ ZACATECNIK = False           # Začátečník
 STAVITEL = False             # Stavitel
 ROZHODCI = False             # Rozhodčí
 POZNAMKA = "..."             # Poznámka (volitelné) - Může být None
-PRITELKYNE = "..."           # Email přítelkyně
+PRITELKYNE = "..."           # Email přítelkyně (None, pokud jsi single)
 JMENO_PRITELKYNE = "..."     # Křestní jméno přítelkyně v prvním pádu
 ```
 
