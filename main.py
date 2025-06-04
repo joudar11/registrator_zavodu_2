@@ -330,17 +330,13 @@ Datum závodu: {datum_zavodu}
     .replace("    ", "")
     .replace("registraci:", "registraci:\n")}"""
 )
-
-    # Přihlašovací údaje
-    uzivatel = GOOGLE_U
-    heslo = GOOGLE_P
     
     with open(f"logs/log-{POKUS_TIME}.txt", "rb") as f:
         msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registrace LOG.txt")
 
     # Odeslání e-mailu
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(uzivatel, heslo)
+        smtp.login(GOOGLE_U, GOOGLE_P)
         smtp.send_message(msg)
     print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
@@ -359,17 +355,13 @@ def posli_error():
     .replace("    ", "")
     .replace("registraci:", "registraci:\n")}"""
 )
-
-    # Přihlašovací údaje
-    uzivatel = GOOGLE_U
-    heslo = GOOGLE_P
     
     with open(f"logs/log-{POKUS_TIME}.txt", "rb") as f:
         msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registrace LOG.txt")
 
     # Odeslání e-mailu
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(uzivatel, heslo)
+        smtp.login(GOOGLE_U, GOOGLE_P)
         smtp.send_message(msg)
     print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
@@ -380,20 +372,19 @@ def informuj_pritelkyni():
     msg['To'] = PRITELKYNE
     msg.set_content(f"""Tvůj kluk se svým úžasným Python skriptem právě přihlásil na závod {nazev_zavodu}, který proběhne {datum_zavodu}.\n\nBude potřebovat držet palce.\n\nMiluju tě. ❤️\n\n\n(Automaticky generovaný email)""")
 
-    # Přihlašovací údaje
-    uzivatel = GOOGLE_U
-    heslo = GOOGLE_P
-
     # Odeslání e-mailu
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(uzivatel, heslo)
+        smtp.login(GOOGLE_U, GOOGLE_P)
         smtp.send_message(msg)
     print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
 
 if __name__ == "__main__":
-    # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná
+    # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná, dokud nedojde k fatální chybě nebo dokud nebude dosažen maximální stanovený počet pokusů.
+    # Fatální chybou se rozumí špatné přihlašovací údaje, špatný formát data a času nebo špatná URL závodu.
+    # POKUS_TIME je konstanta, která se používá pouze pro název souboru s logem.
     POKUS_TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
+
     cislo_pokusu = 1
     while cislo_pokusu <= LIMIT:
         print_and_log(f"🔁 Pokus o registraci č. {cislo_pokusu} z {LIMIT}")
