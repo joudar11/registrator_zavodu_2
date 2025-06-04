@@ -354,7 +354,7 @@ def posli_error():
     msg.set_content(
     f"""❌ Registrace na závod neproběhla úspěšně.
 
-❌ Špatný čas a datum registrace, nebo špatné přihlašovací údaje.
+❌ Při registraci došlo k fatální chybě. Viz přiložený log.
 
 {get_summary()
     .replace("\n\n", "\n")
