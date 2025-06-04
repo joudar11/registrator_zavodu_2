@@ -316,7 +316,7 @@ Datum závodu: {datum_zavodu}
     heslo = GOOGLE_P
     
     with open(f"logs/log-{POKUS_TIME}.txt", "rb") as f:
-        msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registraction LOG.txt")
+        msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registrace LOG.txt")
 
     # Odeslání e-mailu
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
