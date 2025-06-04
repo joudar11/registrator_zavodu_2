@@ -6,3 +6,4 @@ log*
 icon.ico
 logs/
 druha_registrace.py
+*.bat
