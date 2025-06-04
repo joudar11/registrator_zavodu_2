@@ -13,7 +13,7 @@ Součástí je:
 
 ## 📦 Požadavky
 
-- Python 3.13
+- Python 3.12.6
 - `playwright`
 - Gmail s aktivním přihlášením pomocí App Passwords (SMTP)
 - Konfigurační soubor `data.py` s následujícím obsahem:

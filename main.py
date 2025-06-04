@@ -99,6 +99,7 @@ def prihlasit(page):
     except TimeoutError:
         print_and_log("❌ Tlačítko Přihlásit se nepodařilo kliknout – timeout.")
         return False
+    return True
 
 def registrace():
     global DIVIZE_local
@@ -134,7 +135,8 @@ def registrace():
 
             # Přihlášení
             print_and_log("🔐 Přihlašuji se...")
-            prihlasit(page)
+            if not prihlasit(page):
+                return False
 
             cilovy_cas = cas_registrace + timedelta(seconds=0.5)
             print_and_log(f"⏳ Čekám na čas registrace: {cilovy_cas}")
@@ -159,7 +161,8 @@ def registrace():
         else:
             # Režim bez časování → rovnou přihlášení
             print_and_log("⚡ Přihlašuji se a rovnou registruji (bez časování)...")
-            prihlasit(page)
+            if not prihlasit(page):
+                return False
 
         # Kontrola, že server odpovídá - 5s. Pokud ne, funkce selže a jede se od začátku.
         try:
