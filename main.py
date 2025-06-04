@@ -217,7 +217,7 @@ def registrace():
         try:
             page.select_option(SELECTOR_SELECT_DIVIZE, label=DIVIZE_local, timeout=500)
         except Exception:
-            print_and_log(f"⚠️ Nepodařilo se vybrat divizi {DIVIZE} - vybírám první možnou divizi.")
+            print_and_log(f"⚠️ Nepodařilo se vybrat divizi {DIVIZE_local} - vybírám první možnou divizi.")
             try:
                 moznosti = page.locator(f"{SELECTOR_SELECT_DIVIZE} option")
                 prvni_moznost = moznosti.nth(1).get_attribute("value")
@@ -275,10 +275,9 @@ def registrace():
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace:\n{e}")
             return False
-        
         finished = datetime.now()
 
-        # Kontrola, že registrace proběhla (zobrazila se stránka registrace)
+        # Kontrola, že registrace proběhla (zobrazila se stránka e shrnutím registrace)
         max_wait = 8  # vteřin
         start_time = time.time()
         while not page.url.startswith(REG_URL):
@@ -294,27 +293,24 @@ def registrace():
         start_time = time.time()
         print_and_log(f"⏳ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
 
+        # Informuje přítelkyni o datu a názvu závodu + o tom, že ji závodník miluje.
         try:
             if PRITELKYNE:
                 informuj_pritelkyni()
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se informovat přítelkyni:\n{e}")
 
+        # Pošle závodníkovi shrnutí úspěšné reistrace a textový log.
         try:
             posli_email()
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
 
+        # Čeká specifikovaný čas a ukončuje se. (Dokončení čekací funkce skriptu)
         while True:
             if time.time() - start_time > max_wait:
                 return True
             time.sleep(1)
-
-        return True # Toto volání je prakticky zbytečné, jde pouze o pojistku, kdyby selhala čekací funkce výše.
-        
-        # input("Stiskni ENTER pro zavření browseru a ukončení...")
-        # return True
-        # browser.close()  # nech otevřené pro kontrolu
 
 def posli_email():
     msg = EmailMessage()
