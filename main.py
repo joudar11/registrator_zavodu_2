@@ -18,23 +18,25 @@ from data import (
 )
 
 LIMIT = 25 # Po tomto počtu neúspěšných pokusů se program ukončí
-divider = "=" * 30
-finished = None
-datum_zavodu = None
-nazev_zavodu = None
+divider = "=" * 30 # Pouze pro tisk ve stringu
+finished = None # Sem se následně uloží čas dokončení registrace
+datum_zavodu = None # Sem se následně uloží datum závodu (pro odeslání mailem)
+nazev_zavodu = None # Sem se následně uloží název závodu (pro odeslání mailem)
 
 FATAL_ERROR = False
 
 REG_URL = "https://www.loslex.cz/contest/registration"
 DIVIZE_local = DIVIZE # Bere si divizi do proměnné, se kterou je možné v rámci main dále pracovat a měnit ji (pro ochranu proti neexistující  divizi)
-SQUAD_local = str(SQUAD)
-POKUS_TIME = None # Čas zahájení pokusu o registraci (pro log)
+SQUAD_local = str(SQUAD) # Převedení int squadu na str a proměnnou v této funkci pro pozdější použití a změny
+POKUS_TIME = None # Čas zahájení pokusu o registraci (pro název log souboru)
 
+# Selectory pro login
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
 SELECTOR_INPUT_LOGIN = r"#login"
 SELECTOR_INPUT_HESLO = r"#password"
 SELECTOR_TLACITKO_LOGIN = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\:px-0.z-2000 > div.mb-6.bg-white.dark\:bg-gray-800.rounded-lg.overflow-hidden.shadow-xl.transform.transition-all.sm\:w-full.sm\:max-w-md.sm\:mx-auto > div > form > div.flex.items-center.justify-end.mt-4 > button"
 
+# Selectory pro registraci
 SELECTOR_INPUT_JMENO = r"#username"
 SELECTOR_INPUT_DOKLAD = r"#licenceid"
 SELECTOR_CHECKBOX_CLEN = r"#lexmember"
@@ -49,6 +51,8 @@ SELECTOR_INPUT_POZNAMKA = r"#note"
 SELECTOR_CHECKBOX_ROZHODCI = r"#referee"
 SELECTOR_CHECKBOX_STAVITEL = r"#builder"
 SELECTOR_CHECKBOX_ZACATECNIK = r"#rookie"
+
+# Selectory pro scrapnutí dat
 SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.grid.grid-cols-auto.lg\:grid-cols-fitfirst.gap-x-2.lg\:gap-x-4.gap-y-2 > div:nth-child(10)"
 SELECTOR_NAZEV = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.justify-center.items-baseline.text-xl.font-bold.flex"
 SELECTOR_SPATNE_UDAJE = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\:px-0.z-2000 > div.mb-6.bg-white.dark\:bg-gray-800.rounded-lg.overflow-hidden.shadow-xl.transform.transition-all.sm\:w-full.sm\:max-w-md.sm\:mx-auto > div > form > div:nth-child(3) > ul"
@@ -73,12 +77,15 @@ def get_summary():
 
 def print_and_log(action: str):
     print(action)
+    folder = "logs" # složka, kam se uloží log
     try:
-        os.makedirs("logs", exist_ok=True)
+        os.makedirs(folder, exist_ok=True)
     except Exception as e:
-        print(f"❌ Nelze vytvořit složku logs:\n{e}")
+        print(f"❌ Nelze vytvořit složku {folder}:\n{e}")
         return
-    with open(f"logs/log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
+    
+    # Zápis do logu
+    with open(f"{folder}/log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
         f.write(f"[{datetime.now()}] {action}\n")
 
 def prihlasit(page):
