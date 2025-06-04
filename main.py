@@ -395,7 +395,13 @@ if __name__ == "__main__":
         cislo_pokusu += 1
     if cislo_pokusu > LIMIT:
         print_and_log(f"❌ Registrace selhala i po {LIMIT} pokusech. Skript končí.")
-        posli_error(cislo_pokusu-1)
+        try:
+            posli_error(cislo_pokusu-1)
+        except Exception as e:
+            print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
     if FATAL_ERROR:
         print_and_log(f"❌ Registrace selhala - fatální chyba. Vzhledem k její povaze nemá smysl pokus opakovat. Skript končí.")
-        posli_error(cislo_pokusu-1)
+        try:
+            posli_error(cislo_pokusu-1)
+        except Exception as e:
+            print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
