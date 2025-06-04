@@ -5,3 +5,4 @@ __pycache__/
 log*
 icon.ico
 logs/
+druha_registrace.py
