@@ -109,7 +109,7 @@ def prihlasit(page):
         return False
     return True
 
-def registrace():
+def registrace(pokus: int):
     global DIVIZE_local
     global SQUAD_local
     global datum_zavodu
@@ -118,7 +118,8 @@ def registrace():
     global FATAL_ERROR
 
     # Shrnutí načtených údajů
-    print(divider, get_summary(), divider, sep="\n")
+    if pokus == 1:
+        print(divider, get_summary(), divider, sep="\n")
 
     # Zahájení práce s prohlížečem
     with sync_playwright() as p:
@@ -192,7 +193,6 @@ def registrace():
             print_and_log("❌ Stránka nenalezla tlačítko registrace.")
             return False
         
-
         # Společná část registrace
         try:
             page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU)
@@ -340,7 +340,7 @@ Datum závodu: {datum_zavodu}
         smtp.send_message(msg)
     print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
-def posli_error():
+def posli_error(pokusy: int):
     msg = EmailMessage()
     msg['Subject'] = '❌ LOS Registrace neproběhla'
     msg['From'] = GOOGLE_U
@@ -348,7 +348,7 @@ def posli_error():
     msg.set_content(
     f"""❌ Registrace na závod neproběhla úspěšně.
 
-❌ Při registraci došlo k fatální chybě. Viz přiložený log.
+❌ Při registraci došlo k fatální chybě nebo nebyl úspěšný ani jeden z {pokusy} provedených pokusů. Viz přiložený log.
 
 {get_summary()
     .replace("\n\n", "\n")
@@ -389,12 +389,13 @@ if __name__ == "__main__":
     cislo_pokusu = 1
     while cislo_pokusu <= LIMIT:
         print_and_log(f"🔁 Pokus o registraci č. {cislo_pokusu} z {LIMIT}")
-        if registrace() or FATAL_ERROR:
+        if registrace(cislo_pokusu) or FATAL_ERROR:
             break
         print_and_log("❌ Pokus o registraci selhal. Zkouším znovu...")
         cislo_pokusu += 1
     if cislo_pokusu > LIMIT:
         print_and_log(f"❌ Registrace selhala i po {LIMIT} pokusech. Skript končí.")
+        posli_error(cislo_pokusu-1)
     if FATAL_ERROR:
         print_and_log(f"❌ Registrace selhala - fatální chyba. Vzhledem k její povaze nemá smysl pokus opakovat. Skript končí.")
-        posli_error()
+        posli_error(cislo_pokusu-1)
