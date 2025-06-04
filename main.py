@@ -23,9 +23,12 @@ finished = None
 datum_zavodu = None
 nazev_zavodu = None
 
+FATAL_ERROR = False
+
 SQUAD = str(SQUAD)
 REG_URL = "https://www.loslex.cz/contest/registration"
 DIVIZE_local = DIVIZE # Bere si divizi do proměnné, se kterou je možné v rámci main dále pracovat a měnit ji (pro ochranu proti neexistující  divizi)
+SQUAD_local = SQUAD
 POKUS_TIME = None # Čas zahájení pokusu o registraci (pro log)
 
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
@@ -49,6 +52,7 @@ SELECTOR_CHECKBOX_STAVITEL = r"#builder"
 SELECTOR_CHECKBOX_ZACATECNIK = r"#rookie"
 SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.grid.grid-cols-auto.lg\:grid-cols-fitfirst.gap-x-2.lg\:gap-x-4.gap-y-2 > div:nth-child(10)"
 SELECTOR_NAZEV = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.justify-center.items-baseline.text-xl.font-bold.flex"
+SELECTOR_SPATNE_UDAJE = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\:px-0.z-2000 > div.mb-6.bg-white.dark\:bg-gray-800.rounded-lg.overflow-hidden.shadow-xl.transform.transition-all.sm\:w-full.sm\:max-w-md.sm\:mx-auto > div > form > div:nth-child(3) > ul"
 
 def get_summary():
     summary = f"""\n\nÚdaje použité při registraci:\n
@@ -56,7 +60,7 @@ def get_summary():
     Číslo ZP: {CISLO_DOKLADU}\n
     LEX ID: {CLENSKE_ID}\n
     Divize: {DIVIZE_local}\n
-    Squad: {SQUAD}\n
+    Squad: {SQUAD_local}\n
     URL závodu: {URL}\n
     Login: {LOGIN}\n
     Datum a čas registrace: {DATUM_CAS_REGISTRACE}\n
@@ -79,6 +83,7 @@ def print_and_log(action: str):
         f.write(f"[{datetime.now()}] {action}\n")
 
 def prihlasit(page):
+    global FATAL_ERROR
     try:
         page.click(SELECTOR_TLACITKO_PRIHLASIT)
     except Exception as e:
@@ -99,10 +104,15 @@ def prihlasit(page):
     except TimeoutError:
         print_and_log("❌ Tlačítko Přihlásit se nepodařilo kliknout – timeout.")
         return False
+    if page.locator(SELECTOR_SPATNE_UDAJE).is_visible():
+        print_and_log("❌❌❌ Špatné přihlašovací údaje! ❌❌❌")
+        FATAL_ERROR = True
+        return False
     return True
 
 def registrace():
     global DIVIZE_local
+    global SQUAD_local
     print(divider)
     print(get_summary())
     print(divider)
@@ -123,9 +133,10 @@ def registrace():
             try:
                 cas_registrace = datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S")
             except ValueError:
-                # Toto je jediná instance selhání programu, která funkci nespustí znovu. Opětovné spuštění by nemělo smysl, jelikož chyba je ve vadném vstupu.
-                print_and_log("❌ DATUM_CAS_REGISTRACE má špatný formát. Použij RRRR-MM-DD HH:MM:SS. Ukončuji program.")
-                return True
+                # Opětovné spuštění by nemělo smysl, jelikož chyba je ve vadném vstupu.
+                print_and_log("❌❌❌ DATUM_CAS_REGISTRACE má špatný formát. Použij RRRR-MM-DD HH:MM:SS. Ukončuji program. ❌❌❌")
+                FATAL_ERROR = True
+                return False
 
             cas_prihlaseni = cas_registrace - timedelta(seconds=30)
 
@@ -203,7 +214,7 @@ def registrace():
                 if prvni_moznost:
                     prvni_moznost_hodnota = moznosti.nth(1).text_content()
                     page.select_option(SELECTOR_SELECT_DIVIZE, value=prvni_moznost)
-                    print_and_log(f"⚠️ Zvolena první dostupná divize: {prvni_moznost_hodnota}")
+                    print_and_log(f"✅ Zvolena první dostupná divize: {prvni_moznost_hodnota}")
                     DIVIZE_local = prvni_moznost_hodnota
             except Exception as inner_e:
                 print_and_log(f"❌ Nepodařilo se vybrat první možnou divizi:\n{inner_e}")
@@ -218,6 +229,8 @@ def registrace():
             try:
                 print_and_log(f"⚠️ Zkouším zvolit squad 1.")
                 page.click(SELECTOR_SQUAD1)
+                print_and_log(f"✅ Zvolen squad 1.")
+                SQUAD_local = 1
             except Exception as inner_e:
                 print_and_log(f"❌ Nepodařilo se zvolit squad 1:\n{inner_e}")
                 return False
@@ -327,6 +340,36 @@ Datum závodu: {datum_zavodu}
         smtp.send_message(msg)
     print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
+def posli_error():
+    msg = EmailMessage()
+    msg['Subject'] = '❌ LOS Registrace neproběhla'
+    msg['From'] = GOOGLE_U
+    msg['To'] = LOGIN
+    msg.set_content(
+    f"""❌ Registrace na závod neproběhla úspěšně.
+
+❌ Špatný čas a datum registrace, nebo špatné přihlašovací údaje.
+
+{get_summary()
+    .replace("\n\n", "\n")
+    .replace("    ", "")
+    .replace("registraci:", "registraci:\n")}"""
+)
+
+    # Přihlašovací údaje
+    uzivatel = GOOGLE_U
+    heslo = GOOGLE_P
+    
+    with open(f"logs/log-{POKUS_TIME}.txt", "rb") as f:
+        msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registrace LOG.txt")
+
+    # Odeslání e-mailu
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(uzivatel, heslo)
+        smtp.send_message(msg)
+    print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
+
+
 def informuj_pritelkyni():
     msg = EmailMessage()
     msg['Subject'] = '🔫 Tvůj kluk pojede na závod'
@@ -351,9 +394,12 @@ if __name__ == "__main__":
     cislo_pokusu = 1
     while cislo_pokusu <= LIMIT:
         print_and_log(f"🔁 Pokus o registraci č. {cislo_pokusu} z {LIMIT}")
-        if registrace():
+        if registrace() or FATAL_ERROR:
             break
         print_and_log("❌ Pokus o registraci selhal. Zkouším znovu...")
         cislo_pokusu += 1
     if cislo_pokusu > LIMIT:
-        print_and_log(f"❌ Registrace selhala i po {LIMIT} pokusech. Skript končí.")
+        print_and_log(f"❌ Registrace selhala i po {cislo_pokusu} pokusech. Skript končí.")
+    if FATAL_ERROR:
+        print_and_log(f"❌ Registrace selhala - fatální chyba. Vzhledem k její povaze nemá smysl pokus opakovat. Skript končí.")
+        posli_error()
