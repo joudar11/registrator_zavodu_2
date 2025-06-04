@@ -305,11 +305,11 @@ def registrace(pokus: int) -> bool:
         print_and_log(f"⏳ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
 
         # Informuje přítelkyni o datu a názvu závodu + o tom, že ji závodník miluje.
-        try:
-            if PRITELKYNE:
+        if PRITELKYNE:
+            try:
                 informuj_pritelkyni()
-        except Exception as e:
-            print_and_log(f"❌ Nepodařilo se informovat přítelkyni:\n{e}")
+            except Exception as e:
+                print_and_log(f"❌ Nepodařilo se informovat přítelkyni:\n{e}")
 
         # Pošle závodníkovi shrnutí úspěšné reistrace a textový log.
         try:
