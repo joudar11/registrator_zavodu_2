@@ -382,6 +382,7 @@ def informuj_pritelkyni():
 if __name__ == "__main__":
     # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná, dokud nedojde k fatální chybě nebo dokud nebude dosažen maximální stanovený počet pokusů.
     # Fatální chybou se rozumí špatné přihlašovací údaje, špatný formát data a času nebo špatná URL závodu.
+
     # POKUS_TIME je konstanta, která se používá pouze pro název souboru s logem.
     POKUS_TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
 
