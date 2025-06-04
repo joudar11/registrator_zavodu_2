@@ -388,10 +388,11 @@ if __name__ == "__main__":
 
     cislo_pokusu = 1
     while cislo_pokusu <= LIMIT:
+        if cislo_pokusu != 1:
+            print_and_log("❌ Pokus o registraci selhal. Zkouším znovu...")
         print_and_log(f"🔁 Pokus o registraci č. {cislo_pokusu} z {LIMIT}")
         if registrace(cislo_pokusu) or FATAL_ERROR:
             break
-        print_and_log("❌ Pokus o registraci selhal. Zkouším znovu...")
         cislo_pokusu += 1
     if cislo_pokusu > LIMIT:
         print_and_log(f"❌ Registrace selhala i po {LIMIT} pokusech. Skript končí.")
