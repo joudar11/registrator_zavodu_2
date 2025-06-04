@@ -55,7 +55,7 @@ SELECTOR_NAZEV = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main 
 SELECTOR_SPATNE_UDAJE = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\:px-0.z-2000 > div.mb-6.bg-white.dark\:bg-gray-800.rounded-lg.overflow-hidden.shadow-xl.transform.transition-all.sm\:w-full.sm\:max-w-md.sm\:mx-auto > div > form > div:nth-child(3) > ul"
 
 def get_summary():
-    summary = f"""\n\nÚdaje použité při registraci:\n
+    summary = f"""\nÚdaje použité při registraci:\n
     Jméno: {JMENO}\n
     Číslo ZP: {CISLO_DOKLADU}\n
     LEX ID: {CLENSKE_ID}\n
