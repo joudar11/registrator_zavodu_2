@@ -113,6 +113,7 @@ def prihlasit(page):
 def registrace():
     global DIVIZE_local
     global SQUAD_local
+    global FATAL_ERROR
     print(divider)
     print(get_summary())
     print(divider)
@@ -126,6 +127,11 @@ def registrace():
             page.goto(URL, timeout=10000) 
         except Exception as e:
             print_and_log(f"❌ Nelze načíst stránku závodu. Server buď neodpovídá, nebo nejsi připojen k internetu.\n\n{e}")
+            return False
+
+        if page.title() == "Nenalezeno":
+            print_and_log(f"❌❌❌ Stránka závodu {URL} nebyla nalezena - 404 ❌❌❌")
+            FATAL_ERROR = True
             return False
 
         # Pokud je čas zadán → časovaný režim
