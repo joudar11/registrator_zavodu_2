@@ -51,6 +51,7 @@ python main.py
 - ✅ Přihlásí se do systému v určený čas
 - ✅ Automaticky vyplní registrační formulář
 - ✅ Pokud zvolená divize neexistuje, zvolí první možnou dostupnou
+- ✅ Pokud zvolený squad neexistuje, zvolí squad č. 1
 - ✅ Zaznamená každý pokus do textového logu (adresář logs/)
 - ✅ Opakuje registraci až 50× v případě selhání
 - ✅ Ověří přesměrování na stránku úspěšné registrace
