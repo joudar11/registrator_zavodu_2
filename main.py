@@ -23,7 +23,7 @@ finished = None # Sem se následně uloží čas dokončení registrace
 datum_zavodu = None # Sem se následně uloží datum závodu (pro odeslání mailem)
 nazev_zavodu = None # Sem se následně uloží název závodu (pro odeslání mailem)
 
-FATAL_ERROR = False
+fatal_error = False
 
 REG_URL = "https://www.loslex.cz/contest/registration"
 DIVIZE_local = DIVIZE # Bere si divizi do proměnné, se kterou je možné v rámci main dále pracovat a měnit ji (pro ochranu proti neexistující  divizi)
@@ -85,14 +85,14 @@ def print_and_log(action: str) -> None:
     except Exception as e:
         print(f"❌ Nelze vytvořit složku {folder}:\n{e}")
         return
-    
+
     # Zápis do logu
     with open(f"{folder}/log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
         f.write(f"[{datetime.now()}] {action}\n")
 
 def prihlasit(page) -> None:
     """Na stránce předané argumentem se přihlásí s použitím konstant importovaných na začátku."""
-    global FATAL_ERROR
+    global fatal_error
     try:
         page.click(SELECTOR_TLACITKO_PRIHLASIT)
     except Exception as e:
@@ -115,7 +115,7 @@ def prihlasit(page) -> None:
         return False
     if page.locator(SELECTOR_SPATNE_UDAJE).is_visible():
         print_and_log("❌❌❌ Špatné přihlašovací údaje! ❌❌❌")
-        FATAL_ERROR = True
+        fatal_error = True
         return False
     return True
 
@@ -126,7 +126,7 @@ def registrace(pokus: int) -> bool:
     global datum_zavodu
     global nazev_zavodu
     global finished
-    global FATAL_ERROR
+    global fatal_error
 
     # Shrnutí načtených údajů
     if pokus == 1:
@@ -146,7 +146,7 @@ def registrace(pokus: int) -> bool:
 
         if page.title() == "Nenalezeno":
             print_and_log(f"❌❌❌ Stránka závodu {URL} nebyla nalezena - 404 ❌❌❌")
-            FATAL_ERROR = True
+            fatal_error = True
             return False
 
         # Pokud je čas zadán → časovaný režim
@@ -156,7 +156,7 @@ def registrace(pokus: int) -> bool:
             except ValueError:
                 # Opětovné spuštění by nemělo smysl, jelikož chyba je ve vadném vstupu.
                 print_and_log("❌❌❌ DATUM_CAS_REGISTRACE má špatný formát. Použij RRRR-MM-DD HH:MM:SS. Ukončuji program. ❌❌❌")
-                FATAL_ERROR = True
+                fatal_error = True
                 return False
 
             # Přihlášení na registrační web proběhne 30s před spuštěním registrace 
@@ -183,7 +183,7 @@ def registrace(pokus: int) -> bool:
             except TimeoutError:
                 print_and_log("❌ Timeout při refreshi stránky – pokračuji dál.")
                 return False
-            
+
             # Čekání na načtení stránky po refreshi
             try:
                 page.wait_for_load_state("load", timeout=5000)
@@ -203,7 +203,7 @@ def registrace(pokus: int) -> bool:
         except TimeoutError:
             print_and_log("❌ Stránka nenalezla tlačítko registrace.")
             return False
-        
+
         # Společná část registrace
         try:
             page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU)
@@ -240,7 +240,7 @@ def registrace(pokus: int) -> bool:
             except Exception as inner_e:
                 print_and_log(f"❌ Nepodařilo se vybrat první možnou divizi:\n{inner_e}")
                 return False
-            
+
         # Výběr squadu
         try:
             page.wait_for_selector(SELECTOR_SQUAD, timeout=1000)
@@ -255,7 +255,7 @@ def registrace(pokus: int) -> bool:
             except Exception as inner_e:
                 print_and_log(f"❌ Nepodařilo se zvolit squad 1:\n{inner_e}")
                 return False
-            
+
         # Zaškrtnutí souhlasu s GDPR
         try:
             page.check(SELECTOR_CHECKBOX_GDPR)
@@ -296,7 +296,7 @@ def registrace(pokus: int) -> bool:
                 print_and_log(f"❌ Registrace pravděpodobně selhala – URL se nezměnila do {max_wait} sekund.\nAktuální URL: {page.url}")
                 return False
             time.sleep(0.1)
-        
+
         print_and_log(f"✅ Registrace na závod {nazev_zavodu} - {datum_zavodu} dokončena.")
 
         # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
@@ -342,7 +342,7 @@ Datum závodu: {datum_zavodu}
     .replace("    ", "")
     .replace("registraci:", "registraci:\n")}"""
 )
-    
+
     with open(f"logs/log-{POKUS_TIME}.txt", "rb") as f:
         msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registrace LOG.txt")
 
@@ -368,7 +368,7 @@ def posli_error(pokusy: int) -> None:
     .replace("    ", "")
     .replace("registraci:", "registraci:\n")}"""
 )
-    
+
     with open(f"logs/log-{POKUS_TIME}.txt", "rb") as f:
         msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registrace LOG.txt")
 
@@ -405,7 +405,7 @@ if __name__ == "__main__":
         if cislo_pokusu != 1:
             print_and_log("❌ Pokus o registraci selhal. Zkouším znovu...")
         print_and_log(f"🔁 Pokus o registraci č. {cislo_pokusu} z {LIMIT}")
-        if registrace(cislo_pokusu) or FATAL_ERROR:
+        if registrace(cislo_pokusu) or fatal_error:
             break
         cislo_pokusu += 1
     if cislo_pokusu > LIMIT:
@@ -414,7 +414,7 @@ if __name__ == "__main__":
             posli_error(cislo_pokusu-1)
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
-    if FATAL_ERROR:
+    if fatal_error:
         print_and_log(f"❌ Registrace selhala - fatální chyba. Vzhledem k její povaze nemá smysl pokus opakovat. Skript končí.")
         try:
             posli_error(cislo_pokusu-1)
