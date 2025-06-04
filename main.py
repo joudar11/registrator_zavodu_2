@@ -57,7 +57,8 @@ SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main 
 SELECTOR_NAZEV = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.justify-center.items-baseline.text-xl.font-bold.flex"
 SELECTOR_SPATNE_UDAJE = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\:px-0.z-2000 > div.mb-6.bg-white.dark\:bg-gray-800.rounded-lg.overflow-hidden.shadow-xl.transform.transition-all.sm\:w-full.sm\:max-w-md.sm\:mx-auto > div > form > div:nth-child(3) > ul"
 
-def get_summary():
+def get_summary() -> None:
+    """Vytiskne do konzole shrnutí údajů použitých při registraci"""
     summary = f"""\nÚdaje použité při registraci:\n
     Jméno: {JMENO}\n
     Číslo ZP: {CISLO_DOKLADU}\n
@@ -75,7 +76,8 @@ def get_summary():
     """
     return summary
 
-def print_and_log(action: str):
+def print_and_log(action: str) -> None:
+    """Zprávu předanou argumentem vytiskne do konzole a zároveň uloží na konec logu."""
     print(action)
     folder = "logs" # složka, kam se uloží log
     try:
@@ -88,7 +90,8 @@ def print_and_log(action: str):
     with open(f"{folder}/log-{POKUS_TIME}.txt", "a", encoding="utf-8") as f:
         f.write(f"[{datetime.now()}] {action}\n")
 
-def prihlasit(page):
+def prihlasit(page) -> None:
+    """Na stránce předané argumentem se přihlásí s použitím konstant importovaných na začátku."""
     global FATAL_ERROR
     try:
         page.click(SELECTOR_TLACITKO_PRIHLASIT)
@@ -116,7 +119,8 @@ def prihlasit(page):
         return False
     return True
 
-def registrace(pokus: int):
+def registrace(pokus: int) -> bool:
+    """Hlavní část programu. Funkce obsahuje časování, volání přihlášení, volání funkcí pro doesílání emailů, verifikaci importovaných konstant, ochrany proti padnutí programu a fallbacky."""
     global DIVIZE_local
     global SQUAD_local
     global datum_zavodu
@@ -319,7 +323,8 @@ def registrace(pokus: int):
                 return True
             time.sleep(1)
 
-def posli_email():
+def posli_email() -> None:
+    """Pošle závodníkovi email se shrnutím úspěšné registrace."""
     msg = EmailMessage()
     msg['Subject'] = '✅ LOS Registrace proběhla'
     msg['From'] = GOOGLE_U
@@ -347,7 +352,8 @@ Datum závodu: {datum_zavodu}
         smtp.send_message(msg)
     print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
-def posli_error(pokusy: int):
+def posli_error(pokusy: int) -> None:
+    """Funkce pro odeslání oznámení o chybě na závodníkův email"""
     msg = EmailMessage()
     msg['Subject'] = '❌ LOS Registrace neproběhla'
     msg['From'] = GOOGLE_U
@@ -372,7 +378,8 @@ def posli_error(pokusy: int):
         smtp.send_message(msg)
     print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
-def informuj_pritelkyni():
+def informuj_pritelkyni() -> None:
+    """Informuje přřítelkyni o názvu a dni závodu a o citech, které pro ni závodník chová."""
     msg = EmailMessage()
     msg['Subject'] = '🔫 Tvůj kluk pojede na závod'
     msg['From'] = GOOGLE_U
