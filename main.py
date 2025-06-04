@@ -405,7 +405,7 @@ if __name__ == "__main__":
         print_and_log("❌ Pokus o registraci selhal. Zkouším znovu...")
         cislo_pokusu += 1
     if cislo_pokusu > LIMIT:
-        print_and_log(f"❌ Registrace selhala i po {cislo_pokusu} pokusech. Skript končí.")
+        print_and_log(f"❌ Registrace selhala i po {LIMIT} pokusech. Skript končí.")
     if FATAL_ERROR:
         print_and_log(f"❌ Registrace selhala - fatální chyba. Vzhledem k její povaze nemá smysl pokus opakovat. Skript končí.")
         posli_error()
