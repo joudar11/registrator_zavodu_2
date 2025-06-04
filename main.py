@@ -294,7 +294,8 @@ def registrace():
         print_and_log(f"⏳ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
 
         try:
-            informuj_pritelkyni()
+            if PRITELKYNE:
+                informuj_pritelkyni()
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se informovat přítelkyni:\n{e}")
 
@@ -374,7 +375,6 @@ def posli_error():
         smtp.login(uzivatel, heslo)
         smtp.send_message(msg)
     print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
-
 
 def informuj_pritelkyni():
     msg = EmailMessage()
