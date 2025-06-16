@@ -150,7 +150,7 @@ def registrace(pokus: int) -> bool:
             return False
 
         # Pokud je čas zadán → časovaný režim
-        if DATUM_CAS_REGISTRACE:
+        if DATUM_CAS_REGISTRACE and pokus == 1:
             try:
                 cas_registrace = datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S")
             except ValueError:
