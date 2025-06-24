@@ -29,8 +29,8 @@ LOGIN = "..."                # Email pro přihlášení i notifikace
 HESLO = "..."                # Heslo do systému LOS Lex
 DATUM_CAS_REGISTRACE = "2025-06-15 20:00:00"  # nebo None pro okamžitou registraci. Formát musí být RRRR-MM-DD HH:MM:SS
 SQUAD = 2                    # Číslo squadu, nebo r (v uvozovkách pro squad ROZHODČÍ)
-GOOGLE_P = "..."             # Gmail App Password pro SMTP
-GOOGLE_U = "..."             # Gmail odesílatele
+EMAIL_P = "..."              # Proton Bridge heslo pro SMTP
+EMAIL_U = "..."              # Proton Bridge username odesílatele
 MZ = True                    # Mimo závod
 ZACATECNIK = False           # Začátečník
 STAVITEL = False             # Stavitel
@@ -61,5 +61,4 @@ python main.py
 
 ## 📧 Notifikace
 
-Skript používá `smtplib` pro odesílání přes SMTP (Gmail).  
-Je potřeba mít zapnuté [dvoufázové ověření](https://myaccount.google.com/security) a vytvořený [App Password](https://support.google.com/accounts/answer/185833).
+Skript používá `smtplib` pro odesílání přes SMTP (Proton Bridge).
