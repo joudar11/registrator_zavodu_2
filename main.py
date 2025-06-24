@@ -13,7 +13,7 @@ from playwright.sync_api import sync_playwright, TimeoutError
 from data import (
     JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL,
     LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD,
-    GOOGLE_P, GOOGLE_U, MZ, ZACATECNIK, STAVITEL,
+    EMAIL_P, EMAIL_U, MZ, ZACATECNIK, STAVITEL,
     ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE
 )
 
@@ -327,7 +327,7 @@ def posli_email() -> None:
     """Pošle závodníkovi email se shrnutím úspěšné registrace."""
     msg = EmailMessage()
     msg['Subject'] = '✅ LOS Registrace proběhla'
-    msg['From'] = GOOGLE_U
+    msg['From'] = EMAIL_U
     msg['To'] = LOGIN
     msg.set_content(
     f"""Registrace na závod proběhla úspěšně.
@@ -347,8 +347,8 @@ Datum závodu: {datum_zavodu}
         msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registrace LOG.txt")
 
     # Odeslání e-mailu
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(GOOGLE_U, GOOGLE_P)
+    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+        smtp.login(EMAIL_U, EMAIL_P)
         smtp.send_message(msg)
     print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
@@ -356,7 +356,7 @@ def posli_error(pokusy: int) -> None:
     """Funkce pro odeslání oznámení o chybě na závodníkův email"""
     msg = EmailMessage()
     msg['Subject'] = '❌ LOS Registrace neproběhla'
-    msg['From'] = GOOGLE_U
+    msg['From'] = EMAIL_U
     msg['To'] = LOGIN
     msg.set_content(
     f"""❌ Registrace na závod neproběhla úspěšně.
@@ -373,8 +373,8 @@ def posli_error(pokusy: int) -> None:
         msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registrace LOG.txt")
 
     # Odeslání e-mailu
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(GOOGLE_U, GOOGLE_P)
+    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+        smtp.login(EMAIL_U, EMAIL_P)
         smtp.send_message(msg)
     print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
@@ -382,14 +382,14 @@ def informuj_pritelkyni() -> None:
     """Informuje přřítelkyni o názvu a dni závodu a o citech, které pro ni závodník chová."""
     msg = EmailMessage()
     msg['Subject'] = '🔫 Tvůj kluk pojede na závod'
-    msg['From'] = GOOGLE_U
+    msg['From'] = EMAIL_U
     msg['To'] = PRITELKYNE
     msg.set_content(f"""Tvůj kluk se svým úžasným Python skriptem právě přihlásil na závod {nazev_zavodu} ({URL}), který proběhne {datum_zavodu}.\n\nBude potřebovat držet palce.\n\nMiluju tě. ❤️\n\n\n(Automaticky generovaný email)""")
 
     # Odeslání e-mailu
 
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(GOOGLE_U, GOOGLE_P)
+    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+        smtp.login(EMAIL_U, EMAIL_P)
         smtp.send_message(msg)
     print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
 
