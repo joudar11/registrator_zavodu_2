@@ -20,24 +20,24 @@ Součástí je:
 - Konfigurační soubor `data.py` s následujícím obsahem:
 
 ```python
-JMENO = "..."                # Celé jméno závodníka
-CISLO_DOKLADU = "..."        # Číslo ZP
-CLENSKE_ID = "..."           # LEX ID (volitelné - pokud nemáš, napiš None)
-DIVIZE = "..."               # Název divize přesně dle výběru na webu
-URL = "..."                  # URL konkrétního závodu
-LOGIN = "..."                # Email pro přihlášení i notifikace
-HESLO = "..."                # Heslo do systému LOS Lex
-DATUM_CAS_REGISTRACE = "2025-06-15 20:00:00"  # nebo None pro okamžitou registraci. Formát musí být RRRR-MM-DD HH:MM:SS
-SQUAD = 2                    # Číslo squadu, nebo r (v uvozovkách pro squad ROZHODČÍ)
-EMAIL_P = "..."              # Proton Bridge heslo pro SMTP
-EMAIL_U = "..."              # Proton Bridge username odesílatele
-MZ = True                    # Mimo závod
+JMENO = "Jan Novák"          # Celé jméno závodníka
+CISLO_DOKLADU = "AL123456"   # Číslo ZP
+CLENSKE_ID = "ABcdEfGh"      # LEX ID (volitelné - pokud nemáš, napiš None)
+DIVIZE = "Pistole"           # Název divize přesně dle výběru na webu
+URL = "https://www.loslex.cz/contest/292" # URL konkrétního závodu
+LOGIN = "jan.novak"          # Email pro přihlášení i notifikace
+HESLO = "tajneheslo123"      # Heslo do systému LOS Lex
+DATUM_CAS_REGISTRACE = "2025-06-15 20:00:00"  # Datum otevření registrace. Formát musí být RRRR-MM-DD HH:MM:SS
+SQUAD = 1                    # Číslo squadu, nebo r (v uvozovkách pro squad ROZHODČÍ)
+EMAIL_P = "tajneheslo123"    # Proton Bridge heslo pro SMTP
+EMAIL_U = "jan.novak@pm.me"  # Proton Bridge username odesílatele
+MZ = False                    # Mimo závod
 ZACATECNIK = False           # Začátečník
 STAVITEL = False             # Stavitel
 ROZHODCI = False             # Rozhodčí
 POZNAMKA = "..."             # Poznámka (volitelné) - Může být None
-PRITELKYNE = "..."           # Email přítelkyně (None, pokud jsi single)
-JMENO_PRITELKYNE = "..."     # Křestní jméno přítelkyně v prvním pádu
+PRITELKYNE = "jana.novakova@pm.me" # Email přítelkyně (None, pokud jsi single)
+JMENO_PRITELKYNE = "Jana"     # Křestní jméno přítelkyně v prvním pádu
 ```
 
 ## ▶️ Spuštění
