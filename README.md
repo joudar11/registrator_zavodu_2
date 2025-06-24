@@ -16,7 +16,7 @@ Součástí je:
 
 - Python 3.12.6
 - `playwright`
-- Gmail s aktivním přihlášením pomocí App Passwords (SMTP)
+- Běžící Proton Bridge (Lze upravit pro Gmail - viz historii úprav [zde](https://github.com/joudar11/registrator_zavodu_2/commit/97be62a061d772fd1411141ded62da301ff4a896))
 - Konfigurační soubor `data.py` s následujícím obsahem:
 
 ```python
