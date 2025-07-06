@@ -61,13 +61,13 @@ def get_summary() -> None:
     """Vytiskne do konzole shrnutí údajů použitých při registraci"""
     summary = f"""\nÚdaje použité při registraci:\n
     Jméno: {JMENO}\n
-    Číslo ZP: {CISLO_DOKLADU}\n
-    LEX ID: {CLENSKE_ID}\n
     Divize: {DIVIZE_local}\n
     Squad: {SQUAD_local}\n
-    URL závodu: {URL}\n
+    URL závodu: {URL}\n\n
+    Číslo ZP: {CISLO_DOKLADU}\n
+    LEX ID: {CLENSKE_ID}\n
     Login: {LOGIN}\n
-    Datum a čas registrace: {DATUM_CAS_REGISTRACE}\n
+    Datum a čas registrace: {DATUM_CAS_REGISTRACE}\n\n
     Mimo závod: {MZ}\n
     Rozhodčí: {ROZHODCI}\n
     Začátečník: {ZACATECNIK}\n
@@ -331,7 +331,7 @@ def posli_email() -> None:
     msg['From'] = EMAIL_U
     msg['To'] = LOGIN
     msg.set_content(
-    f"""Registrace na závod proběhla úspěšně.
+    f"""Registrace na závod proběhla úspěšně. V příloze nalezneš záznam o průběhu registrace.
 
 Závod: {nazev_zavodu}
 Datum závodu: {datum_zavodu}
