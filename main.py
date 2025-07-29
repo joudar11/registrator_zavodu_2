@@ -171,7 +171,7 @@ def registrace(pokus: int) -> bool:
                 return False
 
             # Uspání skriptu, dokud nenastane čas spuštění registrace
-            cilovy_cas = cas_registrace + timedelta(seconds=0.85)
+            cilovy_cas = cas_registrace + timedelta(seconds=1.1)
             print_and_log(f"⏳ Čekám na čas registrace: {cilovy_cas}")
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
