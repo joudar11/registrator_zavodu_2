@@ -1,5 +1,4 @@
 # --- Standardní knihovny ---
-# TEST
 import os
 import time
 import random
