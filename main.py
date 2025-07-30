@@ -179,14 +179,14 @@ def registrace(pokus: int) -> bool:
             # Refresh po spuštění registrace, aby se zobrazily prvky formuláře
             print_and_log("🔄 Refreshuji stránku...")
             try:
-                page.goto(URL, wait_until="domcontentloaded", timeout=5000)
+                page.goto(URL, wait_until="domcontentloaded", timeout=2000)
             except TimeoutError:
                 print_and_log("❌ Timeout při refreshi stránky – pokračuji dál.")
                 return False
 
             # Čekání na načtení stránky po refreshi
             try:
-                page.wait_for_load_state("load", timeout=5000)
+                page.wait_for_load_state("load", timeout=2000)
             except TimeoutError:
                 print_and_log("❌ Stránku registrace se nepodařilo načíst.")
                 return False
@@ -265,13 +265,13 @@ def registrace(pokus: int) -> bool:
 
         # Uložení údajů ze závodu do globálních proměnných pro odeslání na mail.
         try:
-            datum_zavodu = page.inner_text(SELECTOR_DATUM, timeout=5000)
+            datum_zavodu = page.inner_text(SELECTOR_DATUM, timeout=2000)
         except Exception as e:
             print_and_log(f"⚠️ Nepodařilo se získat datum závodu:\n{e}")
             datum_zavodu = "neznámé datum"
 
         try:
-            nazev_zavodu = page.inner_text(SELECTOR_NAZEV, timeout=5000)
+            nazev_zavodu = page.inner_text(SELECTOR_NAZEV, timeout=2000)
         except Exception as e:
             print_and_log(f"⚠️ Nepodařilo se získat název závodu:\n{e}")
             nazev_zavodu = "neznámý název"
@@ -282,7 +282,7 @@ def registrace(pokus: int) -> bool:
         print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
         try:
-            page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=5000)
+            page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=2000)
             page.click(SELECTOR_TLACITKO_REGISTRACE)
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se kliknout na tlačítko registrace:\n{e}")
