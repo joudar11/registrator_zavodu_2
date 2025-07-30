@@ -278,9 +278,11 @@ def registrace(pokus: int) -> bool:
 
         # Čekání a odeslání registrace v náhodném intervalu + uložení času kliknutí do globální proměnné
         # delay = random.uniform(2, 3)
-        delay = 0.01
-        print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
-        time.sleep(delay)
+        # print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
+        # time.sleep(delay)
+
+        # Odeslání registrace a uložení času odeslání do proměnné k použití v logu.
+
         try:
             page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=2000)
             page.click(SELECTOR_TLACITKO_REGISTRACE)
