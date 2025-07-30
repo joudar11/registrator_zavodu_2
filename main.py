@@ -171,7 +171,7 @@ def registrace(pokus: int) -> bool:
                 return False
 
             # Uspání skriptu, dokud nenastane čas spuštění registrace
-            cilovy_cas = cas_registrace + timedelta(seconds=1.1)
+            cilovy_cas = cas_registrace + timedelta(seconds=1.25)
             print_and_log(f"⏳ Čekám na čas registrace: {cilovy_cas}")
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
@@ -278,7 +278,7 @@ def registrace(pokus: int) -> bool:
 
         # Čekání a odeslání registrace v náhodném intervalu + uložení času kliknutí do globální proměnné
         # delay = random.uniform(2, 3)
-        delay = 0.1
+        delay = 0.01
         print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
         time.sleep(delay)
         try:
