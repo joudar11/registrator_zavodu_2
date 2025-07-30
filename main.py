@@ -171,7 +171,7 @@ def registrace(pokus: int) -> bool:
                 return False
 
             # Uspání skriptu, dokud nenastane čas spuštění registrace
-            cilovy_cas = cas_registrace + timedelta(seconds=1.25)
+            cilovy_cas = cas_registrace + timedelta(seconds=2)
             print_and_log(f"⏳ Čekám na čas registrace: {cilovy_cas}")
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
@@ -199,7 +199,7 @@ def registrace(pokus: int) -> bool:
 
         # Kontrola, že server odpovídá - 2s. Pokud ne, funkce selže.
         try:
-            page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=2000)
+            page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=3000)
         except TimeoutError:
             print_and_log("❌ Stránka nenalezla tlačítko registrace.")
             return False
