@@ -31,13 +31,14 @@ DATUM_CAS_REGISTRACE = "2025-06-15 20:00:00"  # Datum otevření registrace. For
 SQUAD = 1                    # Číslo squadu, nebo r (v uvozovkách pro squad ROZHODČÍ)
 EMAIL_P = "tajneheslo123"    # Proton Bridge heslo pro SMTP
 EMAIL_U = "jan.novak@pm.me"  # Proton Bridge username odesílatele
-MZ = False                    # Mimo závod
+MZ = False                   # Mimo závod
 ZACATECNIK = False           # Začátečník
 STAVITEL = False             # Stavitel
 ROZHODCI = False             # Rozhodčí
 POZNAMKA = "..."             # Poznámka (volitelné) - Může být None
 PRITELKYNE = "jana.novakova@pm.me" # Email přítelkyně (None, pokud jsi single)
-JMENO_PRITELKYNE = "Jana"     # Křestní jméno přítelkyně v prvním pádu
+JMENO_PRITELKYNE = "Jana"    # Křestní jméno přítelkyně v prvním pádu
+RANDOM_WAIT = False          # Zda má skript předs odesláním refistrace čekat náhodný počet sekund mezi 1 a 3
 ```
 
 ## ▶️ Spuštění

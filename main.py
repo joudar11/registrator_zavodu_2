@@ -14,7 +14,7 @@ from data import (
     JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL,
     LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD,
     EMAIL_P, EMAIL_U, MZ, ZACATECNIK, STAVITEL,
-    ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE
+    ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE, RANDOM_WAIT
 )
 
 LIMIT = 25 # Po tomto počtu neúspěšných pokusů se program ukončí
@@ -23,7 +23,6 @@ finished = None # Sem se následně uloží čas dokončení registrace
 datum_zavodu = None # Sem se následně uloží datum závodu (pro odeslání mailem)
 nazev_zavodu = None # Sem se následně uloží název závodu (pro odeslání mailem)
 SEKUND = 2 # Jak dlouho po nastání času registrace má skript refreshnout stránku
-RANDOM_WAIT = False # Zda má skript předs odesláním refistrace čekat náhodný počet sekund mezi 1 a 3
 
 fatal_error = False
 
