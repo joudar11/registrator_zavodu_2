@@ -22,6 +22,7 @@ divider = "=" * 30 # Pouze pro tisk ve stringu
 finished = None # Sem se následně uloží čas dokončení registrace
 datum_zavodu = None # Sem se následně uloží datum závodu (pro odeslání mailem)
 nazev_zavodu = None # Sem se následně uloží název závodu (pro odeslání mailem)
+SEKUND = 2 # Jak dlouho po nastání času registrace má skript refreshnout stránku
 
 fatal_error = False
 
@@ -171,7 +172,7 @@ def registrace(pokus: int) -> bool:
                 return False
 
             # Uspání skriptu, dokud nenastane čas spuštění registrace
-            cilovy_cas = cas_registrace + timedelta(seconds=2)
+            cilovy_cas = cas_registrace + timedelta(seconds=SEKUND)
             print_and_log(f"⏳ Čekám na čas registrace: {cilovy_cas}")
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
