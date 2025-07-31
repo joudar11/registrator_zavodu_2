@@ -23,6 +23,7 @@ finished = None # Sem se následně uloží čas dokončení registrace
 datum_zavodu = None # Sem se následně uloží datum závodu (pro odeslání mailem)
 nazev_zavodu = None # Sem se následně uloží název závodu (pro odeslání mailem)
 SEKUND = 2 # Jak dlouho po nastání času registrace má skript refreshnout stránku
+RANDOM_WAIT = False # Zda má skript předs odesláním refistrace čekat náhodný počet sekund mezi 1 a 3
 
 fatal_error = False
 
@@ -278,9 +279,10 @@ def registrace(pokus: int) -> bool:
             nazev_zavodu = "neznámý název"
 
         # Čekání a odeslání registrace v náhodném intervalu + uložení času kliknutí do globální proměnné
-        # delay = random.uniform(2, 3)
-        # print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
-        # time.sleep(delay)
+        if RANDOM_WAIT:
+            delay = random.uniform(2, 3)
+            print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
+            time.sleep(delay)
 
         # Odeslání registrace a uložení času odeslání do proměnné k použití v logu.
 
