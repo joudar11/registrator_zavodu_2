@@ -57,7 +57,7 @@ PRITELKYNE = "jana.novakova@pm.me"
 JMENO_PRITELKYNE = "Jana"
 # Křestní jméno přítelkyně v prvním pádu
 RANDOM_WAIT = False
-# Zda má skript předs odesláním refistrace čekat náhodný počet sekund mezi 1 a 3, aby registrace vypadala věrohodněji
+# Zda má skript předs odesláním refistrace čekat náhodný počet sekund mezi 2 a 3, aby registrace vypadala věrohodněji
 ```
 
 ## ▶️ Spuštění
