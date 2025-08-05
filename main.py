@@ -398,7 +398,7 @@ def informuj_pritelkyni() -> None:
         smtp.send_message(msg)
     print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
 
-if __name__ == "__main__":
+def run():
     # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná, dokud nedojde k fatální chybě nebo dokud nebude dosažen maximální stanovený počet pokusů.
     # Fatální chybou se rozumí špatné přihlašovací údaje, špatný formát data a času nebo špatná URL závodu.
 
@@ -425,3 +425,7 @@ if __name__ == "__main__":
             posli_error(cislo_pokusu-1)
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
+
+
+if __name__ == "__main__":
+    run()
