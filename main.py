@@ -398,6 +398,22 @@ def informuj_pritelkyni() -> None:
         smtp.send_message(msg)
     print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
 
+def email(To: str, From: str, Subject: str, Body: str) -> None:
+    """Pošle email dle parametrů."""
+    msg = EmailMessage()
+    msg['Subject'] = Subject
+    msg['From'] = From
+    msg['To'] = To
+    msg.set_content(Body)
+
+    with open(f"logs/log-{POKUS_TIME}.txt", "rb") as f:
+        msg.add_attachment(f.read(), maintype="text", subtype="plain", filename=f"Registrace LOG.txt")
+
+    # Odeslání e-mailu
+    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+        smtp.login(EMAIL_U, EMAIL_P)
+        smtp.send_message(msg)
+
 def run():
     # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná, dokud nedojde k fatální chybě nebo dokud nebude dosažen maximální stanovený počet pokusů.
     # Fatální chybou se rozumí špatné přihlašovací údaje, špatný formát data a času nebo špatná URL závodu.
@@ -425,7 +441,6 @@ def run():
             posli_error(cislo_pokusu-1)
         except Exception as e:
             print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
-
 
 if __name__ == "__main__":
     run()
