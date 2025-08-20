@@ -278,7 +278,7 @@ def registrace(pokus: int) -> bool:
             nazev_zavodu = "neznámý název"
 
         # Čekání a odeslání registrace v náhodném intervalu + uložení času kliknutí do globální proměnné
-        if RANDOM_WAIT:
+        if RANDOM_WAIT and pokus == 1:
             delay = random.uniform(2, 3)
             print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
             time.sleep(delay)
