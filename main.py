@@ -22,7 +22,7 @@ divider = "=" * 30 # Pouze pro tisk ve stringu
 finished = None # Sem se následně uloží čas dokončení registrace
 datum_zavodu = None # Sem se následně uloží datum závodu (pro odeslání mailem)
 nazev_zavodu = None # Sem se následně uloží název závodu (pro odeslání mailem)
-SEKUND = 2 # Jak dlouho po nastání času registrace má skript refreshnout stránku
+SEKUND = 2.2 # Jak dlouho po nastání času registrace má skript refreshnout stránku
 
 fatal_error = False
 
