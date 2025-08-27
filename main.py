@@ -22,7 +22,7 @@ divider = "=" * 30 # Pouze pro tisk ve stringu
 finished = None # Sem se následně uloží čas dokončení registrace
 datum_zavodu = None # Sem se následně uloží datum závodu (pro odeslání mailem)
 nazev_zavodu = None # Sem se následně uloží název závodu (pro odeslání mailem)
-SEKUND = 2.3 # Jak dlouho po nastání času registrace má skript refreshnout stránku
+SEKUND = 2.2 # Jak dlouho po nastání času registrace má skript refreshnout stránku
 
 fatal_error = False
 
@@ -162,18 +162,18 @@ def registrace(pokus: int) -> bool:
 
             # Přihlášení na registrační web proběhne 30s před spuštěním registrace 
             cas_prihlaseni = cas_registrace - timedelta(seconds=30)
-            print_and_log(f"⏳ Čekám na čas přihlášení: {cas_prihlaseni}")
+            print_and_log(f"ℹ️ Čekám na čas přihlášení: {cas_prihlaseni}")
             while datetime.now() < cas_prihlaseni:
                 time.sleep(0.1)
 
             # Přihlášení
-            print_and_log("🔐 Přihlašuji se...")
+            print_and_log("ℹ️ Přihlašuji se...")
             if not prihlasit(page):
                 return False
 
             # Uspání skriptu, dokud nenastane čas spuštění registrace
             cilovy_cas = cas_registrace + timedelta(seconds=SEKUND)
-            print_and_log(f"⏳ Čekám na čas registrace: {cilovy_cas}")
+            print_and_log(f"ℹ️ Čekám na čas registrace: {cilovy_cas}")
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
 
@@ -182,7 +182,7 @@ def registrace(pokus: int) -> bool:
             try:
                 page.goto(URL, wait_until="domcontentloaded", timeout=2000)
             except TimeoutError:
-                print_and_log("❌ Timeout při refreshi stránky.")
+                print_and_log("❌ Timeout při refreshi stránky – pokračuji dál.")
                 return False
 
             # Čekání na načtení stránky po refreshi
@@ -194,7 +194,7 @@ def registrace(pokus: int) -> bool:
 
         else:
             # Režim bez časování → rovnou přihlášení
-            print_and_log("⚡ Přihlašuji se a rovnou registruji...")
+            print_and_log("ℹ️ Přihlašuji se a rovnou registruji...")
             if not prihlasit(page):
                 return False
 
@@ -280,7 +280,7 @@ def registrace(pokus: int) -> bool:
         # Čekání a odeslání registrace v náhodném intervalu + uložení času kliknutí do globální proměnné
         if RANDOM_WAIT and pokus == 1:
             delay = random.uniform(2, 3)
-            print_and_log(f"⏳ Čekám {delay:.2f} sekundy...")
+            print_and_log(f"ℹ️ Čekám {delay:.2f} sekundy...")
             time.sleep(delay)
 
         # Odeslání registrace a uložení času odeslání do proměnné k použití v logu.
@@ -307,7 +307,7 @@ def registrace(pokus: int) -> bool:
         # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
         max_wait = 60  # sekund
         start_time = time.time()
-        print_and_log(f"⏳ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
+        print_and_log(f"ℹ️ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
 
         # Informuje přítelkyni o datu a názvu závodu + o tom, že ji závodník miluje.
         if PRITELKYNE:
