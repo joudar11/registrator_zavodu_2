@@ -248,14 +248,34 @@ def registrace(pokus: int) -> bool:
             page.click(SELECTOR_SQUAD)
         except Exception as e:
             print_and_log(f"⚠️ Nepodařilo se vybrat squad {SQUAD}:\n{e}")
-            try:
-                print_and_log(f"⚠️ Zkouším zvolit squad 1.")
-                page.click(SELECTOR_SQUAD1)
-                print_and_log(f"✅ Zvolen squad 1.")
-                SQUAD_local = 1
-            except Exception as inner_e:
-                print_and_log(f"❌ Nepodařilo se zvolit squad 1:\n{inner_e}")
+            success = False
+            for squad_oprava in range(1, 101):
+                try:
+                    loc = page.locator(f"#squad-{squad_oprava}")
+                    if loc.count() == 0:
+                        continue  # squad v DOM vůbec není
+
+                    print_and_log(f"⚠️ Zkouším zvolit squad {squad_oprava}.")
+                    loc.click()
+                    page.wait_for_timeout(50)  # krátké čekání na propsání stavu
+
+                    checked = False
+                    checked = loc.is_checked()   # funguje pro
+
+                    if checked:
+                        print_and_log(f"✅ Zvolen squad {squad_oprava}.")
+                        SQUAD_local = str(squad_oprava)
+                        success = True
+                        break
+                    else:
+                        print_and_log(f"ℹ️ Squad {squad_oprava} se neoznačil – zkouším další.")
+                except Exception as inner_e1:
+                    print_and_log(f"ℹ️ Squad {squad_oprava} nelze zvolit:\n{inner_e1}")
+                    continue
+
+            if not success:
                 return False
+
 
         # Zaškrtnutí souhlasu s GDPR
         try:
