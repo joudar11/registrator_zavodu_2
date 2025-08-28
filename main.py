@@ -275,7 +275,7 @@ def registrace(pokus: int) -> bool:
                     continue
 
             if not success:
-                print_and_log(f"❌ Nepodařilo se zvoliz žádný squad v rozsahu od 1 do 100.")
+                print_and_log(f"❌ Nepodařilo se zvolit žádný squad v rozsahu od 1 do 100.")
                 return False
 
 
