@@ -5,7 +5,7 @@ CISLO_DOKLADU = "AL123456"
 CLENSKE_ID = "ABcdEfGh"
 # LEX ID (volitelné - pokud nemáš, napiš None)
 DIVIZE = "Pistole"
-# Název divize přesně dle výběru na webu
+# Název divize PŘESNĚ dle výběru na webu
 URL = "https://www.loslex.cz/contest/292"
 # URL konkrétního závodu
 LOGIN = "jan.novak"
