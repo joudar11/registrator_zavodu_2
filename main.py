@@ -242,7 +242,8 @@ def registrace(pokus: int) -> bool:
                 print_and_log(f"❌ Nepodařilo se vybrat první možnou divizi:\n{inner_e}")
                 return False
 
-        # Výběr squadu
+        # Výběr squadu a ošetření plného/neexistujícího squadu
+        # Skript zkusí postupně registraci do squadu 1 až 100. Pokud nenajde ani checkbox pro 100. squad, program končí fatální chybou.
         try:
             page.wait_for_selector(SELECTOR_SQUAD, timeout=1000)
             page.click(SELECTOR_SQUAD)
@@ -260,7 +261,7 @@ def registrace(pokus: int) -> bool:
                     page.wait_for_timeout(50)  # krátké čekání na propsání stavu
 
                     checked = False
-                    checked = loc.is_checked()   # funguje pro
+                    checked = loc.is_checked()
 
                     if checked:
                         print_and_log(f"✅ Zvolen squad {squad_oprava}.")
