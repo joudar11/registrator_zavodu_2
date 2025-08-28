@@ -243,7 +243,7 @@ def registrace(pokus: int) -> bool:
                 return False
 
         # Výběr squadu a ošetření plného/neexistujícího squadu
-        # Skript zkusí postupně registraci do squadu 1 až 100. Pokud nenajde ani checkbox pro 100. squad, program končí fatální chybou.
+        # Skript zkusí postupně registraci do squadu 1 až 100. Pokud nenajde ani checkbox pro 100. squad, tato část kódu vrátí False a jede se znovu :).
         try:
             page.wait_for_selector(SELECTOR_SQUAD, timeout=1000)
             page.click(SELECTOR_SQUAD)
