@@ -9,7 +9,8 @@ Součástí je:
 - Notifikace přítelkyni ❤️
 - Logování do souboru
 - Automatické opakování registrace při selhání (max. 25 pokusů - lze změnit v proměnné "LIMIT" v main.py)
-- Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo a následně registraci může upravit. Stejný postup je uplatněn na squady.
+- Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo a následně registraci může upravit.
+- Pokud je zvolený squad plný, skript automaticky zkusí zvolit první volný squad v rozsahu 1 - 100.
 - Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru. 
 
 ## 📦 Požadavky
@@ -72,7 +73,7 @@ python main.py
 - ✅ Přihlásí se do systému v určený čas
 - ✅ Automaticky vyplní registrační formulář
 - ✅ Pokud zvolená divize neexistuje, zvolí první možnou dostupnou
-- ✅ Pokud zvolený squad neexistuje, zvolí squad č. 1
+- ✅ Pokud zvolený squad neexistuje, zvolí první dostupný
 - ✅ Zaznamená každý pokus do textového logu (adresář logs/)
 - ✅ Opakuje registraci až 25× v případě selhání
 - ✅ Ověří přesměrování na stránku úspěšné registrace
