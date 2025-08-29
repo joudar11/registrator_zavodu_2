@@ -3,15 +3,16 @@
 Vylepšený [skript](https://github.com/joudar11/registrator_zavodu), který automaticky provádí registraci na závod LOS Lex pomocí knihovny Playwright. Nevyžaduje žádné zadávání údajů v konzoli – vše si načítá z konfiguračního souboru `data.py`.
 
 Součástí je:
-- Časovaná registrace s přesností na sekundy
-- Automatické přihlášení do systému
-- Odeslání potvrzovacího e-mailu
-- Notifikace přítelkyni ❤️
-- Logování do souboru
-- Automatické opakování registrace při selhání (max. 25 pokusů - lze změnit v proměnné "LIMIT" v main.py)
+- Časovaná registrace s přesností na sekundy.
+- Automatické přihlášení do systému.
+- Odeslání potvrzovacího e-mailu.
+- Notifikace přítelkyni ❤️.
+- Logování do souboru.
+- Automatické opakování registrace při selhání (max. 25 pokusů - lze změnit v proměnné "LIMIT" v main.py).
 - Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo a následně registraci může upravit.
 - Pokud je zvolený squad plný, skript automaticky zkusí zvolit první volný squad v rozsahu 1 - 100.
-- Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru. 
+- Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru.
+- Pokud závodník prosral začátek registrace a závod je plný, lze spustit soubor plny_zavod.py, který každých 30 minut kontroluje obsazenost a v případě volného místa spouští registrační skript. 
 
 ## 📦 Požadavky
 
@@ -59,26 +60,35 @@ JMENO_PRITELKYNE = "Jana"
 # Křestní jméno přítelkyně v prvním pádu
 RANDOM_WAIT = False
 # Zda má skript před odesláním registrace čekat náhodný počet sekund mezi 2 a 3, aby registrace vypadala věrohodněji
+INTERVAL = 1800
+# V jakém intervalu v sekundách se má kontrolovat volné místo na plném závodě (s tímto údajem se pracuje pouze v plny_zavod.py)
 ```
 
 ## ▶️ Spuštění
+
+- Pokud registrace ještě nezačala:
 
 ```bash
 python main.py
 ```
 
+- Pokud registrace běží, ale závod je plný:
+```bash
+python plny_zavod.py
+```
+
 ### Funkce skriptu
 
-- ✅ Načte stránku závodu
-- ✅ Přihlásí se do systému v určený čas
-- ✅ Automaticky vyplní registrační formulář
-- ✅ Pokud zvolená divize neexistuje, zvolí první možnou dostupnou
-- ✅ Pokud zvolený squad neexistuje, zvolí první dostupný
-- ✅ Zaznamená každý pokus do textového logu (adresář logs/)
-- ✅ Opakuje registraci až 25× v případě selhání
-- ✅ Ověří přesměrování na stránku úspěšné registrace
-- ✅ Odešle potvrzení na email
-- ✅ Informuje přítelkyni, že jedeš střílet 😎❤️ (Pošle jí na email datum závodu a název.)
+- Načte stránku závodu
+- Přihlásí se do systému v určený čas
+- Automaticky vyplní registrační formulář
+- Pokud zvolená divize neexistuje, zvolí první možnou dostupnou
+- Pokud zvolený squad neexistuje, zvolí první dostupný
+- Zaznamená každý pokus do textového logu (adresář logs/)
+- Opakuje registraci až 25× v případě selhání
+- Ověří přesměrování na stránku úspěšné registrace
+- Odešle potvrzení na email
+- Informuje přítelkyni, že jedeš střílet 😎❤️ (Pošle jí na email datum závodu a název.)
 
 ## 📧 Notifikace
 
