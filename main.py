@@ -425,6 +425,7 @@ def run():
     # Fatální chybou se rozumí špatné přihlašovací údaje, špatný formát data a času nebo špatná URL závodu.
 
     # POKUS_TIME je konstanta, která se používá pouze pro název souboru s logem.
+    global POKUS_TIME
     POKUS_TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
 
     cislo_pokusu = 1
