@@ -58,7 +58,7 @@ SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main 
 SELECTOR_NAZEV = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.justify-center.items-baseline.text-xl.font-bold.flex"
 SELECTOR_SPATNE_UDAJE = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\:px-0.z-2000 > div.mb-6.bg-white.dark\:bg-gray-800.rounded-lg.overflow-hidden.shadow-xl.transform.transition-all.sm\:w-full.sm\:max-w-md.sm\:mx-auto > div > form > div:nth-child(3) > ul"
 
-def get_summary() -> None:
+def get_summary() -> str:
     """Vytiskne do konzole shrnutí údajů použitých při registraci"""
     summary = f"""\nÚdaje použité při registraci:\n
     Jméno: {JMENO}\n
@@ -162,7 +162,27 @@ def registrace(pokus: int) -> bool:
 
             # Přihlášení na registrační web proběhne 30s před spuštěním registrace 
             cas_prihlaseni = cas_registrace - timedelta(seconds=30)
+            cas_notifikace = cas_registrace - timedelta(minutes=30)
+            notifikovano = False
+
+            try:
+                informuj_o_zacatku()
+                print_and_log("✅ Odeslal jsem notifikační email o tom, že skript byl spuštěn.")
+            except Exception as e:
+                print_and_log("❌ Nepodařilo se odeslat zahajovací email. Pokračuji.")
+
             print_and_log(f"ℹ️ Čekám na čas přihlášení: {cas_prihlaseni}")
+
+
+            while datetime.now() <cas_notifikace:
+                time.sleep(1)
+
+            try:
+                stale_bezi()
+                print_and_log("✅ Odeslal jsem notifikační email o tom, že skript stále běží.")
+            except Exception as e:
+                print_and_log("❌ Nepodařilo se odeslat pokračovací email. Pokračuji.")
+
             while datetime.now() < cas_prihlaseni:
                 time.sleep(0.1)
 
@@ -420,6 +440,34 @@ def informuj_pritelkyni() -> None:
         smtp.send_message(msg)
     print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
 
+def informuj_o_zacatku() -> None:
+    """Informuje závodníka o začátku skriptu"""
+    msg = EmailMessage()
+    msg['Subject'] = '🔫 Registrační skript spuštěn.'
+    msg['From'] = EMAIL_U
+    msg['To'] = LOGIN
+    msg.set_content(f"""Registrační skript na závod na závod {URL} byl spuštěn.\n\n30 minut před začátkem registrace ({datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=30)}) očekávej potvrzovací email, že skript stále běží.\n\n\n(Automaticky generovaný email)""")
+
+    # Odeslání e-mailu
+
+    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+        smtp.login(EMAIL_U, EMAIL_P)
+        smtp.send_message(msg)
+
+def stale_bezi() -> None:
+    """Informuje závodníka o běhu skriptu."""
+    msg = EmailMessage()
+    msg['Subject'] = '🔫 Registrační skript stále běží'
+    msg['From'] = EMAIL_U
+    msg['To'] = LOGIN
+    msg.set_content(f"""Registrační skript na závod na závod {URL} v pořádku běží.\n\n\n(Automaticky generovaný email)""")
+
+    # Odeslání e-mailu
+
+    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+        smtp.login(EMAIL_U, EMAIL_P)
+        smtp.send_message(msg)
+
 def run():
     # Funkce spouští registraci stále dokola, dokud registrace nebude úspěšná, dokud nedojde k fatální chybě nebo dokud nebude dosažen maximální stanovený počet pokusů.
     # Fatální chybou se rozumí špatné přihlašovací údaje, špatný formát data a času nebo špatná URL závodu.
@@ -427,7 +475,6 @@ def run():
     # POKUS_TIME je konstanta, která se používá pouze pro název souboru s logem.
     global POKUS_TIME
     POKUS_TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
-
     cislo_pokusu = 1
     while cislo_pokusu <= LIMIT:
         if cislo_pokusu != 1:
