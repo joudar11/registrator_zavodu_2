@@ -165,16 +165,17 @@ def registrace(pokus: int) -> bool:
             cas_notifikace = cas_registrace - timedelta(minutes=30)
             notifikovano = False
 
-            try:
-                informuj_o_zacatku()
-                print_and_log("✅ Odeslal jsem notifikační email o tom, že skript byl spuštěn.")
-            except Exception as e:
-                print_and_log("❌ Nepodařilo se odeslat zahajovací email. Pokračuji.")
+            if int((cas_registrace - datetime.now()).total_seconds() // 60) > 60:
+                try:
+                    informuj_o_zacatku()
+                    print_and_log("✅ Odeslal jsem notifikační email o tom, že skript byl spuštěn.")
+                except Exception as e:
+                    print_and_log("❌ Nepodařilo se odeslat zahajovací email. Pokračuji.")
 
             print_and_log(f"ℹ️ Čekám na čas přihlášení: {cas_prihlaseni}")
 
 
-            while datetime.now() <cas_notifikace:
+            while datetime.now() < cas_notifikace:
                 time.sleep(1)
 
             try:
