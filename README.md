@@ -5,7 +5,7 @@ Vylepšený [skript](https://github.com/joudar11/registrator_zavodu), který aut
 Součástí je:
 - Časovaná registrace s přesností na sekundy.
 - Automatické přihlášení do systému.
-- Odeslání potvrzovacího e-mailu.
+- Odeslání potvrzovacího e-mailu s .ics událostí.
 - Notifikace přítelkyni ❤️.
 - Logování do souboru.
 - Automatické opakování registrace při selhání (max. 25 pokusů - lze změnit v proměnné "LIMIT" v main.py).
