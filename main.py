@@ -191,16 +191,17 @@ def registrace(pokus: int) -> bool:
 
             print_and_log(f"ℹ️ Čekám na čas přihlášení: {cas_prihlaseni}")
 
-            while datetime.now() < cas_notifikace:
-                time.sleep(1)
+            if cas_registrace - datetime.now() > timedelta(minutes=60):
+                while datetime.now() < cas_notifikace:
+                    time.sleep(1)
 
-            try:
-                stale_bezi()
-                print_and_log(
-                    "✅ Odeslal jsem notifikační email o tom, že skript stále běží.")
-            except Exception as e:
-                print_and_log(
-                    "❌ Nepodařilo se odeslat pokračovací email. Pokračuji.")
+                try:
+                    stale_bezi()
+                    print_and_log(
+                        "✅ Odeslal jsem notifikační email o tom, že skript stále běží.")
+                except Exception as e:
+                    print_and_log(
+                        "❌ Nepodařilo se odeslat pokračovací email. Pokračuji.")
 
             while datetime.now() < cas_prihlaseni:
                 time.sleep(0.1)
@@ -499,7 +500,7 @@ def informuj_o_zacatku() -> None:
     msg['From'] = EMAIL_U
     msg['To'] = LOGIN
     msg.set_content(
-        f"""Registrační skript na závod na závod {URL} byl spuštěn.\n\n30 minut před začátkem registrace ({datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=30)}) očekávej potvrzovací email, že skript stále běží.\n\n\n(Automaticky generovaný email)""")
+        f"""Registrační skript na závod na závod {URL} byl spuštěn.\n\n45 minut před začátkem registrace ({datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=30)}) očekávej potvrzovací email, že skript stále běží.\n\n\n(Automaticky generovaný email)""")
 
     # Odeslání e-mailu
 
