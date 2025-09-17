@@ -500,7 +500,7 @@ def informuj_o_zacatku() -> None:
     msg['From'] = EMAIL_U
     msg['To'] = LOGIN
     msg.set_content(
-        f"""Registrační skript na závod na závod {URL} byl spuštěn.\n\n45 minut před začátkem registrace ({datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=30)}) očekávej potvrzovací email, že skript stále běží.\n\n\n(Automaticky generovaný email)""")
+        f"""Registrační skript na závod na závod {URL} byl spuštěn.\n\n45 minut před začátkem registrace ({datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=45)}) očekávej potvrzovací email, že skript stále běží.\n\n\n(Automaticky generovaný email)""")
 
     # Odeslání e-mailu
 
