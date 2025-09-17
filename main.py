@@ -25,6 +25,7 @@ datum_zavodu = None  # Sem se následně uloží datum závodu (pro odeslání m
 nazev_zavodu = None  # Sem se následně uloží název závodu (pro odeslání mailem)
 SEKUND = 2.2  # Jak dlouho po nastání času registrace má skript refreshnout stránku
 ics_file = None
+STALE_BEZI_MINUT = 45 #Kolik minut před registrací poslat potvrzovací email, že skript stále běží
 
 fatal_error = False
 
@@ -177,7 +178,7 @@ def registrace(pokus: int) -> bool:
 
             # Přihlášení na registrační web proběhne 30s před spuštěním registrace
             cas_prihlaseni = cas_registrace - timedelta(seconds=30)
-            cas_notifikace = cas_registrace - timedelta(minutes=30)
+            cas_notifikace = cas_registrace - timedelta(minutes=STALE_BEZI_MINUT)
             notifikovano = False
 
             if int((cas_registrace - datetime.now()).total_seconds() // 60) > 60:
@@ -500,7 +501,7 @@ def informuj_o_zacatku() -> None:
     msg['From'] = EMAIL_U
     msg['To'] = LOGIN
     msg.set_content(
-        f"""Registrační skript na závod na závod {URL} byl spuštěn.\n\n45 minut před začátkem registrace ({datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=45)}) očekávej potvrzovací email, že skript stále běží.\n\n\n(Automaticky generovaný email)""")
+        f"""Registrační skript na závod na závod {URL} byl spuštěn.\n\n{STALE_BEZI_MINUT} minut před začátkem registrace ({datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=STALE_BEZI_MINUT)}) očekávej potvrzovací email, že skript stále běží.\n\n\n(Automaticky generovaný email)""")
 
     # Odeslání e-mailu
 
