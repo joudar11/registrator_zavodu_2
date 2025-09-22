@@ -84,9 +84,9 @@ def main():
 
         nazev, datum, strelnice, datum_raw = ziskej_data(page)
 
-        print(f"Co : {nazev}")
-        print(f"Kdy: {datum_raw}")
-        print(f"Kde: {strelnice}")
+        # print(f"Co : {nazev}")
+        # print(f"Kdy: {datum_raw}")
+        # print(f"Kde: {strelnice}")
 
         vytvor_ics(nazev, datum, strelnice)
         return filename
