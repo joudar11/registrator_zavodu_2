@@ -395,22 +395,22 @@ def registrace(pokus: int) -> bool:
 
         # Vytvoří ics k odeslání emailem
 
-        try:
-            ics_file = vytvor_ics.main()
-        except Exception as e:
-            print_and_log(f"❌ Nepodařilo se vytvořit .ics soubor:\n{e}")
+    try:
+        ics_file = vytvor_ics.main()
+    except Exception as e:
+        print_and_log(f"❌ Nepodařilo se vytvořit .ics soubor:\n{e}")
 
-        # Pošle závodníkovi shrnutí úspěšné reistrace a textový log.
-        try:
-            posli_email()
-        except Exception as e:
-            print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
+    # Pošle závodníkovi shrnutí úspěšné reistrace a textový log.
+    try:
+        posli_email()
+    except Exception as e:
+        print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
 
-        # Čeká specifikovaný čas a ukončuje se. (Dokončení čekací funkce skriptu)
-        while True:
-            if time.time() - start_time > max_wait:
-                return True
-            time.sleep(1)
+    # Čeká specifikovaný čas a ukončuje se. (Dokončení čekací funkce skriptu)
+    while True:
+        if time.time() - start_time > max_wait:
+            return True
+        time.sleep(1)
 
 
 def posli_email() -> None:
