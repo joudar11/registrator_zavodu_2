@@ -219,7 +219,7 @@ def registrace(pokus: int) -> bool:
                 time.sleep(0.05)
 
             # Refresh po spuštění registrace, aby se zobrazily prvky formuláře
-            print_and_log("🔄 Refreshuji stránku...")
+            print_and_log("ℹ️ Refreshuji stránku...")
             try:
                 page.goto(URL, wait_until="domcontentloaded", timeout=2000)
             except TimeoutError:
@@ -380,23 +380,17 @@ def registrace(pokus: int) -> bool:
         print_and_log(
             f"✅ Registrace na závod {nazev_zavodu} - {datum_zavodu} dokončena.")
 
-        # Po dokončení registrace počká specifikovaný čas a následně ukončuje program.
-        max_wait = 60  # sekund
-        start_time = time.time()
-        print_and_log(
-            f"ℹ️ Čekám {max_wait} sekund pro kontrolu uživatelem. Následně se ukončím.")
+    # Informuje přítelkyni o datu a názvu závodu + o tom, že ji závodník miluje.
+    if PRITELKYNE:
+        try:
+            informuj_pritelkyni()
+        except Exception as e:
+            print_and_log(f"❌ Nepodařilo se informovat přítelkyni:\n{e}")
 
-        # Informuje přítelkyni o datu a názvu závodu + o tom, že ji závodník miluje.
-        if PRITELKYNE:
-            try:
-                informuj_pritelkyni()
-            except Exception as e:
-                print_and_log(f"❌ Nepodařilo se informovat přítelkyni:\n{e}")
-
-        # Vytvoří ics k odeslání emailem
-
+    # Vytvoří ics k odeslání emailem
     try:
         ics_file = vytvor_ics.main()
+        print_and_log("✅ .ics soubor vytvořen.")
     except Exception as e:
         print_and_log(f"❌ Nepodařilo se vytvořit .ics soubor:\n{e}")
 
@@ -406,11 +400,7 @@ def registrace(pokus: int) -> bool:
     except Exception as e:
         print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
 
-    # Čeká specifikovaný čas a ukončuje se. (Dokončení čekací funkce skriptu)
-    while True:
-        if time.time() - start_time > max_wait:
-            return True
-        time.sleep(1)
+    return True
 
 
 def posli_email() -> None:
@@ -537,7 +527,7 @@ def run():
     while cislo_pokusu <= LIMIT:
         if cislo_pokusu != 1:
             print_and_log("❌ Pokus o registraci selhal. Zkouším znovu...")
-        print_and_log(f"🔁 Pokus o registraci č. {cislo_pokusu} z {LIMIT}")
+        print_and_log(f"ℹ️ Pokus o registraci č. {cislo_pokusu} z {LIMIT}")
         if registrace(cislo_pokusu) or fatal_error:
             break
         cislo_pokusu += 1
