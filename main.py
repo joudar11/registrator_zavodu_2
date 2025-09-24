@@ -410,7 +410,7 @@ def posli_email() -> None:
     msg['From'] = EMAIL_U
     msg['To'] = LOGIN
     msg.set_content(
-        f"""Registrace na závod proběhla úspěšně. V příloze nalezneš záznam o průběhu registrace.
+        f"""Registrace na závod proběhla úspěšně. V příloze nalezneš záznam o průběhu registrace a .ics událost pro uložení do kalendáře.
 
 Závod: {nazev_zavodu}
 Datum závodu: {datum_zavodu}
