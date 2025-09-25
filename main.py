@@ -240,12 +240,11 @@ def registrace(pokus: int) -> bool:
             if not prihlasit(page):
                 return False
 
-        # Kontrola, že server odpovídá - 2s. Pokud ne, funkce selže.
-        try:
-            page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=3000)
-        except TimeoutError:
-            print_and_log("❌ Stránka nenalezla tlačítko registrace.")
-            return False
+            try:
+                page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=4000)
+            except TimeoutError:
+                print_and_log("❌ Stránka nenalezla tlačítko registrace.")
+                return False
 
         # Společná část registrace
         try:
