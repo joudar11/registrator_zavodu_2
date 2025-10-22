@@ -69,9 +69,10 @@ INTERVAL = 1800
 
 ### Prvotní instalace před spuštěním:
 ```bash
-python -m venv venv
-venv\Scripts\Activate.ps1
+python -m venv .venv
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+playwright install
 ```
 ### Následně:
 
