@@ -10,7 +10,6 @@ from data import (
 DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "Opt"}  # Převod z divize DATA na tento skript
 DIVIZE_V_POHARU = {"Pi": "Pi", "Opt": "OptPi"}
 
-URL = "https://www.loslex.cz/contest/313"
 
 DIVIZE = DIVIZE_KONVERZE[DIVIZE]
 
