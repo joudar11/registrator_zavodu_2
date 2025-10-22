@@ -90,6 +90,7 @@ python plny_zavod.py
 ```bash
 python plny_zavod.py
 ```
+(tato funkcionalita je dokončena, ale skript vyžaduje refaktor a zkrásnění)
 
 ### Funkce skriptu
 
