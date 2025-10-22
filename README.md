@@ -13,7 +13,7 @@ Součástí je:
 - Pokud je zvolený squad plný, skript automaticky zkusí zvolit první volný squad v rozsahu 1 - 100.
 - Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru.
 - Pokud závodník prosral začátek registrace a závod je plný, lze spustit soubor plny_zavod.py, který každých 30 minut kontroluje obsazenost a v případě volného místa spouští registrační skript.
-- Pokud si závodník chce vyjetz konkurenci, lze spustit skript konkurence.py. Následně mu bude do konzole vypsán přehled závodníků, kteří jsou na nadcházející závod registrováni ve stejné divizi. Tito jsou seřazeni dle jejich průměrné procentuální úspěšnosti v poháru. Data si skript bere vždy z poháru, který skončil minulý rok, tj. v roce 2026 si data bere z výsledků poháru 2025 atd. 
+- Pokud si závodník chce vyjet konkurenci, lze spustit skript konkurence.py. Následně mu bude do konzole vypsán přehled závodníků, kteří jsou na nadcházející závod registrováni ve stejné divizi. Tito jsou seřazeni dle jejich průměrné procentuální úspěšnosti v poháru. Data si skript bere vždy z poháru, který skončil minulý rok, tj. v roce 2026 si data bere z výsledků poháru 2025 atd. 
 
 ## 📦 Požadavky
 
