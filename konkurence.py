@@ -12,8 +12,10 @@ from data import (
 CREATE = True
 FOLDER = "logs"
 TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
-LOGNAME = f"log-KONKURENCE-{TIME}.html"
+LOGNAME = f"log-KONKURENCE-{TIME}"
 
+
+URL = "https://www.loslex.cz/contest/313"
 
 DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
                    "PDW": "PDW"}  # Převod z divize DATA na tento skript
@@ -229,7 +231,7 @@ def print_and_log(action: str) -> None:
         return
 
     # Zápis do logu
-    with open(f"{FOLDER}/{LOGNAME}", "a", encoding="utf-8") as f:
+    with open(f"{FOLDER}/{LOGNAME}.html", "a", encoding="utf-8") as f:
         if CREATE == True:
             f.write(f'<meta charset="UTF-8">\n<pre>')
             CREATE = False
@@ -258,7 +260,7 @@ if __name__ == "__main__":
         porovnat(POHAR3)
     except TypeError:
         pass
-    with open(f"{FOLDER}/{LOGNAME}", "a", encoding="utf-8") as f:
+    with open(f"{FOLDER}/{LOGNAME}.html", "a", encoding="utf-8") as f:
         f.write(f'</pre>')
     if input(f"\nPřeješ si registrovat? (Y/N): ") == "Y".lower():
         print("Spouštím registrační skript...")
