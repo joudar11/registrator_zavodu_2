@@ -16,6 +16,8 @@ FOLDER = "logs"
 TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
 LOGNAME = f"log-KONKURENCE-{TIME}"
 KONZOLE = False
+FIRST_RUN = True
+HEADER_LEN = None
 
 DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
                    "PDW": "PDW"}  # Převod z divize DATA na tento skript
@@ -53,16 +55,22 @@ def print_konzole(content: str) -> None:
         print(content)
 
 def statistika(URL_z: str, rok: str) -> None:
+    global FIRST_RUN
+    global HEADER_LEN
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         page.goto(URL)
         print_and_log("")
-        print_konzole(f'Závod:  {page.title()} - {URL}')
-        only_log(f'Závod:  <a href="{URL}">{page.title()}</a>')
+        if FIRST_RUN:
+            print_konzole(f'Závod:  {page.title()} - {URL}')
+            only_log(f'Závod:  <a href="{URL}">{page.title()}</a>')
+            print_and_log(f"Divize: {DIVIZE}\n")
+        else:
+            print_and_log("=" * HEADER_LEN)
+            print_and_log("")
         print_konzole(f"Pohár:  {rok} - {URL_z}")
         only_log(f'Pohár:  <a href="{URL_z}">{rok}</a>')
-        print_and_log(f"Divize: {DIVIZE}")
         print_and_log("")
 
         page.click(SELECTOR_LOGIN_FORM)
@@ -177,6 +185,7 @@ def statistika(URL_z: str, rok: str) -> None:
                     'Průměr %':>9}"
         print_and_log(header)
         print_and_log("-" * len(header))
+        HEADER_LEN = len(header)
 
         
 
@@ -222,6 +231,7 @@ def statistika(URL_z: str, rok: str) -> None:
                         races:>7} | {
                         avg_out:>9}{SPAN_END}")
         browser.close()
+        
 
 
 def muj_prumer() -> float:
@@ -231,6 +241,12 @@ def muj_prumer() -> float:
 
 
 def porovnat(sezona: str) -> None:
+    if FIRST_RUN:
+        singular = "je"
+        plural = "mají"
+    else:
+        singular = "byl"
+        plural = "měli"
     if vysledky[0][1] == JMENO:
         print_and_log("\nJsi nejlepším přihlášeným závodníkem v tomto závodě!")
         return
@@ -238,7 +254,7 @@ def porovnat(sezona: str) -> None:
     if MUJ_PRUMER == None:
         return
     print_and_log(
-        f"\nNejlepší závodník v tomto závodě ({vysledky[0][1]} - {vysledky[0][-1]}%) je v průměru v sezoně {sezona} lepší než ty ({MUJ_PRUMER}%)!\n")
+        f"\nNejlepší závodník {singular} v průměru v sezoně {sezona} o {(float(vysledky[0][-1])-MUJ_PRUMER):.2f}% lepší než ty.")
     lepsich_zavodniku = 0
     for record in vysledky:
         if record[1] != JMENO:
@@ -246,7 +262,7 @@ def porovnat(sezona: str) -> None:
         else:
             break
     print_and_log(
-        f"Závodníků kteří v sezoně {sezona} měli lepší průměrné výsledky než ty: {lepsich_zavodniku}")
+        f"Počet závodníků, kteří v sezoně {sezona} {plural} lepší průměrné výsledky než ty: {lepsich_zavodniku}")
 
 
 def print_and_log(action: str) -> None:
@@ -284,7 +300,17 @@ def only_log(action: str) -> None:
         f.write(f"{action}<br>")
 
 
+def vynuluj() -> None:
+    global vysledky
+    global jmena
+    vysledky = []
+    jmena = []
+    return
+
+
+
 def run() -> None:
+    global FIRST_RUN
     global jmena
     global vysledky
     statistika(URL_CUP3, POHAR1)
@@ -292,17 +318,14 @@ def run() -> None:
         porovnat(POHAR1)
     except TypeError:
         pass
-    print_and_log(f"\n\n\n")
-    jmena = []
-    vysledky = []
+    FIRST_RUN = False
+    vynuluj()
     statistika(URL_CUP2, POHAR2)
     try:
         porovnat(POHAR2)
     except TypeError:
         pass
-    print_and_log(f"\n\n\n")
-    jmena = []
-    vysledky = []
+    vynuluj()
     statistika(URL_CUP1, POHAR3)
     try:
         porovnat(POHAR3)
