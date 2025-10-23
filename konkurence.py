@@ -12,7 +12,7 @@ from data import (
 )
 
 CREATE = True
-FOLDER = "logs"
+FOLDER = "konkurence"
 TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
 LOGNAME = f"konkurence-{URL.split("/")[-1]}"
 KONZOLE = False
