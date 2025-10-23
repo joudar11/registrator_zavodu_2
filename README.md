@@ -90,7 +90,7 @@ python plny_zavod.py
 ```bash
 python plny_zavod.py
 ```
-(tato funkcionalita je dokončena, ale skript vyžaduje refaktor a zkrásnění)
+(Tato funkcionalita podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude implementována.)
 
 ### Funkce skriptu
 
