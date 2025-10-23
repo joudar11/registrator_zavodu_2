@@ -1,5 +1,6 @@
 from playwright.sync_api import sync_playwright
 import re
+import os
 from datetime import datetime, date
 import subprocess
 from data import (
@@ -7,9 +8,10 @@ from data import (
     )
 
 
-DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "Opt"}  # Převod z divize DATA na tento skript
-DIVIZE_V_POHARU = {"Pi": "Pi", "Opt": "OptPi"}
+TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
 
+DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi", "PDW": "PDW"}  # Převod z divize DATA na tento skript
+DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW"}
 
 DIVIZE = DIVIZE_KONVERZE[DIVIZE]
 
@@ -35,7 +37,7 @@ SELECTOR_PASS = r"#password"
 SELECTOR_DIVIZE_POHAR = f"#division-{DIVIZE_V_POHARU[DIVIZE]}-tab"
 
 jmena = []
-vysledky1 = []
+vysledky = []
 
 
 def statistika(URL_z: str, rok: str) -> None:
@@ -43,11 +45,11 @@ def statistika(URL_z: str, rok: str) -> None:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         page.goto(URL)
-        print("")
-        print("Závod:  ", page.title(), " - ", URL)
-        print("Pohár:  ", rok, " - ", URL_z)
-        print("Divize: ", DIVIZE)
-        print("")
+        print_and_log("")
+        print_and_log(f"Závod:  {page.title()} {URL}")
+        print_and_log(f"Pohár:  {rok} - {URL_z}")
+        print_and_log(f"Divize: {DIVIZE}")
+        print_and_log("")
 
         page.click(SELECTOR_LOGIN_FORM)
         page.wait_for_selector(SELECTOR_USER)
@@ -94,7 +96,7 @@ def statistika(URL_z: str, rok: str) -> None:
 
         # jen aktivní (viditelný) panel
         visible_panel = page.locator(
-            f'div[role="tabpanel"]#division-{DIVIZE}:visible')
+            f'div[role="tabpanel"]#division-{DIVIZE_V_POHARU[DIVIZE]}:visible')
 
         for name in jmena:
             if " (MZ)" in name:
@@ -104,7 +106,7 @@ def statistika(URL_z: str, rok: str) -> None:
             name_cell = visible_panel.locator(
                 "div.w-36:visible", has_text=name_re).first
             if name_cell.count() == 0:
-                vysledky1.append((None, name, None, 0, None))
+                vysledky.append((None, name, None, 0, None))
                 continue
 
             # řádek s rankem/jménem/procenty
@@ -131,7 +133,7 @@ def statistika(URL_z: str, rok: str) -> None:
             # všechny závody – procenta z každého zeleného boxu
             next_row = row.locator(
                 "+ div.flex.flex-row.gap-x-1.justify-center:visible")
-            race_percents1 = []
+            race_percents = []
             if next_row.count() > 0:
                 for box in next_row.locator(
                         "div.border.rounded-md.p-1.w-20.cursor-help:visible").all():
@@ -139,17 +141,17 @@ def statistika(URL_z: str, rok: str) -> None:
                         "div.text-center").first.text_content().strip()
                     val = _clean_percent(val_raw)
                     if val is not None:
-                        race_percents1.append(val)
+                        race_percents.append(val)
 
-            race_count1 = len(race_percents1)
-            avg1 = round(
-                sum(race_percents1) / race_count1,
-                2) if race_count1 > 0 else None
+            race_count = len(race_percents)
+            avg = round(
+                sum(race_percents) / race_count,
+                2) if race_count > 0 else None
 
-            vysledky1.append((rank, name, pct, race_count1, avg1))
+            vysledky.append((rank, name, pct, race_count, avg))
 
         # seřazení od nejlepšího
-        vysledky1.sort(key=lambda x: (x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
+        vysledky.sort(key=lambda x: (x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
 
         # výpis
         header = f"{
@@ -158,12 +160,12 @@ def statistika(URL_z: str, rok: str) -> None:
             '% pohár':>10} | {
                 'Závody':>7} | {
                     'Průměr %':>9}"
-        print(header)
-        print("-" * len(header))
+        print_and_log(header)
+        print_and_log("-" * len(header))
 
-        for rank, name, pct, races, avg1 in vysledky1:
+        for rank, name, pct, races, avg in vysledky:
             if rank is None:
-                print(
+                print_and_log(
                     f"{
                         '–':>8} | {
                         name:<35} | {
@@ -172,8 +174,8 @@ def statistika(URL_z: str, rok: str) -> None:
                         '–':>9}")
             else:
                 pct_out = f"{pct:.2f}%" if pct is not None else "–"
-                avg_out = f"{avg1:.2f}%" if avg1 is not None else "–"
-                print(
+                avg_out = f"{avg:.2f}%" if avg is not None else "–"
+                print_and_log(
                     f"{
                         rank:>8} | {
                         name:<35} | {
@@ -184,40 +186,63 @@ def statistika(URL_z: str, rok: str) -> None:
 
 
 def muj_prumer() -> float:
-    for record in vysledky1:
+    for record in vysledky:
         if record[1] == JMENO:
             return record[-1]
 
 
 def porovnat(sezona: str) -> None:
     MUJ_PRUMER = muj_prumer()
-    if vysledky1[0][-1] < MUJ_PRUMER:
+    if vysledky[0][-1] < MUJ_PRUMER:
         porovnani = "horší"
     else:
         porovnani = "lepší"
-    print(
-        f"\nNejlepší závodník v tomto závodě ({vysledky1[0][1]} - {vysledky1[0][-1]}%) je v průměru {porovnani} než ty ({MUJ_PRUMER}%)!\n")
+    print_and_log(
+        f"\nNejlepší závodník v tomto závodě ({vysledky[0][1]} - {vysledky[0][-1]}%) je v průměru {porovnani} než ty ({MUJ_PRUMER}%)!\n")
     lepsich_zavodniku = 0
-    for record in vysledky1:
+    for record in vysledky:
         if record[1] != JMENO:
             lepsich_zavodniku += 1
         else:
             break
-    print(f"V závodě je přihlášeno {lepsich_zavodniku} závodníků kteří v sezoně {sezona} měli lepší průměrné výsledky než ty.")
+    print_and_log(f"V závodě je přihlášeno {lepsich_zavodniku} závodníků kteří v sezoně {sezona} měli lepší průměrné výsledky než ty.")
 
+def print_and_log(action: str) -> None:
+    """Zprávu předanou argumentem vytiskne do konzole a zároveň uloží na konec logu."""
+    print(action)
+    folder = "logs"  # složka, kam se uloží log
+    try:
+        os.makedirs(folder, exist_ok=True)
+    except Exception as e:
+        print(f"❌ Nelze vytvořit složku {folder}:\n{e}")
+        return
 
+    # Zápis do logu
+    with open(f"{folder}/log-KONKURENCE-{TIME}.txt", "a", encoding="utf-8") as f:
+        f.write(f"{action}\n")
 
 if __name__ == "__main__":
     statistika(URL_CUP3, POHAR1)
-    porovnat(POHAR1)
+    try:
+        porovnat(POHAR1)
+    except TypeError:
+        pass
+    print_and_log(f"\n\n\n\n")
     jmena=[]
-    vysledky1=[]
+    vysledky=[]
     statistika(URL_CUP2,POHAR2)
-    porovnat(POHAR2)
+    try:
+        porovnat(POHAR2)
+    except TypeError:
+        pass
+    print_and_log(f"\n\n\n\n")
     jmena=[]
-    vysledky1=[]
+    vysledky=[]
     statistika(URL_CUP1, POHAR3)
-    porovnat(POHAR3)
+    try:
+        porovnat(POHAR3)
+    except TypeError:
+        pass
     if input(f"\nPřeješ si registrovat? (Y/N): ") == "Y".lower():
         print("Spouštím registrační skript...")
         subprocess.Popen(["start", "cmd", "/k", "python main.py"], shell=True)
