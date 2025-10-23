@@ -1,8 +1,10 @@
-from playwright.sync_api import sync_playwright
 import re
 import os
 from datetime import datetime, date
 import subprocess
+
+from playwright.sync_api import sync_playwright
+
 from data import (
     JMENO, DIVIZE, URL, LOGIN, HESLO
 )
