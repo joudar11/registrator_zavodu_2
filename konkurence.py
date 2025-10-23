@@ -2,6 +2,8 @@ import re
 import os
 from datetime import datetime, date
 import subprocess
+import webbrowser
+from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
@@ -13,7 +15,7 @@ CREATE = True
 FOLDER = "logs"
 TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
 LOGNAME = f"log-KONKURENCE-{TIME}"
-
+KONZOLE = False
 
 DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
                    "PDW": "PDW"}  # Převod z divize DATA na tento skript
@@ -46,6 +48,9 @@ SELECTOR_DIVIZE_POHAR = f"#division-{DIVIZE_V_POHARU[DIVIZE]}-tab"
 jmena = []
 vysledky = []
 
+def print_konzole(content: str) -> None:
+    if KONZOLE:
+        print(content)
 
 def statistika(URL_z: str, rok: str) -> None:
     with sync_playwright() as p:
@@ -53,9 +58,9 @@ def statistika(URL_z: str, rok: str) -> None:
         page = browser.new_page()
         page.goto(URL)
         print_and_log("")
-        print(f'Závod:  {page.title()} - {URL}')
+        print_konzole(f'Závod:  {page.title()} - {URL}')
         only_log(f'Závod:  <a href="{URL}">{page.title()}</a>')
-        print(f"Pohár:  {rok} - {URL_z}")
+        print_konzole(f"Pohár:  {rok} - {URL_z}")
         only_log(f'Pohár:  <a href="{URL_z}">{rok}</a>')
         print_and_log(f"Divize: {DIVIZE}")
         print_and_log("")
@@ -185,7 +190,7 @@ def statistika(URL_z: str, rok: str) -> None:
                 SPAN_BEGIN = '<span style="background-color: red;">'
                 SPAN_END = '</span>'
             if rank is None:
-                print(
+                print_konzole(
                     f"{
                         '–':>8} | {
                         name:<35} | {
@@ -202,7 +207,7 @@ def statistika(URL_z: str, rok: str) -> None:
             else:
                 pct_out = f"{pct:.2f}%" if pct is not None else "–"
                 avg_out = f"{avg:.2f}%" if avg is not None else "–"
-                print(
+                print_konzole(
                     f"{
                         rank:>8} | {
                         name:<35} | {
@@ -247,7 +252,7 @@ def porovnat(sezona: str) -> None:
 def print_and_log(action: str) -> None:
     global CREATE
     """Zprávu předanou argumentem vytiskne do konzole a zároveň uloží na konec logu."""
-    print(action)
+    print_konzole(action)
     try:
         os.makedirs(FOLDER, exist_ok=True)
     except Exception as e:
@@ -305,6 +310,7 @@ def run() -> None:
         pass
     with open(f"{FOLDER}/{LOGNAME}.html", "a", encoding="utf-8") as f:
         f.write(f'</pre>')
+    webbrowser.open(Path(f"{FOLDER}/{LOGNAME}.html").resolve().as_uri())
     if input(f"\nPřeješ si registrovat? (Y/N): ") == "Y".lower():
         print("Spouštím registrační skript...")
         subprocess.Popen(["start", "cmd", "/k", "python main.py"], shell=True)
