@@ -15,8 +15,6 @@ TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
 LOGNAME = f"log-KONKURENCE-{TIME}"
 
 
-URL = "https://www.loslex.cz/contest/313"
-
 DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
                    "PDW": "PDW"}  # Převod z divize DATA na tento skript
 DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW"}
