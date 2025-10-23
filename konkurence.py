@@ -16,7 +16,6 @@ DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
                    "PDW": "PDW"}  # Převod z divize DATA na tento skript
 DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW"}
 
-
 DIVIZE = DIVIZE_KONVERZE[DIVIZE]
 
 today = date.today()
@@ -201,6 +200,8 @@ def porovnat(sezona: str) -> None:
         print_and_log("\nJsi nejlepším přihlášeným závodníkem v tomto závodě!")
         return
     MUJ_PRUMER = muj_prumer()
+    if MUJ_PRUMER == None:
+        return
     print_and_log(
         f"\nNejlepší závodník v tomto závodě ({vysledky[0][1]} - {vysledky[0][-1]}%) je v průměru v sezoně {sezona} lepší než ty ({MUJ_PRUMER}%)!\n")
     lepsich_zavodniku = 0
