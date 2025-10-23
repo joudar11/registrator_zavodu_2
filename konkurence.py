@@ -50,9 +50,11 @@ SELECTOR_DIVIZE_POHAR = f"#division-{DIVIZE_V_POHARU[DIVIZE]}-tab"
 jmena = []
 vysledky = []
 
+
 def print_konzole(content: str) -> None:
     if KONZOLE:
         print(content)
+
 
 def statistika(URL_z: str, rok: str) -> None:
     global FIRST_RUN
@@ -187,8 +189,6 @@ def statistika(URL_z: str, rok: str) -> None:
         print_and_log("-" * len(header))
         HEADER_LEN = len(header)
 
-        
-
         for rank, name, pct, races, avg in vysledky:
             SPAN_BEGIN = ''
             SPAN_END = ''
@@ -231,7 +231,6 @@ def statistika(URL_z: str, rok: str) -> None:
                         races:>7} | {
                         avg_out:>9}{SPAN_END}")
         browser.close()
-        
 
 
 def muj_prumer() -> float:
@@ -251,10 +250,10 @@ def porovnat(sezona: str) -> None:
         print_and_log("\nJsi nejlepším přihlášeným závodníkem v tomto závodě!")
         return
     MUJ_PRUMER = muj_prumer()
-    if MUJ_PRUMER == None:
+    if MUJ_PRUMER is None:
         return
     print_and_log(
-        f"\nNejlepší závodník {singular} v průměru v sezoně {sezona} o {(float(vysledky[0][-1])-MUJ_PRUMER):.2f}% lepší než ty.")
+        f"\nNejlepší závodník {singular} v průměru v sezoně {sezona} o {(float(vysledky[0][-1]) - MUJ_PRUMER):.2f}% lepší než ty.")
     lepsich_zavodniku = 0
     for record in vysledky:
         if record[1] != JMENO:
@@ -277,7 +276,7 @@ def print_and_log(action: str) -> None:
 
     # Zápis do logu
     with open(f"{FOLDER}/{LOGNAME}.html", "a", encoding="utf-8") as f:
-        if CREATE == True:
+        if CREATE:
             f.write(f'<meta charset="UTF-8">\n<pre>')
             CREATE = False
         f.write(f"{action}<br>")
@@ -294,7 +293,7 @@ def only_log(action: str) -> None:
 
     # Zápis do logu
     with open(f"{FOLDER}/{LOGNAME}.html", "a", encoding="utf-8") as f:
-        if CREATE == True:
+        if CREATE:
             f.write(f'<meta charset="UTF-8">\n<pre>')
             CREATE = False
         f.write(f"{action}<br>")
@@ -306,7 +305,6 @@ def vynuluj() -> None:
     vysledky = []
     jmena = []
     return
-
 
 
 def run() -> None:
