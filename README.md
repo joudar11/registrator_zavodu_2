@@ -18,7 +18,8 @@ Součástí je:
 ## 📦 Požadavky
 
 - Python 3.12.6
-- `playwright`
+- Git
+- Playwright
 - Běžící Proton Bridge (Lze upravit pro Gmail - viz historii úprav [zde](https://github.com/joudar11/registrator_zavodu_2/commit/97be62a061d772fd1411141ded62da301ff4a896))
 - Konfigurační soubor `data.py` s následujícím obsahem:
 
@@ -69,6 +70,7 @@ INTERVAL = 1800
 
 ### Prvotní instalace před spuštěním:
 ```bash
+git clone https://github.com/joudar11/registrator_zavodu_2
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
