@@ -181,7 +181,7 @@ def statistika(URL_z: str, rok: str) -> None:
             if name == JMENO:
                 SPAN_BEGIN = '<span style="background-color: orange;">'
                 SPAN_END = '</span>'
-            if rank == 1:
+            if (rank == 1) and (name != JMENO):
                 SPAN_BEGIN = '<span style="background-color: red;">'
                 SPAN_END = '</span>'
             if rank is None:
