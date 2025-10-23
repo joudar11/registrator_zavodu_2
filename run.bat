@@ -1,2 +1,3 @@
-python main.py
+cd \.venv\Scripts\
+python.exe main.py
 @PAUSE
