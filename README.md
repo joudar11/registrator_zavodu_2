@@ -75,6 +75,9 @@ EMAIL_PROVIDER = "PROTON"
 ## ▶️ Spuštění
 
 ### Prvotní instalace před spuštěním:
+
+Před tímto krokem je nutné mít nainstalovaný [Python](https://www.python.org/downloads/) a [Git](https://git-scm.com/install/).
+
 ```bash
 git clone https://github.com/joudar11/registrator_zavodu_2
 python -m venv .venv
