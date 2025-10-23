@@ -14,7 +14,7 @@ from data import (
 CREATE = True
 FOLDER = "logs"
 TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
-LOGNAME = f"log-KONKURENCE-{TIME}"
+LOGNAME = f"konkurence-{URL.split("/")[-1]}"
 KONZOLE = False
 FIRST_RUN = True
 HEADER_LEN = None
@@ -50,6 +50,16 @@ SELECTOR_DIVIZE_POHAR = f"#division-{DIVIZE_V_POHARU[DIVIZE]}-tab"
 jmena = []
 vysledky = []
 
+def smazat_log() -> None:
+    global FOLDER
+    global LOGNAME
+    filename = f"{LOGNAME}.html"
+    path = os.path.join(FOLDER, filename)
+    if os.path.isfile(path):
+        os.remove(path)
+        print(f"Soubor '{path}' byl smazán.")
+    return
+
 
 def print_konzole(content: str) -> None:
     if KONZOLE:
@@ -65,9 +75,12 @@ def statistika(URL_z: str, rok: str) -> None:
         page.goto(URL)
         print_and_log("")
         if FIRST_RUN:
-            print_konzole(f'Závod:  {page.title()} - {URL}')
-            only_log(f'Závod:  <a href="{URL}">{page.title()}</a>')
-            print_and_log(f"Divize: {DIVIZE}\n")
+            vytvoreno = datetime.now()
+            vytvoreno_f = vytvoreno.strftime("%d.%m.%Y %H:%M")
+            print_konzole(f'Závod:      {page.title()} - {URL}')
+            only_log(f'Závod:      <a href="{URL}">{page.title()}</a>')
+            print_and_log(f"Divize:     {DIVIZE}")
+            print_and_log(f"Vytvořeno:  {vytvoreno_f}\n")
         else:
             print_and_log("=" * HEADER_LEN)
             print_and_log("")
@@ -308,6 +321,7 @@ def vynuluj() -> None:
 
 
 def run() -> None:
+    smazat_log()
     global FIRST_RUN
     global jmena
     global vysledky
