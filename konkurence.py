@@ -9,6 +9,8 @@ from data import (
     JMENO, DIVIZE, URL, LOGIN, HESLO
 )
 
+CREATE = True
+FOLDER = "logs"
 
 TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -17,6 +19,7 @@ DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
 DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW"}
 
 DIVIZE = DIVIZE_KONVERZE[DIVIZE]
+
 
 today = date.today()
 datum_zari = date(today.year, 9, 1)
@@ -215,18 +218,21 @@ def porovnat(sezona: str) -> None:
 
 
 def print_and_log(action: str) -> None:
+    global CREATE
     """Zprávu předanou argumentem vytiskne do konzole a zároveň uloží na konec logu."""
     print(action)
-    folder = "logs"  # složka, kam se uloží log
     try:
-        os.makedirs(folder, exist_ok=True)
+        os.makedirs(FOLDER, exist_ok=True)
     except Exception as e:
-        print(f"❌ Nelze vytvořit složku {folder}:\n{e}")
+        print(f"❌ Nelze vytvořit složku {FOLDER}:\n{e}")
         return
 
     # Zápis do logu
-    with open(f"{folder}/log-KONKURENCE-{TIME}.txt", "a", encoding="utf-8") as f:
-        f.write(f"{action}\n")
+    with open(f"{FOLDER}/log-KONKURENCE-{TIME}.html", "a", encoding="utf-8") as f:
+        if CREATE == True:
+            f.write(f'<meta charset="UTF-8">\n<pre>')
+            CREATE = False
+        f.write(f"{action}<br>")
 
 
 if __name__ == "__main__":
@@ -251,6 +257,8 @@ if __name__ == "__main__":
         porovnat(POHAR3)
     except TypeError:
         pass
+    with open(f"{FOLDER}/log-KONKURENCE-{TIME}.html", "a", encoding="utf-8") as f:
+        f.write(f'</pre>')
     if input(f"\nPřeješ si registrovat? (Y/N): ") == "Y".lower():
         print("Spouštím registrační skript...")
         subprocess.Popen(["start", "cmd", "/k", "python main.py"], shell=True)
