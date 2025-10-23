@@ -1,6 +1,6 @@
 # Automatická registrace na LOS závod
 
-Vylepšený [skript](https://github.com/joudar11/registrator_zavodu), který automaticky provádí registraci na závod LOS Lex pomocí knihovny Playwright. Nevyžaduje žádné zadávání údajů v konzoli – vše si načítá z konfiguračního souboru `data.py`.
+Vylepšený skript, který automaticky provádí registraci na závod LOS Lex pomocí knihovny Playwright. Nevyžaduje žádné zadávání údajů v konzoli – vše si načítá z konfiguračního souboru `data.py`.
 
 Součástí je:
 - Časovaná registrace s přesností na sekundy.
