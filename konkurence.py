@@ -176,11 +176,14 @@ def statistika(URL_z: str, rok: str) -> None:
         
 
         for rank, name, pct, races, avg in vysledky:
-            SPAN_BEGIN = '<span style="background-color: orange;">'
-            SPAN_END = '</span>'
-            if name != JMENO:
-                SPAN_BEGIN = ""
-                SPAN_END = ""
+            SPAN_BEGIN = ''
+            SPAN_END = ''
+            if name == JMENO:
+                SPAN_BEGIN = '<span style="background-color: orange;">'
+                SPAN_END = '</span>'
+            if rank == 1:
+                SPAN_BEGIN = '<span style="background-color: red;">'
+                SPAN_END = '</span>'
             if rank is None:
                 print(
                     f"{
