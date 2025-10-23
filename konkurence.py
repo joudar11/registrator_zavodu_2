@@ -53,8 +53,10 @@ def statistika(URL_z: str, rok: str) -> None:
         page = browser.new_page()
         page.goto(URL)
         print_and_log("")
-        print_and_log(f"Závod:  {page.title()} {URL}")
-        print_and_log(f"Pohár:  {rok} - {URL_z}")
+        print(f'Závod:  {page.title()} - {URL}')
+        only_log(f'Závod:  <a href="{URL}">{page.title()}</a>')
+        print(f"Pohár:  {rok} - {URL_z}")
+        only_log(f'Pohár:  <a href="{URL_z}">{rok}</a>')
         print_and_log(f"Divize: {DIVIZE}")
         print_and_log("")
 
@@ -171,25 +173,46 @@ def statistika(URL_z: str, rok: str) -> None:
         print_and_log(header)
         print_and_log("-" * len(header))
 
+        
+
         for rank, name, pct, races, avg in vysledky:
+            SPAN_BEGIN = '<span style="background-color: orange;">'
+            SPAN_END = '</span>'
+            if name != JMENO:
+                SPAN_BEGIN = ""
+                SPAN_END = ""
             if rank is None:
-                print_and_log(
+                print(
                     f"{
                         '–':>8} | {
                         name:<35} | {
                         '–':>10} | {
                         races:>7} | {
                         '–':>9}")
+                only_log(
+                    f"{SPAN_BEGIN}{
+                        '–':>8} | {
+                        name:<35} | {
+                        '–':>10} | {
+                        races:>7} | {
+                        '–':>9}{SPAN_END}")
             else:
                 pct_out = f"{pct:.2f}%" if pct is not None else "–"
                 avg_out = f"{avg:.2f}%" if avg is not None else "–"
-                print_and_log(
+                print(
                     f"{
                         rank:>8} | {
                         name:<35} | {
                         pct_out:>10} | {
                         races:>7} | {
                         avg_out:>9}")
+                only_log(
+                    f"{SPAN_BEGIN}{
+                        rank:>8} | {
+                        name:<35} | {
+                        pct_out:>10} | {
+                        races:>7} | {
+                        avg_out:>9}{SPAN_END}")
         browser.close()
 
 
@@ -236,7 +259,26 @@ def print_and_log(action: str) -> None:
         f.write(f"{action}<br>")
 
 
-if __name__ == "__main__":
+def only_log(action: str) -> None:
+    global CREATE
+    """Zprávu předanou argumentem uloží na konec logu."""
+    try:
+        os.makedirs(FOLDER, exist_ok=True)
+    except Exception as e:
+        print(f"❌ Nelze vytvořit složku {FOLDER}:\n{e}")
+        return
+
+    # Zápis do logu
+    with open(f"{FOLDER}/{LOGNAME}.html", "a", encoding="utf-8") as f:
+        if CREATE == True:
+            f.write(f'<meta charset="UTF-8">\n<pre>')
+            CREATE = False
+        f.write(f"{action}<br>")
+
+
+def run() -> None:
+    global jmena
+    global vysledky
     statistika(URL_CUP3, POHAR1)
     try:
         porovnat(POHAR1)
@@ -263,3 +305,7 @@ if __name__ == "__main__":
     if input(f"\nPřeješ si registrovat? (Y/N): ") == "Y".lower():
         print("Spouštím registrační skript...")
         subprocess.Popen(["start", "cmd", "/k", "python main.py"], shell=True)
+
+
+if __name__ == "__main__":
+    run()
