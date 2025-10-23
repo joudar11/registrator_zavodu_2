@@ -5,12 +5,13 @@ from datetime import datetime, date
 import subprocess
 from data import (
     JMENO, DIVIZE, URL, LOGIN, HESLO
-    )
+)
 
 
 TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
 
-DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi", "PDW": "PDW"}  # Převod z divize DATA na tento skript
+DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
+                   "PDW": "PDW"}  # Převod z divize DATA na tento skript
 DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW"}
 
 DIVIZE = DIVIZE_KONVERZE[DIVIZE]
@@ -19,13 +20,13 @@ today = date.today()
 datum_zari = date(today.year, 9, 1)
 
 if today >= datum_zari:
-    POHAR1 = int(datetime.now().year)+1
+    POHAR1 = int(datetime.now().year) + 1
 else:
     POHAR1 = int(datetime.now().year)
 
 
-POHAR2 = POHAR1-1
-POHAR3 = POHAR1-2
+POHAR2 = POHAR1 - 1
+POHAR3 = POHAR1 - 2
 
 URL_CUP1 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024}"
 URL_CUP2 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024 + 1}"
@@ -151,7 +152,8 @@ def statistika(URL_z: str, rok: str) -> None:
             vysledky.append((rank, name, pct, race_count, avg))
 
         # seřazení od nejlepšího
-        vysledky.sort(key=lambda x: (x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
+        vysledky.sort(key=lambda x: (
+            x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
 
         # výpis
         header = f"{
@@ -205,7 +207,9 @@ def porovnat(sezona: str) -> None:
             lepsich_zavodniku += 1
         else:
             break
-    print_and_log(f"V závodě je přihlášeno {lepsich_zavodniku} závodníků kteří v sezoně {sezona} měli lepší průměrné výsledky než ty.")
+    print_and_log(
+        f"V závodě je přihlášeno {lepsich_zavodniku} závodníků kteří v sezoně {sezona} měli lepší průměrné výsledky než ty.")
+
 
 def print_and_log(action: str) -> None:
     """Zprávu předanou argumentem vytiskne do konzole a zároveň uloží na konec logu."""
@@ -221,6 +225,7 @@ def print_and_log(action: str) -> None:
     with open(f"{folder}/log-KONKURENCE-{TIME}.txt", "a", encoding="utf-8") as f:
         f.write(f"{action}\n")
 
+
 if __name__ == "__main__":
     statistika(URL_CUP3, POHAR1)
     try:
@@ -228,16 +233,16 @@ if __name__ == "__main__":
     except TypeError:
         pass
     print_and_log(f"\n\n\n\n")
-    jmena=[]
-    vysledky=[]
-    statistika(URL_CUP2,POHAR2)
+    jmena = []
+    vysledky = []
+    statistika(URL_CUP2, POHAR2)
     try:
         porovnat(POHAR2)
     except TypeError:
         pass
     print_and_log(f"\n\n\n\n")
-    jmena=[]
-    vysledky=[]
+    jmena = []
+    vysledky = []
     statistika(URL_CUP1, POHAR3)
     try:
         porovnat(POHAR3)
