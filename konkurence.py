@@ -77,15 +77,15 @@ def statistika(URL_z: str, rok: str) -> None:
         if FIRST_RUN:
             vytvoreno = datetime.now()
             vytvoreno_f = vytvoreno.strftime("%d.%m.%Y %H:%M")
-            print_konzole(f'Závod:      {page.title()} - {URL}')
-            only_log(f'Závod:      <a href="{URL}">{page.title()}</a>')
-            print_and_log(f"Divize:     {DIVIZE}")
-            print_and_log(f"Vytvořeno:  {vytvoreno_f}\n")
+            print_konzole(f'{'Závod:':<14}{page.title()} - {URL}')
+            only_log(f'{'Závod:':<14}<a href="{URL}">{page.title()}</a>')
+            print_and_log(f"{'Divize:':<14}{DIVIZE}")
+            print_and_log(f"{'Vytvořeno:':<14}{vytvoreno_f}\n")
         else:
             print_and_log("=" * HEADER_LEN)
             print_and_log("")
-        print_konzole(f"Pohár:  {rok} - {URL_z}")
-        only_log(f'Pohár:  <a href="{URL_z}">{rok}</a>')
+        print_konzole(f"{'Pohrát:':<14}{rok} - {URL_z}")
+        only_log(f'{'Pohár:':<14}<a href="{URL_z}">{rok}</a>')
         print_and_log("")
 
         page.click(SELECTOR_LOGIN_FORM)
