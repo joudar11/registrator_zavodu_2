@@ -14,7 +14,7 @@ from data import (
     JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL,
     LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD,
     EMAIL_P, EMAIL_U, MZ, ZACATECNIK, STAVITEL,
-    ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE, RANDOM_WAIT
+    ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE, RANDOM_WAIT, EMAIL_PROVIDER
 )
 import vytvor_ics
 
@@ -35,6 +35,8 @@ DIVIZE_local = DIVIZE
 # Převedení int squadu na str a proměnnou v této funkci pro pozdější použití a změny
 SQUAD_local = str(SQUAD)
 POKUS_TIME = None  # Čas zahájení pokusu o registraci (pro název log souboru)
+
+EMAIL_PROVIDERS = ("PROTON", "GMAIL")
 
 # Selectory pro login
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
@@ -184,8 +186,6 @@ def registrace(pokus: int) -> bool:
             if int((cas_registrace - datetime.now()).total_seconds() // 60) > 60:
                 try:
                     informuj_o_zacatku()
-                    print_and_log(
-                        "✅ Odeslal jsem notifikační email o tom, že skript byl spuštěn.")
                 except Exception as e:
                     print_and_log(
                         "❌ Nepodařilo se odeslat zahajovací email. Pokračuji.")
@@ -434,10 +434,8 @@ Datum závodu: {datum_zavodu}
                                filename="zavod.ics", disposition="attachment", params={"method": "REQUEST"})
 
     # Odeslání e-mailu
-    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
-        smtp.login(EMAIL_U, EMAIL_P)
-        smtp.send_message(msg)
-    print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
+    if odeslat(msg):
+        print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
 
 def posli_error(pokusy: int) -> None:
@@ -462,10 +460,8 @@ def posli_error(pokusy: int) -> None:
                            subtype="plain", filename=f"Registrace LOG.txt")
 
     # Odeslání e-mailu
-    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
-        smtp.login(EMAIL_U, EMAIL_P)
-        smtp.send_message(msg)
-    print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
+    if odeslat(msg):
+        print_and_log(f"✅ Shrnutí odesláno na {LOGIN}.")
 
 
 def informuj_pritelkyni() -> None:
@@ -479,10 +475,8 @@ def informuj_pritelkyni() -> None:
 
     # Odeslání e-mailu
 
-    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
-        smtp.login(EMAIL_U, EMAIL_P)
-        smtp.send_message(msg)
-    print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
+    if odeslat(msg):
+        print_and_log(f"✅ {JMENO_PRITELKYNE} informována.")
 
 
 def informuj_o_zacatku() -> None:
@@ -496,9 +490,9 @@ def informuj_o_zacatku() -> None:
 
     # Odeslání e-mailu
 
-    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
-        smtp.login(EMAIL_U, EMAIL_P)
-        smtp.send_message(msg)
+    if odeslat(msg):
+        print_and_log(
+                        "✅ Odeslal jsem notifikační email o tom, že skript byl spuštěn.")
 
 
 def stale_bezi() -> None:
@@ -512,9 +506,25 @@ def stale_bezi() -> None:
 
     # Odeslání e-mailu
 
-    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
-        smtp.login(EMAIL_U, EMAIL_P)
-        smtp.send_message(msg)
+    odeslat(msg)
+
+
+def odeslat(msg: str) -> bool:
+    if EMAIL_PROVIDER not in EMAIL_PROVIDERS:
+        print_and_log(f"❌ Poskytovatel emailových služeb {EMAIL_PROVIDER} není implementován. Email nebyl odeslán.")
+        return False
+    if EMAIL_PROVIDER == "PROTON":
+        with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+            smtp.login(EMAIL_U, EMAIL_P)
+            smtp.send_message(msg)
+        return True
+    elif EMAIL_PROVIDER == "GMAIL":
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(EMAIL_U, EMAIL_P)
+            smtp.send_message(msg)
+        return True
+    else:
+        return False
 
 
 def run():

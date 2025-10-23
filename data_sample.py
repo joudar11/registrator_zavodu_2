@@ -38,3 +38,5 @@ RANDOM_WAIT = False
 # Zda má skript před odesláním registrace čekat náhodný počet sekund mezi 2 a 3, aby registrace vypadala věrohodněji
 INTERVAL = 1800
 # V jakém intervalu v sekundách se má kontrolovat volné místo na plném závodě (v plny_zavod.py)
+EMAIL_PROVIDER = "PROTON"
+# Poskytovatel emailových služeb. Možnosti jsou buď "PROTON" (S nainstalovaným Proton Bridge) nebo "GMAIL" (S specifickým Google apps password)
