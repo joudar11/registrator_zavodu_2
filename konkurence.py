@@ -199,12 +199,8 @@ def porovnat(sezona: str) -> None:
         print_and_log("\nJsi nejlepším přihlášeným závodníkem v tomto závodě!")
         return
     MUJ_PRUMER = muj_prumer()
-    if vysledky[0][-1] < MUJ_PRUMER:
-        porovnani = "horší"
-    else:
-        porovnani = "lepší"
     print_and_log(
-        f"\nNejlepší závodník v tomto závodě ({vysledky[0][1]} - {vysledky[0][-1]}%) je v průměru v sezoně {sezona} {porovnani} než ty ({MUJ_PRUMER}%)!\n")
+        f"\nNejlepší závodník v tomto závodě ({vysledky[0][1]} - {vysledky[0][-1]}%) je v průměru v sezoně {sezona} lepší než ty ({MUJ_PRUMER}%)!\n")
     lepsich_zavodniku = 0
     for record in vysledky:
         if record[1] != JMENO:
@@ -212,7 +208,7 @@ def porovnat(sezona: str) -> None:
         else:
             break
     print_and_log(
-        f"V závodě je přihlášeno {lepsich_zavodniku} závodníků kteří v sezoně {sezona} měli lepší průměrné výsledky než ty.")
+        f"Závodníků kteří v sezoně {sezona} měli lepší průměrné výsledky než ty: {lepsich_zavodniku}")
 
 
 def print_and_log(action: str) -> None:
