@@ -76,6 +76,7 @@ EMAIL_PROVIDER = "PROTON"
 
 ### Prvotní instalace před spuštěním:
 ```bash
+git clone https://github.com/joudar11/registrator_zavodu_2
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
