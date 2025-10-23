@@ -14,6 +14,8 @@ DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
                    "PDW": "PDW"}  # Převod z divize DATA na tento skript
 DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW"}
 
+JMENO = "Jan Čech"
+
 DIVIZE = DIVIZE_KONVERZE[DIVIZE]
 
 today = date.today()
@@ -194,6 +196,9 @@ def muj_prumer() -> float:
 
 
 def porovnat(sezona: str) -> None:
+    if vysledky[0][1] == JMENO:
+        print_and_log("\nJsi nejlepším přihlášeným závodníkem v tomto závodě!")
+        return
     MUJ_PRUMER = muj_prumer()
     if vysledky[0][-1] < MUJ_PRUMER:
         porovnani = "horší"
@@ -232,7 +237,7 @@ if __name__ == "__main__":
         porovnat(POHAR1)
     except TypeError:
         pass
-    print_and_log(f"\n\n\n\n")
+    print_and_log(f"\n\n\n")
     jmena = []
     vysledky = []
     statistika(URL_CUP2, POHAR2)
@@ -240,7 +245,7 @@ if __name__ == "__main__":
         porovnat(POHAR2)
     except TypeError:
         pass
-    print_and_log(f"\n\n\n\n")
+    print_and_log(f"\n\n\n")
     jmena = []
     vysledky = []
     statistika(URL_CUP1, POHAR3)
