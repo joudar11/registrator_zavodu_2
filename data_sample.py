@@ -18,10 +18,10 @@ DATUM_CAS_REGISTRACE = "2025-06-15 20:00:00"
 # Datum otevření registrace. Formát musí být RRRR-MM-DD HH:MM:SS
 SQUAD = 1
 # Číslo squadu, nebo r (v uvozovkách pro squad ROZHODČÍ)
-EMAIL_P = "tajneheslo123"
+EMAIL_P = "tajne-EMAILOVE-heslo123"
 # Proton Bridge nebo Gmail heslo pro SMTP
 EMAIL_U = "jan.novak@pm.me"
-# Proton Bridge nebo Gmail username odesílatele
+# Proton Bridge nebo Gmail username odesílatele ve formátu emailové adresy
 MZ = False
 # Mimo závod
 ZACATECNIK = False
