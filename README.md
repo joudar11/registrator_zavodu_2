@@ -11,7 +11,7 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 - Automatické opakování registrace při selhání (max. 25 pokusů - lze změnit v proměnné "LIMIT" v main.py)
 - Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo a následně registraci může upravit.
 - Pokud je zvolený squad plný, skript automaticky zkusí zvolit první volný squad v rozsahu 1 - 100.
-- Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru - skript je možno nechat běžet bez dohledu a neselže-
+- Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru - skript je možno nechat běžet bez dohledu a neselže.
 ### Registrace na plný závod (plny_zavod.py)
 - Pokud závodník prosral začátek registrace a závod je plný, lze spustit soubor plny_zavod.py, který každých 30 minut kontroluje obsazenost a v případě volného místa spouští registrační skript.
 ### Analýza konkurence (konkurence.py)
@@ -28,7 +28,7 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 
 - Python 3.12.6
 - playwright
-- Běžící Proton Bridge nebo Gmail účet s aktivní App Password (lze nastavit [zde](https://myaccount.google.com/apppasswords)) 
+- Běžící Proton Bridge nebo Gmail účet se specifickým Google App Password (lze nastavit [zde](https://myaccount.google.com/apppasswords)) 
 - Konfigurační soubor `data.py` s následujícím obsahem:
 
 ```python
