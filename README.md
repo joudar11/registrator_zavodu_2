@@ -97,7 +97,7 @@ pip install -r requirements.txt
 playwright install
 ```
 ### Následně:
-### Vytvoření konfigurace:
+#### Vytvoření konfigurace:
 Přejmenuj soubor <code>data_sample.py</code> na <code>data.py</code> a vyplň ho.
 #### Pokud registrace ještě nezačala:
 spustit soubor <code>run.bat</code> (doporučeno)<br>
