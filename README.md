@@ -2,18 +2,23 @@
 
 Vylepšený skript, který automaticky provádí registraci na závod LOS Lex pomocí knihovny Playwright. Nevyžaduje žádné zadávání údajů v konzoli – vše si načítá z konfiguračního souboru `data.py`.
 
-Součástí je:
-- Časovaná registrace s přesností na sekundy.
-- Automatické přihlášení do systému.
-- Odeslání potvrzovacího e-mailu s .ics událostí.
+## Součástí je:
+### Časovaná registrace
+- Automatické přihlášení do systému
+- Odeslání potvrzovacího e-mailu s .ics událostí
 - Notifikace přítelkyni ❤️.
 - Logování do souboru.
 - Automatické opakování registrace při selhání (max. 25 pokusů - lze změnit v proměnné "LIMIT" v main.py).
 - Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo a následně registraci může upravit.
 - Pokud je zvolený squad plný, skript automaticky zkusí zvolit první volný squad v rozsahu 1 - 100.
-- Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru.
+- Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru - skript je možno nechat běžet bez dohledu a neselže-
+### Registrace na plný závod
 - Pokud závodník prosral začátek registrace a závod je plný, lze spustit soubor plny_zavod.py, který každých 30 minut kontroluje obsazenost a v případě volného místa spouští registrační skript.
-- Pokud si závodník chce vyjet konkurenci, lze spustit skript konkurence.py. Následně mu vytvořen a otevřen .html přehled závodníků, kteří jsou na nadcházející závod registrováni ve stejné divizi. Tito jsou seřazeni dle jejich průměrné procentuální úspěšnosti v poháru. Závodník je vyznačen oranžově, první příčka poháru červeně. Data si skript bere vždy z aktuálního poháru a vypisuje ještě 2 předešlé poháry. 
+### Analýza konkurence
+- Pokud si závodník chce vyjet konkurenci, lze spustit skript konkurence.py. Následně mu vytvořen a otevřen .html přehled závodníků, kteří jsou na nadcházející závod registrováni ve stejné divizi. Tito jsou seřazeni dle jejich průměrné procentuální úspěšnosti v poháru. Závodník je vyznačen oranžově, první příčka poháru červeně. Data si skript bere vždy z aktuálního poháru a vypisuje ještě 2 předešlé poháry.
+- Výstupem je .html přehled v následující podobě:
+- <img width="603" height="982" alt="image" src="https://github.com/user-attachments/assets/9b7ce5ee-b2d7-4b22-b55f-ae865bd2d88f" />
+
 
 ## 📦 Požadavky
 
