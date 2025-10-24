@@ -3,7 +3,7 @@
 Vylepšený skript, který automaticky provádí registraci na závod LOS Lex pomocí knihovny Playwright. Nevyžaduje žádné zadávání údajů v konzoli – vše si načítá z konfiguračního souboru `data.py`.
 
 ## Součástí je:
-### Časovaná registrace
+### Časovaná registrace (main.py)
 - Automatické přihlášení do systému
 - Odeslání potvrzovacího e-mailu s .ics událostí
 - Notifikace přítelkyni ❤️
@@ -12,9 +12,9 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 - Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo a následně registraci může upravit.
 - Pokud je zvolený squad plný, skript automaticky zkusí zvolit první volný squad v rozsahu 1 - 100.
 - Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru - skript je možno nechat běžet bez dohledu a neselže-
-### Registrace na plný závod
+### Registrace na plný závod (plny_zavod.py)
 - Pokud závodník prosral začátek registrace a závod je plný, lze spustit soubor plny_zavod.py, který každých 30 minut kontroluje obsazenost a v případě volného místa spouští registrační skript.
-### Analýza konkurence
+### Analýza konkurence (konkurence.py)
 - Pokud si závodník chce vyjet konkurenci a zhodnotit svoje šance na úspěch, lze spustit skript konkurence.py.
 - Skript vytváří a rovnou otevírá .html přehled závodníků, kteří jsou na zvolený závod registrováni ve stejné divizi.
 - - Tito jsou seřazeni dle jejich průměrné procentuální úspěšnosti v poháru (Celkový součet procentních výsledků VŠECH závodů děleno počet těchto závodů - skript bere v potaz i závody, které se závodníkovi do poháru nepočítají, neboť jsou přes limit počítaných závodů).
