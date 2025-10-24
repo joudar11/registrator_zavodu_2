@@ -90,6 +90,7 @@ Před tímto krokem je nutné mít nainstalovaný [Python](https://www.python.or
 ```bash
 cd C:\User\Jan-Novak\Documents\Slozka_kde_chci_mit_registrator
 git clone https://github.com/joudar11/registrator_zavodu_2
+cd ./registrator_zavodu_2
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
