@@ -100,16 +100,19 @@ playwright install
 ```bash
 python main.py
 ```
+nebo spustit soubor run.bat
 
 #### Pokud registrace běží, ale závod je plný:
 ```bash
 python plny_zavod.py
 ```
+nebo spustit soubor plny_zavod.bat
 
 #### Pokud závod ještě nebyl vyhlášen, registrace už je spuštěna a závodník chce analýzu konkurence:
 ```bash
 python konkurence.py
 ```
+nebo spustit soubor konkurence.bat
 (Tato funkcionalita podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude implementována.)
 
 ### Funkce skriptu
