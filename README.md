@@ -106,7 +106,7 @@ nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
 .venv\Scripts\Activate.ps1
 python main.py
 ```
-Pokud pracuješ v okně, de jsi prováděl instalaci, stačí:
+Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
 ```bash
 python main.py
 ```
@@ -117,7 +117,7 @@ nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
 .venv\Scripts\Activate.ps1
 python plny_zavod.py
 ```
-Pokud pracuješ v okně, de jsi prováděl instalaci, stačí:
+Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
 ```bash
 python plny_zavod.py
 ```
@@ -128,7 +128,7 @@ nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
 .venv\Scripts\Activate.ps1
 python konkurence.py
 ```
-Pokud pracuješ v okně, de jsi prováděl instalaci, stačí:
+Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
 ```bash
 python konkurence.py
 ```
