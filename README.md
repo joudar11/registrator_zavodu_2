@@ -20,8 +20,7 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 - - Tito jsou seřazeni dle jejich průměrné procentuální úspěšnosti v poháru (Celkový součet procentních výsledků VŠECH závodů děleno počet těchto závodů - skript bere v potaz i závody, které se závodníkovi do poháru nepočítají, neboť jsou přes limit počítaných závodů).
 - Závodník je vyznačen oranžově, konkurenční závodník, který je na prvním místě poháru, je vyznačen červeně.
 - Data si skript bere vždy z aktuálního poháru a vypisuje ještě 2 předešlé poháry.
-- Výstupem je .html přehled v následující podobě:
-- <img width="603" height="982" alt="image" src="https://github.com/user-attachments/assets/9b7ce5ee-b2d7-4b22-b55f-ae865bd2d88f" />
+- Výstupem je .html přehled. Vzor je v souboru konkurence_sample.html.
 
 
 ## 📦 Požadavky
