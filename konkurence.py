@@ -4,6 +4,7 @@ from datetime import datetime, date
 import subprocess
 import webbrowser
 from pathlib import Path
+import sys
 
 from playwright.sync_api import sync_playwright
 
@@ -11,10 +12,15 @@ from data import (
     JMENO, DIVIZE, URL, LOGIN, HESLO
 )
 
+if len(sys.argv) == 4:
+    JMENO = sys.argv[1]
+    DIVIZE = sys.argv[2]
+    URL = sys.argv[3]
+
 CREATE = True
 FOLDER = "konkurence"
 TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
-LOGNAME = f"konkurence-{URL.split("/")[-1]}"
+LOGNAME = f"konkurence-{URL.split("/")[-1]}-{JMENO}"
 KONZOLE = False
 FIRST_RUN = True
 HEADER_LEN = None
