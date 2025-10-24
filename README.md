@@ -132,6 +132,7 @@ Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
 ```bash
 python konkurence.py
 ```
+Je možné spustit s argumenty JMÉNO DIVIZE URL pro přepsání dat o závodě a závodníkovi v souboru <code>data.py</code>.
 (Tato funkcionalita podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude implementována.)
 
 ### Aktualizace na poslední verzi
