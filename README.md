@@ -99,7 +99,7 @@ pip install -r requirements.txt
 playwright install
 if exist data_sample.py ren data_sample.py data.py
 ```
-### Následně:
+### 🏁 Použití po instalaci:
 #### Vytvoření konfigurace:
 Přejmenuj soubor <code>data_sample.py</code> na <code>data.py</code> (toto automaticky dělá instalační skript <code>install.bat</code>) a vyplň ho.
 #### Pokud registrace ještě nezačala:
