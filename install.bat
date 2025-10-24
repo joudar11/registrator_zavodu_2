@@ -6,3 +6,4 @@ set VIRTUAL_ENV_DISABLE_PROMPT=
 call .venv\Scripts\activate.bat
 pip install -r requirements.txt
 playwright install
+if exist data_sample.py ren data_sample.py data.py
