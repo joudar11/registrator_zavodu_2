@@ -376,9 +376,9 @@ def run() -> None:
     with open(f"{FOLDER}/{LOGNAME}.html", "a", encoding="utf-8") as f:
         f.write(f'</pre>')
     webbrowser.open(Path(f"{FOLDER}/{LOGNAME}.html").resolve().as_uri())
-    if input(f"\nPřeješ si registrovat? (Y/N): ") == "Y".lower():
-        print("Spouštím registrační skript...")
-        subprocess.Popen(["start", "cmd", "/k", "python main.py"], shell=True)
+#    if input(f"\nPřeješ si registrovat? (Y/N): ") == "Y".lower():
+#        print("Spouštím registrační skript...")
+#        subprocess.Popen(["start", "cmd", "/k", "python main.py"], shell=True)
 
 
 if __name__ == "__main__":
