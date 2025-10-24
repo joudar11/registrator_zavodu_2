@@ -6,16 +6,20 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 ### Časovaná registrace
 - Automatické přihlášení do systému
 - Odeslání potvrzovacího e-mailu s .ics událostí
-- Notifikace přítelkyni ❤️.
-- Logování do souboru.
-- Automatické opakování registrace při selhání (max. 25 pokusů - lze změnit v proměnné "LIMIT" v main.py).
+- Notifikace přítelkyni ❤️
+- Logování do souboru
+- Automatické opakování registrace při selhání (max. 25 pokusů - lze změnit v proměnné "LIMIT" v main.py)
 - Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo a následně registraci může upravit.
 - Pokud je zvolený squad plný, skript automaticky zkusí zvolit první volný squad v rozsahu 1 - 100.
 - Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru - skript je možno nechat běžet bez dohledu a neselže-
 ### Registrace na plný závod
 - Pokud závodník prosral začátek registrace a závod je plný, lze spustit soubor plny_zavod.py, který každých 30 minut kontroluje obsazenost a v případě volného místa spouští registrační skript.
 ### Analýza konkurence
-- Pokud si závodník chce vyjet konkurenci, lze spustit skript konkurence.py. Následně mu vytvořen a otevřen .html přehled závodníků, kteří jsou na nadcházející závod registrováni ve stejné divizi. Tito jsou seřazeni dle jejich průměrné procentuální úspěšnosti v poháru. Závodník je vyznačen oranžově, první příčka poháru červeně. Data si skript bere vždy z aktuálního poháru a vypisuje ještě 2 předešlé poháry.
+- Pokud si závodník chce vyjet konkurenci a zhodnotit svoje šance na úspěch, lze spustit skript konkurence.py.
+- Skript vytváří a rovnou otevírá .html přehled závodníků, kteří jsou na zvolený závod registrováni ve stejné divizi.
+- - Tito jsou seřazeni dle jejich průměrné procentuální úspěšnosti v poháru (Celkový součet procentních výsledků VŠECH závodů děleno počet těchto závodů - skript bere v potaz i závody, které se závodníkovi do poháru nepočítají, neboť jsou přes limit počítaných závodů).
+- Závodník je vyznačen oranžově, konkurenční závodník, který je na prvním místě poháru, je vyznačen červeně.
+- Data si skript bere vždy z aktuálního poháru a vypisuje ještě 2 předešlé poháry.
 - Výstupem je .html přehled v následující podobě:
 - <img width="603" height="982" alt="image" src="https://github.com/user-attachments/assets/9b7ce5ee-b2d7-4b22-b55f-ae865bd2d88f" />
 
