@@ -88,6 +88,7 @@ EMAIL_PROVIDER = "PROTON"
 Před tímto krokem je nutné mít nainstalovaný [Python](https://www.python.org/downloads/) a [Git](https://git-scm.com/install/).
 
 ```bash
+cd C:\User\Jan-Novak\Documents\Slozka_kde_chci_mit_registrator
 git clone https://github.com/joudar11/registrator_zavodu_2
 python -m venv .venv
 .venv\Scripts\Activate.ps1
