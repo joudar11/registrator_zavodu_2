@@ -182,10 +182,10 @@ def vypis():
         SPAN_BEGIN = ''
         SPAN_END = ''
         if name == JMENO:
-            SPAN_BEGIN = '<span style="background-color: orange;">'
+            SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
             SPAN_END = '</span>'
         if (rank == 1) and (name != JMENO):
-            SPAN_BEGIN = '<span style="background-color: red;">'
+            SPAN_BEGIN = '<span style="background-color: #fab1a0;">'
             SPAN_END = '</span>'
         if rank is None:
             print_konzole(
