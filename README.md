@@ -116,19 +116,7 @@ python konkurence.py
 ```
 (Tato funkcionalita podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude implementována.)
 
-### Funkce skriptu
-
-- Načte stránku závodu
-- Přihlásí se do systému v určený čas
-- Automaticky vyplní registrační formulář
-- Pokud zvolená divize neexistuje, zvolí první možnou dostupnou
-- Pokud zvolený squad neexistuje, zvolí první dostupný
-- Zaznamená každý pokus do textového logu (adresář logs/)
-- Opakuje registraci až 25× v případě selhání
-- Ověří přesměrování na stránku úspěšné registrace
-- Odešle potvrzení na email
-- Informuje přítelkyni, že jedeš střílet 😎❤️ (Pošle jí na email datum závodu a název.)
-
-## 📧 Notifikace
-
-Skript používá `smtplib` pro odesílání přes SMTP (Proton Bridge).
+### Aktualizace na poslední verzi
+```bash
+git clone https://github.com/joudar11/registrator_zavodu_2
+```
