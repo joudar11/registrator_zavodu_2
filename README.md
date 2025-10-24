@@ -97,22 +97,38 @@ pip install -r requirements.txt
 playwright install
 ```
 ### Následně:
-
+### Vytvoření konfigurace:
+Přejmenuj soubor <code>data_sample.py</code> na <code>data.py</code> a vyplň ho.
 #### Pokud registrace ještě nezačala:
 spustit soubor <code>run.bat</code> (doporučeno)<br>
-nebo
+nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
+```bash
+.venv\Scripts\Activate.ps1
+python main.py
+```
+Pokud pracuješ v okně, de jsi prováděl instalaci, stačí:
 ```bash
 python main.py
 ```
 #### Pokud registrace běží, ale závod je plný:
 spustit soubor <code>plny_zavod.bat</code> (doporučeno)<br>
-nebo
+nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
+```bash
+.venv\Scripts\Activate.ps1
+python plny_zavod.py
+```
+Pokud pracuješ v okně, de jsi prováděl instalaci, stačí:
 ```bash
 python plny_zavod.py
 ```
 #### Pokud závod ještě nebyl vyhlášen, registrace už je spuštěna a závodník chce analýzu konkurence:
 spustit soubor <code>konkurence.bat</code> (doporučeno)<br>
-nebo
+nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
+```bash
+.venv\Scripts\Activate.ps1
+python konkurence.py
+```
+Pokud pracuješ v okně, de jsi prováděl instalaci, stačí:
 ```bash
 python konkurence.py
 ```
