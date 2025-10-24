@@ -136,5 +136,7 @@ python konkurence.py
 
 ### Aktualizace na poslední verzi
 ```bash
+git fetch --all
+git reset --hard HEAD
 git pull
 ```
