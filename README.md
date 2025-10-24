@@ -88,17 +88,19 @@ EMAIL_PROVIDER = "PROTON"
 Před tímto krokem je nutné mít nainstalovaný [Python](https://www.python.org/downloads/) a [Git](https://git-scm.com/install/).
 
 ```bash
-cd C:\User\Jan-Novak\Documents\Slozka_kde_chci_mit_registrator
+cd %appdata%
 git clone https://github.com/joudar11/registrator_zavodu_2
 cd ./registrator_zavodu_2
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+set VIRTUAL_ENV_DISABLE_PROMPT=
+call .venv\Scripts\activate.bat
 pip install -r requirements.txt
 playwright install
+if exist data_sample.py ren data_sample.py data.py
 ```
 ### Následně:
 #### Vytvoření konfigurace:
-Přejmenuj soubor <code>data_sample.py</code> na <code>data.py</code> a vyplň ho.
+Přejmenuj soubor <code>data_sample.py</code> na <code>data.py</code> (toto automaticky dělá instalační skript <code>install.bat</code>) a vyplň ho.
 #### Pokud registrace ještě nezačala:
 spustit soubor <code>run.bat</code> (doporučeno)<br>
 nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
