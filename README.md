@@ -84,8 +84,9 @@ EMAIL_PROVIDER = "PROTON"
 
 ### Prvotní instalace před spuštěním:
 
-Před tímto krokem je nutné mít nainstalovaný [Python](https://www.python.org/downloads/) a [Git](https://git-scm.com/install/).
-
+Před tímto krokem je nutné mít nainstalovaný [Python](https://www.python.org/downloads/) a [Git](https://git-scm.com/install/).<br>
+Spusť v příkazovém řádku následující příkazy, nebo si stáhni a spusť <code>install.bat</code>.<br>
+Registrátor se ti nainstaluje do <code>C:\Users\TVUJ_USERNAME\AppData\Roaming</code>
 ```bash
 cd %appdata%
 git clone https://github.com/joudar11/registrator_zavodu_2
