@@ -118,5 +118,5 @@ python konkurence.py
 
 ### Aktualizace na poslední verzi
 ```bash
-git clone https://github.com/joudar11/registrator_zavodu_2
+git pull
 ```
