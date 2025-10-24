@@ -38,9 +38,9 @@ else:
 POHAR2 = POHAR1 - 1
 POHAR3 = POHAR1 - 2
 
-URL_CUP1 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024}"
+URL_CUP3 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024}"
 URL_CUP2 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024 + 1}"
-URL_CUP3 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024 + 2}"
+URL_CUP1 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024 + 2}"
 SELECTOR_LOGIN_FORM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"
 SELECTOR_LOGIN_BUTTON = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\:px-0.z-2000 > div.mb-6.bg-white.dark\:bg-gray-800.rounded-lg.overflow-hidden.shadow-xl.transform.transition-all.sm\:w-full.sm\:max-w-md.sm\:mx-auto > div > form > div.flex.items-center.justify-end.mt-4 > button"
 SELECTOR_USER = r"#login"
@@ -49,6 +49,7 @@ SELECTOR_DIVIZE_POHAR = f"#division-{DIVIZE_V_POHARU[DIVIZE]}-tab"
 
 jmena = []
 vysledky = []
+
 
 def smazat_log() -> None:
     global FOLDER
@@ -66,7 +67,7 @@ def print_konzole(content: str) -> None:
         print(content)
 
 
-def statistika(URL_z: str, rok: str) -> None:
+def statistika() -> None:
     global FIRST_RUN
     global HEADER_LEN
     with sync_playwright() as p:
@@ -84,8 +85,8 @@ def statistika(URL_z: str, rok: str) -> None:
         else:
             print_and_log("=" * HEADER_LEN)
             print_and_log("")
-        print_konzole(f"{'Pohrát:':<14}{rok} - {URL_z}")
-        only_log(f'{'Pohár:':<14}<a href="{URL_z}">{rok}</a>')
+        print_konzole(f"{'Pohár:':<14}{POHAR1} - {URL_CUP1}")
+        only_log(f'{'Pohár:':<14}<a href="{URL_CUP1}">{POHAR1}</a>')
         print_and_log("")
 
         page.click(SELECTOR_LOGIN_FORM)
@@ -117,142 +118,187 @@ def statistika(URL_z: str, rok: str) -> None:
                 jmena.append(name)
 
         jmena.append(JMENO)
-        page.goto(URL_z)
-        page.click(SELECTOR_DIVIZE_POHAR)
-
-        def _clean_percent(pct_raw: str):
-            s = pct_raw.replace("%", "").strip()
-            if s.count(".") > 1:
-                parts = s.split(".")
-                s = "".join(parts[:-1]) + "." + parts[-1]
-            s = s.replace(",", "").strip()
-            try:
-                return float(s)
-            except BaseException:
-                return None
-
-        # jen aktivní (viditelný) panel
-        visible_panel = page.locator(
-            f'div[role="tabpanel"]#division-{DIVIZE_V_POHARU[DIVIZE]}:visible')
-
-        for name in jmena:
-            if " (MZ)" in name:
-                continue
-            # přesná shoda jména (viditelná buňka)
-            name_re = re.compile(rf'^\s*{re.escape(name)}\s*$', re.IGNORECASE)
-            name_cell = visible_panel.locator(
-                "div.w-36:visible", has_text=name_re).first
-            if name_cell.count() == 0:
-                vysledky.append((None, name, None, 0, None))
-                continue
-
-            # řádek s rankem/jménem/procenty
-            row = name_cell.locator(
-                "xpath=ancestor::div[contains(@class,'border-gray-400')][1]").first
-
-            # pořadí
-            rank_txt = row.locator(
-                "div.w-5:visible").first.text_content().strip().rstrip(".")
-            try:
-                rank = int(rank_txt)
-            except BaseException:
-                rank = None
-
-            # procenta v poháru
-            pct_loc = name_cell.locator(
-                "xpath=following-sibling::div[contains(@class,'w-20') and contains(@class,'text-right')][1]"
-            )
-            if pct_loc.count() == 0:
-                pct_loc = row.locator("div.w-20.text-right:visible").first
-            pct_raw = pct_loc.text_content().strip() if pct_loc.count() > 0 else ""
-            pct = _clean_percent(pct_raw)
-
-            # všechny závody – procenta z každého zeleného boxu
-            next_row = row.locator(
-                "+ div.flex.flex-row.gap-x-1.justify-center:visible")
-            race_percents = []
-            if next_row.count() > 0:
-                for box in next_row.locator(
-                        "div.border.rounded-md.p-1.w-20.cursor-help:visible").all():
-                    val_raw = box.locator(
-                        "div.text-center").first.text_content().strip()
-                    val = _clean_percent(val_raw)
-                    if val is not None:
-                        race_percents.append(val)
-
-            race_count = len(race_percents)
-            avg = round(
-                sum(race_percents) / race_count,
-                2) if race_count > 0 else None
-
-            vysledky.append((rank, name, pct, race_count, avg))
-
-        # seřazení od nejlepšího
-        vysledky.sort(key=lambda x: (
-            x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
-
-        # výpis
-        header = f"{
-            '# pohár':>8} | {
-            'Jméno':<35} | {
-            '% pohár':>10} | {
-                'Závody':>7} | {
-                    'Průměr %':>9}"
-        print_and_log(header)
-        print_and_log("-" * len(header))
-        HEADER_LEN = len(header)
-
-        for rank, name, pct, races, avg in vysledky:
-            SPAN_BEGIN = ''
-            SPAN_END = ''
-            if name == JMENO:
-                SPAN_BEGIN = '<span style="background-color: orange;">'
-                SPAN_END = '</span>'
-            if (rank == 1) and (name != JMENO):
-                SPAN_BEGIN = '<span style="background-color: red;">'
-                SPAN_END = '</span>'
-            if rank is None:
-                print_konzole(
-                    f"{
-                        '–':>8} | {
-                        name:<35} | {
-                        '–':>10} | {
-                        races:>7} | {
-                        '–':>9}")
-                only_log(
-                    f"{SPAN_BEGIN}{
-                        '–':>8} | {
-                        name:<35} | {
-                        '–':>10} | {
-                        races:>7} | {
-                        '–':>9}{SPAN_END}")
-            else:
-                pct_out = f"{pct:.2f}%" if pct is not None else "–"
-                avg_out = f"{avg:.2f}%" if avg is not None else "–"
-                print_konzole(
-                    f"{
-                        rank:>8} | {
-                        name:<35} | {
-                        pct_out:>10} | {
-                        races:>7} | {
-                        avg_out:>9}")
-                only_log(
-                    f"{SPAN_BEGIN}{
-                        rank:>8} | {
-                        name:<35} | {
-                        pct_out:>10} | {
-                        races:>7} | {
-                        avg_out:>9}{SPAN_END}")
+        pohar(URL_CUP1, page)
+        vypis()
+        try:
+            porovnat(POHAR1)
+        except TypeError:
+            pass
+        vynuluj()
+        FIRST_RUN = False
+        print_and_log("")
+        print_and_log("=" * HEADER_LEN)
+        print_and_log("")
+        pohar(URL_CUP2, page)
+        print_konzole(f"{'Pohár:':<14}{POHAR2} - {URL_CUP2}")
+        only_log(f'{'Pohár:':<14}<a href="{URL_CUP2}">{POHAR2}</a>')
+        print_and_log("")
+        vypis()
+        try:
+            porovnat(POHAR2)
+        except TypeError:
+            pass
+        vynuluj()
+        print_and_log("")
+        print_and_log("=" * HEADER_LEN)
+        print_and_log("")
+        pohar(URL_CUP3, page)
+        print_konzole(f"{'Pohár:':<14}{POHAR3} - {URL_CUP3}")
+        only_log(f'{'Pohár:':<14}<a href="{URL_CUP3}">{POHAR3}</a>')
+        print_and_log("")
+        vypis()
+        try:
+            porovnat(POHAR3)
+        except TypeError:
+            pass
         browser.close()
 
 
+def vypis():
+    global vysledky
+    global HEADER_LEN
+# seřazení od nejlepšího
+    vysledky.sort(key=lambda x: (
+        x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
+
+    # výpis
+    header = f"{
+        '# pohár':>8} | {
+        'Jméno':<35} | {
+        '% pohár':>10} | {
+            'Závody':>7} | {
+                'Průměr %':>9}"
+    print_and_log(header)
+    print_and_log("-" * len(header))
+    HEADER_LEN = len(header)
+
+    for rank, name, pct, races, avg in vysledky:
+        SPAN_BEGIN = ''
+        SPAN_END = ''
+        if name == JMENO:
+            SPAN_BEGIN = '<span style="background-color: orange;">'
+            SPAN_END = '</span>'
+        if (rank == 1) and (name != JMENO):
+            SPAN_BEGIN = '<span style="background-color: red;">'
+            SPAN_END = '</span>'
+        if rank is None:
+            print_konzole(
+                f"{
+                    '–':>8} | {
+                    name:<35} | {
+                    '–':>10} | {
+                    races:>7} | {
+                    '–':>9}")
+            only_log(
+                f"{SPAN_BEGIN}{
+                    '–':>8} | {
+                    name:<35} | {
+                    '–':>10} | {
+                    races:>7} | {
+                    '–':>9}{SPAN_END}")
+        else:
+            pct_out = f"{pct:.2f}%" if pct is not None else "–"
+            avg_out = f"{avg:.2f}%" if avg is not None else "–"
+            print_konzole(
+                f"{
+                    rank:>8} | {
+                    name:<35} | {
+                    pct_out:>10} | {
+                    races:>7} | {
+                    avg_out:>9}")
+            only_log(
+                f"{SPAN_BEGIN}{
+                    rank:>8} | {
+                    name:<35} | {
+                    pct_out:>10} | {
+                    races:>7} | {
+                    avg_out:>9}{SPAN_END}")
+    pass
+
+
+def pohar(URL_z, page):
+    # pohar
+
+    page.goto(URL_z)
+    page.click(SELECTOR_DIVIZE_POHAR)
+
+    def _clean_percent(pct_raw: str):
+        s = pct_raw.replace("%", "").strip()
+        if s.count(".") > 1:
+            parts = s.split(".")
+            s = "".join(parts[:-1]) + "." + parts[-1]
+        s = s.replace(",", "").strip()
+        try:
+            return float(s)
+        except BaseException:
+            return None
+
+    # jen aktivní (viditelný) panel
+    visible_panel = page.locator(
+        f'div[role="tabpanel"]#division-{DIVIZE_V_POHARU[DIVIZE]}:visible')
+
+    for name in jmena:
+        if " (MZ)" in name:
+            continue
+        # přesná shoda jména (viditelná buňka)
+        name_re = re.compile(rf'^\s*{re.escape(name)}\s*$', re.IGNORECASE)
+        name_cell = visible_panel.locator(
+            "div.w-36:visible", has_text=name_re).first
+        if name_cell.count() == 0:
+            vysledky.append((None, name, None, 0, None))
+            continue
+
+        # řádek s rankem/jménem/procenty
+        row = name_cell.locator(
+            "xpath=ancestor::div[contains(@class,'border-gray-400')][1]").first
+
+        # pořadí
+        rank_txt = row.locator(
+            "div.w-5:visible").first.text_content().strip().rstrip(".")
+        try:
+            rank = int(rank_txt)
+        except BaseException:
+            rank = None
+
+        # procenta v poháru
+        pct_loc = name_cell.locator(
+            "xpath=following-sibling::div[contains(@class,'w-20') and contains(@class,'text-right')][1]"
+        )
+        if pct_loc.count() == 0:
+            pct_loc = row.locator("div.w-20.text-right:visible").first
+        pct_raw = pct_loc.text_content().strip() if pct_loc.count() > 0 else ""
+        pct = _clean_percent(pct_raw)
+
+        # všechny závody – procenta z každého zeleného boxu
+        next_row = row.locator(
+            "+ div.flex.flex-row.gap-x-1.justify-center:visible")
+        race_percents = []
+        if next_row.count() > 0:
+            for box in next_row.locator(
+                    "div.border.rounded-md.p-1.w-20.cursor-help:visible").all():
+                val_raw = box.locator(
+                    "div.text-center").first.text_content().strip()
+                val = _clean_percent(val_raw)
+                if val is not None:
+                    race_percents.append(val)
+
+        race_count = len(race_percents)
+        avg = round(
+            sum(race_percents) / race_count,
+            2) if race_count > 0 else None
+
+        vysledky.append((rank, name, pct, race_count, avg))
+
+
 def muj_prumer() -> float:
+    global vysledky
     for record in vysledky:
         if record[1] == JMENO:
             return record[-1]
 
 
 def porovnat(sezona: str) -> None:
+    global FIRST_RUN
     if FIRST_RUN:
         singular = "je"
         plural = "mají"
@@ -314,35 +360,13 @@ def only_log(action: str) -> None:
 
 def vynuluj() -> None:
     global vysledky
-    global jmena
     vysledky = []
-    jmena = []
     return
 
 
 def run() -> None:
     smazat_log()
-    global FIRST_RUN
-    global jmena
-    global vysledky
-    statistika(URL_CUP3, POHAR1)
-    try:
-        porovnat(POHAR1)
-    except TypeError:
-        pass
-    FIRST_RUN = False
-    vynuluj()
-    statistika(URL_CUP2, POHAR2)
-    try:
-        porovnat(POHAR2)
-    except TypeError:
-        pass
-    vynuluj()
-    statistika(URL_CUP1, POHAR3)
-    try:
-        porovnat(POHAR3)
-    except TypeError:
-        pass
+    statistika()
     with open(f"{FOLDER}/{LOGNAME}.html", "a", encoding="utf-8") as f:
         f.write(f'</pre>')
     webbrowser.open(Path(f"{FOLDER}/{LOGNAME}.html").resolve().as_uri())
