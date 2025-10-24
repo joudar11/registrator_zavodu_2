@@ -97,19 +97,19 @@ playwright install
 ### Následně:
 
 #### Pokud registrace ještě nezačala:
-spustit soubor run.bat (doporučeno)
+spustit soubor <code>run.bat</code> (doporučeno)<br>
 nebo
 ```bash
 python main.py
 ```
 #### Pokud registrace běží, ale závod je plný:
-spustit soubor plny_zavod.bat (doporučeno)
+spustit soubor <code>plny_zavod.bat</code> (doporučeno)<br>
 nebo
 ```bash
 python plny_zavod.py
 ```
 #### Pokud závod ještě nebyl vyhlášen, registrace už je spuštěna a závodník chce analýzu konkurence:
-spustit soubor konkurence.bat (doporučeno)
+spustit soubor <code>konkurence.bat</code> (doporučeno)<br>
 nebo
 ```bash
 python konkurence.py
