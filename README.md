@@ -140,3 +140,4 @@ git fetch --all
 git reset --hard HEAD
 git pull
 ```
+nebo spuštěním souboru <code>update.bat</code>
