@@ -135,7 +135,11 @@ Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
 ```bash
 python konkurence.py
 ```
-Je možné spustit s argumenty JMÉNO DIVIZE URL pro přepsání dat o závodě a závodníkovi v souboru <code>data.py</code>.
+Je možné spustit s argumenty JMÉNO DIVIZE URL pro přepsání dat o závodě a závodníkovi v souboru <code>data.py</code>. I zde je však potřeba mít vyplněný soubor data.py, aby se skript mohl na webu LOSu přihlásit a zobrazit si celá jména.<br>
+např:
+```bash
+python konkurence.py "Jan Novák" "Pistole" "https://www.loslex.cz/contest/313"
+```
 (Tato funkcionalita podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude implementována.)
 
 ### Aktualizace na poslední verzi
