@@ -99,7 +99,7 @@ python plny_zavod.py
 
 #### Pokud závod ještě nebyl vyhlášen, registrace už je spuštěna a závodník chce analýzu konkurence:
 ```bash
-python plny_zavod.py
+python konkurence.py
 ```
 (Tato funkcionalita podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude implementována.)
 
