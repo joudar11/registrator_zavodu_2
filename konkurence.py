@@ -85,7 +85,7 @@ def statistika() -> None:
             vytvoreno = datetime.now()
             vytvoreno_f = vytvoreno.strftime("%d.%m.%Y %H:%M")
             print_konzole(f'{'Závod:':<14}{page.title()} - {URL}')
-            only_log(f'{'Závod:':<14}<a href="{URL}">{page.title()}</a>')
+            only_log(f'{'Závod:':<14}<a target="_blank" href="{URL}">{page.title()}</a>')
             print_and_log(f"{'Divize:':<14}{DIVIZE}")
             print_and_log(f"{'Vytvořeno:':<14}{vytvoreno_f}\n")
             only_log(f'<span style="background-color: #cccccc;">Závodník, který se nezůčastnil žádného pohárovéno závodu ve vybrané sezoně</span>')
@@ -96,7 +96,7 @@ def statistika() -> None:
             print_and_log("=" * HEADER_LEN)
             print_and_log("")
         print_konzole(f"{'Pohár:':<14}{POHAR1} - {URL_CUP1}")
-        only_log(f'{'Pohár:':<14}<a href="{URL_CUP1}">{POHAR1}</a>')
+        only_log(f'{'Pohár:':<14}<a target="_blank" href="{URL_CUP1}">{POHAR1}</a>')
         print_and_log("")
 
         page.click(SELECTOR_LOGIN_FORM)
