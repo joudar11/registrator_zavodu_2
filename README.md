@@ -103,39 +103,39 @@ if exist data_sample.py ren data_sample.py data.py
 #### Vytvoření konfigurace:
 Přejmenuj soubor <code>data_sample.py</code> na <code>data.py</code> (toto automaticky dělá instalační skript <code>install.bat</code>) a vyplň ho.
 #### Pokud registrace ještě nezačala:
-spustit soubor <code>run.bat</code> (doporučeno)<br>
-nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
+- spustit soubor <code>run.bat</code> (doporučeno)<br>
+- nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
 ```bash
 .venv\Scripts\Activate.ps1
 python main.py
 ```
-Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
+- Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
 ```bash
 python main.py
 ```
 #### Pokud registrace běží, ale závod je plný:
-spustit soubor <code>plny_zavod.bat</code> (doporučeno)<br>
-nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
+- spustit soubor <code>plny_zavod.bat</code> (doporučeno)<br>
+- nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
 ```bash
 .venv\Scripts\Activate.ps1
 python plny_zavod.py
 ```
-Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
+- Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
 ```bash
 python plny_zavod.py
 ```
 #### Pokud závod ještě nebyl vyhlášen, registrace už je spuštěna a závodník chce analýzu konkurence:
-spustit soubor <code>konkurence.bat</code> (doporučeno)<br>
-nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
+- spustit soubor <code>konkurence.bat</code> (doporučeno)<br>
+- nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
 ```bash
 .venv\Scripts\Activate.ps1
 python konkurence.py
 ```
-Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
+- Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
 ```bash
 python konkurence.py
 ```
-Je možné spustit s argumenty JMÉNO DIVIZE URL pro přepsání dat o závodě a závodníkovi v souboru <code>data.py</code>. I zde je však potřeba mít vyplněný soubor data.py, aby se skript mohl na webu LOSu přihlásit a zobrazit si celá jména.<br>
+- Je možné spustit s argumenty JMÉNO DIVIZE URL pro přepsání dat o závodě a závodníkovi v souboru <code>data.py</code>. I zde je však potřeba mít vyplněný soubor data.py, aby se skript mohl na webu LOSu přihlásit a zobrazit si celá jména.<br>
 např:
 ```bash
 python konkurence.py "Jan Novák" "Pistole" "https://www.loslex.cz/contest/313"
