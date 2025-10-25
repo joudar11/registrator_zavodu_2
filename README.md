@@ -80,7 +80,7 @@ EMAIL_PROVIDER = "PROTON"
 # Poskytovatel emailových služeb. Možnosti jsou buď "PROTON" (S nainstalovaným Proton Bridge) nebo "GMAIL" (S specifickým Google apps password)
 ```
 
-## ▶️ Spuštění
+## ▶️ Instalace a spuštění
 
 ### Prvotní instalace před spuštěním:
 
