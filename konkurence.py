@@ -88,6 +88,10 @@ def statistika() -> None:
             only_log(f'{'Závod:':<14}<a href="{URL}">{page.title()}</a>')
             print_and_log(f"{'Divize:':<14}{DIVIZE}")
             print_and_log(f"{'Vytvořeno:':<14}{vytvoreno_f}\n")
+            only_log(f'<span style="background-color: #cccccc;">Závodník, který se nezůčastnil žádného pohárovéno závodu ve vybrané sezoně</span>')
+            only_log(f'<span style="background-color: #fab1a0;">Závodník, který se v poháru ve vybrané sezoně umístil na jednom z prvních 3 míst</span>')
+            only_log(f'<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
+            only_log("")
         else:
             print_and_log("=" * HEADER_LEN)
             print_and_log("")
@@ -168,35 +172,39 @@ def vypis():
         x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
 
     # výpis
-    header = f"{
-        '# pohár':>8} | {
-        'Jméno':<35} | {
-        '% pohár':>10} | {
-            'Závody':>7} | {
-                'Průměr %':>9}"
+    header = f"{'#':>3} | {
+        '# POHÁR':>8} | {
+        'JMÉNO':<35} | {
+        '% POHÁR':>10} | {
+            'ZÁVODY':>7} | {
+                'PRŮMĚR %':>9}"
     print_and_log(header)
     print_and_log("-" * len(header))
     HEADER_LEN = len(header)
 
+    i = 1
     for rank, name, pct, races, avg in vysledky:
         SPAN_BEGIN = ''
         SPAN_END = ''
         if name == JMENO:
             SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
             SPAN_END = '</span>'
-        if (rank == 1) and (name != JMENO):
+        if (rank in range(1, 4)) and (name != JMENO):
             SPAN_BEGIN = '<span style="background-color: #fab1a0;">'
+            SPAN_END = '</span>'
+        if (rank == None) and (name != JMENO):
+            SPAN_BEGIN = '<span style="background-color: #cccccc;">'
             SPAN_END = '</span>'
         if rank is None:
             print_konzole(
-                f"{
+                f"{'-':>3} | {
                     '–':>8} | {
                     name:<35} | {
                     '–':>10} | {
                     races:>7} | {
                     '–':>9}")
             only_log(
-                f"{SPAN_BEGIN}{
+                f"{SPAN_BEGIN}{'-':>3} | {
                     '–':>8} | {
                     name:<35} | {
                     '–':>10} | {
@@ -206,19 +214,20 @@ def vypis():
             pct_out = f"{pct:.2f}%" if pct is not None else "–"
             avg_out = f"{avg:.2f}%" if avg is not None else "–"
             print_konzole(
-                f"{
+                f"{i:>3} | {
                     rank:>8} | {
                     name:<35} | {
                     pct_out:>10} | {
                     races:>7} | {
                     avg_out:>9}")
             only_log(
-                f"{SPAN_BEGIN}{
+                f"{SPAN_BEGIN}{i:>3} | {
                     rank:>8} | {
                     name:<35} | {
                     pct_out:>10} | {
                     races:>7} | {
                     avg_out:>9}{SPAN_END}")
+        i += 1
     pass
 
 
@@ -312,13 +321,13 @@ def porovnat(sezona: str) -> None:
         singular = "byl"
         plural = "měli"
     if vysledky[0][1] == JMENO:
-        print_and_log("\nJsi nejlepším přihlášeným závodníkem v tomto závodě!")
+        print_and_log("\nVybraný závodník je nejlepším přihlášeným závodníkem v tomto závodě!")
         return
     MUJ_PRUMER = muj_prumer()
     if MUJ_PRUMER is None:
         return
     print_and_log(
-        f"\nNejlepší závodník {singular} v průměru v sezoně {sezona} o {(float(vysledky[0][-1]) - MUJ_PRUMER):.2f}% lepší než ty.")
+        f"\nNejlepší závodník {singular} v průměru v sezoně {sezona} o {(float(vysledky[0][-1]) - MUJ_PRUMER):.2f}% lepší než vybraný závodník.")
     lepsich_zavodniku = 0
     for record in vysledky:
         if record[1] != JMENO:
@@ -326,7 +335,7 @@ def porovnat(sezona: str) -> None:
         else:
             break
     print_and_log(
-        f"Počet závodníků, kteří v sezoně {sezona} {plural} lepší průměrné výsledky než ty: {lepsich_zavodniku}")
+        f"Závodníků, kteří v sezoně {sezona} {plural} lepší průměrné výsledky než vybraný závodník: {lepsich_zavodniku}")
 
 
 def print_and_log(action: str) -> None:
