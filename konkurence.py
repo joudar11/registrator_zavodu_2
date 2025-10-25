@@ -44,9 +44,14 @@ else:
 POHAR2 = POHAR1 - 1
 POHAR3 = POHAR1 - 2
 
-URL_CUP3 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024}"
-URL_CUP2 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024 + 1}"
-URL_CUP1 = f"https://www.loslex.cz/cup/{int(datetime.now().year) - 2024 + 2}"
+if today >= datum_zari:
+    POHAR1_U = int(datetime.now().year)
+else:
+    POHAR1_U = int(datetime.now().year) - 1
+
+URL_CUP3 = f"https://www.loslex.cz/cup/{POHAR1_U - 2024}"
+URL_CUP2 = f"https://www.loslex.cz/cup/{POHAR1_U - 2024 + 1}"
+URL_CUP1 = f"https://www.loslex.cz/cup/{POHAR1_U - 2024 + 2}"
 SELECTOR_LOGIN_FORM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"
 SELECTOR_LOGIN_BUTTON = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\:px-0.z-2000 > div.mb-6.bg-white.dark\:bg-gray-800.rounded-lg.overflow-hidden.shadow-xl.transform.transition-all.sm\:w-full.sm\:max-w-md.sm\:mx-auto > div > form > div.flex.items-center.justify-end.mt-4 > button"
 SELECTOR_USER = r"#login"
