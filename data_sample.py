@@ -10,7 +10,7 @@ DIVIZE = "Pistole"
 # DIVIZE = "Optik/Pistole"
 URL = "https://www.loslex.cz/contest/292"
 # URL konkrétního závodu
-LOGIN = "jan.novak"
+LOGIN = "jan.novak@email.com"
 # Email pro přihlášení i notifikace
 HESLO = "tajneheslo123"
 # Heslo do systému LOS Lex
