@@ -21,6 +21,7 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 - Závodník je vyznačen oranžově, konkurenční závodník, který je na prvním místě poháru, je vyznačen červeně.
 - Data si skript bere vždy z aktuálního poháru a vypisuje ještě 2 předešlé poháry.
 - Výstupem je .html přehled. Vzor je v souboru konkurence_sample.html.
+- Pokud existuje soubor <code>ftp_konkurence.py</code>, skript automaticky nahraje přehled na FTP a otevře jeho umístění na webu.
 
 
 ## 📦 Požadavky
@@ -28,7 +29,7 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 - Python 3.12.6
 - playwright
 - Běžící Proton Bridge nebo Gmail účet se specifickým Google App Password (lze nastavit [zde](https://myaccount.google.com/apppasswords)) 
-- Konfigurační soubor `data.py` s následujícím obsahem:
+- Konfigurační soubor <code>data.py</code> s následujícím obsahem:
 
 ```python
 JMENO = "Jan Novák"
@@ -78,6 +79,16 @@ INTERVAL = 1800
 # V jakém intervalu v sekundách se má kontrolovat volné místo na plném závodě (s tímto údajem se pracuje pouze v plny_zavod.py)
 EMAIL_PROVIDER = "PROTON"
 # Poskytovatel emailových služeb. Možnosti jsou buď "PROTON" (S nainstalovaným Proton Bridge) nebo "GMAIL" (S specifickým Google apps password)
+```
+
+- Volitelně konfigurační soubor <code>ftp_konkurence.py</code>:
+
+```python
+host=r"255.255.255.255" #FTPS host
+username=r"username" #FTPS username
+password=r"T@jneHeSl0" #FTPS heslo
+remote_dir=r"/domena.cz/web/public/prehledy" #FTPS složka, kam nahrát skript
+visit=r"https://domena.cz/public/prehledy/" #URL ke složce, kam se nahrává - tato cesta musí být přístupná http nebo https protokolem
 ```
 
 ## ▶️ Instalace a spuštění
