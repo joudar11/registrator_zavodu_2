@@ -224,7 +224,7 @@ def statistika() -> None:
 
         vypis_poslednich_12_mesicu()
         try:
-            porovnat()
+            porovnat(True)
         except TypeError:
             pass
 
@@ -460,9 +460,9 @@ def muj_prumer() -> float:
             return record[-1]
 
 
-def porovnat() -> None:
+def porovnat(M12 = False) -> None:
     global FIRST_RUN
-    if FIRST_RUN:
+    if FIRST_RUN or M12:
         singular = "je"
         plural = "mají"
     else:
