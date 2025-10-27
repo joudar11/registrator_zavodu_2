@@ -228,6 +228,8 @@ def statistika() -> None:
         except TypeError:
             pass
 
+        only_log("\n\n\n\n\n\n")
+
         browser.close()
 
 
