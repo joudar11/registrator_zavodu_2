@@ -146,6 +146,8 @@ def statistika() -> None:
         if FIRST_RUN:
             vytvoreno = datetime.now()
             vytvoreno_f = vytvoreno.strftime("%d. %m. %Y %H:%M")
+            if ftp_script.exists():
+                only_log(f'{"Přehled:":<18}<a target="_blank" href="{visit}">{visit}</a>')
             print_konzole(f'{'Závod:':<18}{page.title()} - {URL}')
             only_log(f'{'Závod:':<18}<a target="_blank" href="{URL}">{page.title()}</a>')
             print_and_log(f"{'Divize:':<18}{DIVIZE}")
