@@ -98,7 +98,7 @@ def statistika() -> None:
             only_log(f'{'Závod:':<18}<a target="_blank" href="{URL}">{page.title()}</a>')
             print_and_log(f"{'Divize:':<18}{DIVIZE}")
             print_and_log(f"{'Vytvořeno:':<18}{vytvoreno_f}\n")
-            only_log(f'<span style="background-color: #cccccc;">Závodník, který se nezůčastnil žádného pohárovéno závodu ve vybrané sezoně</span>')
+            only_log(f'<span style="background-color: #cccccc;">Závodník, který se nezůčastnil žádného pohárovéno závodu v hodnoceném období</span>')
             only_log(f'<span style="background-color: #fab1a0;">Závodník, který se v poháru ve vybrané sezoně umístil na jednom z prvních 3 míst</span>')
             only_log(f'<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
             only_log("")
@@ -139,7 +139,7 @@ def statistika() -> None:
         pohar(URL_CUP1, page, zahrnout_do_12m=True)
         vypis(POHAR1, URL_CUP1)
         try:
-            porovnat(POHAR1)
+            porovnat()
         except TypeError:
             pass
         vynuluj()
@@ -151,7 +151,7 @@ def statistika() -> None:
         print_and_log("")
         vypis(POHAR2, URL_CUP2)
         try:
-            porovnat(POHAR2)
+            porovnat()
         except TypeError:
             pass
         vynuluj()
@@ -162,11 +162,17 @@ def statistika() -> None:
         print_and_log("")
         vypis(POHAR3, URL_CUP3)
         try:
-            porovnat(POHAR3)
+            porovnat()
         except TypeError:
             pass
 
+        vynuluj()
+
         vypis_poslednich_12_mesicu()
+        try:
+            porovnat()
+        except TypeError:
+            pass
 
         browser.close()
 
@@ -199,11 +205,18 @@ def vypis(pohar: str, pohar_url: str):
         if name == JMENO:
             SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
             SPAN_END = '</span>'
-        if (rank in range(1, 4)) and (name != JMENO):
-            SPAN_BEGIN = '<span style="background-color: #fab1a0;">'
-            SPAN_END = '</span>'
-        if (rank == None) and (name != JMENO):
+        elif (rank in range(1, 4)):
+            if not (i % 2 == 0):
+                SPAN_BEGIN = '<span style="background-color: #fab1a0;">'
+                SPAN_END = '</span>'
+            else:
+                SPAN_BEGIN = '<span style="background-color: #f7876e;">'
+                SPAN_END = '</span>'
+        elif (rank == None):
             SPAN_BEGIN = '<span style="background-color: #cccccc;">'
+            SPAN_END = '</span>'
+        elif (i % 2 == 0):
+            SPAN_BEGIN = '<span style="background-color: #f0f0f0;">'
             SPAN_END = '</span>'
         if rank is None:
             print_konzole(
@@ -242,22 +255,21 @@ def vypis(pohar: str, pohar_url: str):
 
 def vypis_poslednich_12_mesicu():
     """Vytiskne '12M' tabulku: souhrn všech procent z posledních 12 měsíců přes aktuální a minulý pohár."""
+    global vysledky
     global jmena
     # připrav výsledky: (rank, name, pct, races, avg) — rank i pct nejsou relevantní → None
-    vysledky12 = []
+    vysledky = []
     for name in jmena:
         s, c = LAST12_SUMS.get(name, (0.0, 0))
         avg = round(s / c, 2) if c > 0 else None
-        vysledky12.append((None, name, None, c, avg))
+        vysledky.append((None, name, None, c, avg))
 
     # stejné řazení jako ve vypis(): podle avg desc, None až nakonec
-    vysledky12.sort(key=lambda x: (x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
+    vysledky.sort(key=lambda x: (x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
 
     # hlavička v témže stylu (ponecháme '# POHÁR' – naplníme '12M' v řádcích)
     header = f"{'#':>3} | {
-        '# POHÁR':>8} | {
         'JMÉNO':<35} | {
-        '% POHÁR':>10} | {
             'ZÁVODY':>7} | {
                 'PRŮMĚR %':>9}"
     print_and_log("")
@@ -269,23 +281,24 @@ def vypis_poslednich_12_mesicu():
     print_and_log("-" * len(header))
 
     i = 1
-    for rank, name, pct, races, avg in vysledky12:
+    for rank, name, pct, races, avg in vysledky:
         SPAN_BEGIN = ''
         SPAN_END = ''
         if name == JMENO:
             SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
             SPAN_END = '</span>'
-        if (races == 0) and (name != JMENO):
+        elif (races == 0):
             SPAN_BEGIN = '<span style="background-color: #cccccc;">'
+            SPAN_END = '</span>'
+        elif (i % 2 == 0):
+            SPAN_BEGIN = '<span style="background-color: #f0f0f0;">'
             SPAN_END = '</span>'
         if rank is None:
             # „# POHÁR“ = '12M', '% POHÁR' = '–' (nedává smysl)
             avg_out = f"{avg:.2f}%" if avg is not None else "–"
             only_log(
                 f"{SPAN_BEGIN}{i:>3} | {
-                    '-':>8} | {
                     name:<35} | {
-                    '–':>10} | {
                     races:>7} | {
                     avg_out:>9}{SPAN_END}")
         else:
@@ -391,7 +404,7 @@ def muj_prumer() -> float:
             return record[-1]
 
 
-def porovnat(sezona: str) -> None:
+def porovnat() -> None:
     global FIRST_RUN
     if FIRST_RUN:
         singular = "je"
@@ -406,7 +419,7 @@ def porovnat(sezona: str) -> None:
     if MUJ_PRUMER is None:
         return
     print_and_log(
-        f"\nNejlepší závodník {singular} v průměru v sezoně {sezona} o {(float(vysledky[0][-1]) - MUJ_PRUMER):.2f}% lepší než vybraný závodník.")
+        f"\nNejlepší závodník {singular} v průměru v hodnoceném období o {(float(vysledky[0][-1]) - MUJ_PRUMER):.2f}% lepší než vybraný závodník.")
     lepsich_zavodniku = 0
     for record in vysledky:
         if record[1] != JMENO:
@@ -414,7 +427,7 @@ def porovnat(sezona: str) -> None:
         else:
             break
     print_and_log(
-        f"Závodníků, kteří v sezoně {sezona} {plural} lepší průměrné výsledky než vybraný závodník: {lepsich_zavodniku}")
+        f"Závodníků, kteří v hodnoceném období {plural} lepší průměrné výsledky než vybraný závodník: {lepsich_zavodniku}")
 
 
 def print_and_log(action: str) -> None:
