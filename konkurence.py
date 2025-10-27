@@ -98,7 +98,7 @@ def statistika() -> None:
             only_log(f'{'Závod:':<18}<a target="_blank" href="{URL}">{page.title()}</a>')
             print_and_log(f"{'Divize:':<18}{DIVIZE}")
             print_and_log(f"{'Vytvořeno:':<18}{vytvoreno_f}\n")
-            only_log(f'<span style="background-color: #cccccc;">Závodník, který se nezůčastnil žádného pohárovéno závodu v hodnoceném období</span>')
+            only_log(f'<span style="color: #b0b0b0;">Závodník, který se nezůčastnil žádného pohárovéno závodu v hodnoceném období</span>')
             only_log(f'<span style="background-color: #fab1a0;">Závodník, který se v poháru ve vybrané sezoně umístil na jednom z prvních 3 míst</span>')
             only_log(f'<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
             only_log("")
@@ -212,8 +212,8 @@ def vypis(pohar: str, pohar_url: str):
             else:
                 SPAN_BEGIN = '<span style="background-color: #f7876e;">'
                 SPAN_END = '</span>'
-        elif (rank == None):
-            SPAN_BEGIN = '<span style="background-color: #cccccc;">'
+        elif (races == 0):
+            SPAN_BEGIN = '<span style="color: #b0b0b0;">'
             SPAN_END = '</span>'
         elif (i % 2 == 0):
             SPAN_BEGIN = '<span style="background-color: #f0f0f0;">'
@@ -288,7 +288,7 @@ def vypis_poslednich_12_mesicu():
             SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
             SPAN_END = '</span>'
         elif (races == 0):
-            SPAN_BEGIN = '<span style="background-color: #cccccc;">'
+            SPAN_BEGIN = '<span style="color: #b0b0b0;">'
             SPAN_END = '</span>'
         elif (i % 2 == 0):
             SPAN_BEGIN = '<span style="background-color: #f0f0f0;">'
