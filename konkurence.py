@@ -1,6 +1,6 @@
 import re
 import os
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import subprocess
 import webbrowser
 from pathlib import Path
@@ -24,6 +24,8 @@ LOGNAME = f"konkurence-{URL.split("/")[-1]}-{JMENO}"
 KONZOLE = False
 FIRST_RUN = True
 HEADER_LEN = None
+LAST12_SUMS = {}        # ### NEW: jméno -> (součet_procent, počet_závodů)
+CUTOFF_12M = date.today() - timedelta(days=365)  # ### NEW: hranice 12 měsíců
 
 DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
                    "PDW": "PDW"}  # Převod z divize DATA na tento skript
@@ -81,6 +83,9 @@ def print_konzole(content: str) -> None:
 def statistika() -> None:
     global FIRST_RUN
     global HEADER_LEN
+    global LAST12_SUMS
+    LAST12_SUMS = {}
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
@@ -89,10 +94,10 @@ def statistika() -> None:
         if FIRST_RUN:
             vytvoreno = datetime.now()
             vytvoreno_f = vytvoreno.strftime("%d.%m.%Y %H:%M")
-            print_konzole(f'{'Závod:':<14}{page.title()} - {URL}')
-            only_log(f'{'Závod:':<14}<a target="_blank" href="{URL}">{page.title()}</a>')
-            print_and_log(f"{'Divize:':<14}{DIVIZE}")
-            print_and_log(f"{'Vytvořeno:':<14}{vytvoreno_f}\n")
+            print_konzole(f'{'Závod:':<18}{page.title()} - {URL}')
+            only_log(f'{'Závod:':<18}<a target="_blank" href="{URL}">{page.title()}</a>')
+            print_and_log(f"{'Divize:':<18}{DIVIZE}")
+            print_and_log(f"{'Vytvořeno:':<18}{vytvoreno_f}\n")
             only_log(f'<span style="background-color: #cccccc;">Závodník, který se nezůčastnil žádného pohárovéno závodu ve vybrané sezoně</span>')
             only_log(f'<span style="background-color: #fab1a0;">Závodník, který se v poháru ve vybrané sezoně umístil na jednom z prvních 3 míst</span>')
             only_log(f'<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
@@ -100,8 +105,6 @@ def statistika() -> None:
         else:
             print_and_log("=" * HEADER_LEN)
             print_and_log("")
-        print_konzole(f"{'Pohár:':<14}{POHAR1} - {URL_CUP1}")
-        only_log(f'{'Pohár:':<14}<a target="_blank" href="{URL_CUP1}">{POHAR1}</a>')
         print_and_log("")
 
         page.click(SELECTOR_LOGIN_FORM)
@@ -133,8 +136,8 @@ def statistika() -> None:
                 jmena.append(name)
 
         jmena.append(JMENO)
-        pohar(URL_CUP1, page)
-        vypis()
+        pohar(URL_CUP1, page, zahrnout_do_12m=True)
+        vypis(POHAR1, URL_CUP1)
         try:
             porovnat(POHAR1)
         except TypeError:
@@ -144,11 +147,9 @@ def statistika() -> None:
         print_and_log("")
         print_and_log("=" * HEADER_LEN)
         print_and_log("")
-        pohar(URL_CUP2, page)
-        print_konzole(f"{'Pohár:':<14}{POHAR2} - {URL_CUP2}")
-        only_log(f'{'Pohár:':<14}<a href="{URL_CUP2}">{POHAR2}</a>')
+        pohar(URL_CUP2, page, zahrnout_do_12m=True)
         print_and_log("")
-        vypis()
+        vypis(POHAR2, URL_CUP2)
         try:
             porovnat(POHAR2)
         except TypeError:
@@ -158,20 +159,24 @@ def statistika() -> None:
         print_and_log("=" * HEADER_LEN)
         print_and_log("")
         pohar(URL_CUP3, page)
-        print_konzole(f"{'Pohár:':<14}{POHAR3} - {URL_CUP3}")
-        only_log(f'{'Pohár:':<14}<a href="{URL_CUP3}">{POHAR3}</a>')
         print_and_log("")
-        vypis()
+        vypis(POHAR3, URL_CUP3)
         try:
             porovnat(POHAR3)
         except TypeError:
             pass
+
+        vypis_poslednich_12_mesicu()
+
         browser.close()
 
 
-def vypis():
+def vypis(pohar: str, pohar_url: str):
     global vysledky
     global HEADER_LEN
+    print_konzole(f"{'Hodnocené období:':<18}{pohar} - {pohar_url}")
+    only_log(f'{'Hodnocené období:':<18}<a href="{pohar_url}">{pohar}</a>')
+    print_and_log("")
 # seřazení od nejlepšího
     vysledky.sort(key=lambda x: (
         x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
@@ -235,10 +240,62 @@ def vypis():
         i += 1
     pass
 
+def vypis_poslednich_12_mesicu():
+    """Vytiskne '12M' tabulku: souhrn všech procent z posledních 12 měsíců přes aktuální a minulý pohár."""
+    global jmena
+    # připrav výsledky: (rank, name, pct, races, avg) — rank i pct nejsou relevantní → None
+    vysledky12 = []
+    for name in jmena:
+        s, c = LAST12_SUMS.get(name, (0.0, 0))
+        avg = round(s / c, 2) if c > 0 else None
+        vysledky12.append((None, name, None, c, avg))
 
-def pohar(URL_z, page):
+    # stejné řazení jako ve vypis(): podle avg desc, None až nakonec
+    vysledky12.sort(key=lambda x: (x[-1] is None, -(x[-1] if x[-1] is not None else float("-inf"))))
+
+    # hlavička v témže stylu (ponecháme '# POHÁR' – naplníme '12M' v řádcích)
+    header = f"{'#':>3} | {
+        '# POHÁR':>8} | {
+        'JMÉNO':<35} | {
+        '% POHÁR':>10} | {
+            'ZÁVODY':>7} | {
+                'PRŮMĚR %':>9}"
+    print_and_log("")
+    print_and_log(f"{"=" * len(header)}{"\n\n"}")
+    print_konzole(f'{'Hodnocené období:':<18} {CUTOFF_12M:%d. %m. %Y} - {date.today():%d. %m. %Y}')
+    only_log(f'{'Hodnocené období:':<18} {CUTOFF_12M:%d. %m. %Y} - {date.today():%d. %m. %Y}')
+    print_and_log("")
+    print_and_log(header)
+    print_and_log("-" * len(header))
+
+    i = 1
+    for rank, name, pct, races, avg in vysledky12:
+        SPAN_BEGIN = ''
+        SPAN_END = ''
+        if name == JMENO:
+            SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
+            SPAN_END = '</span>'
+        if (races == 0) and (name != JMENO):
+            SPAN_BEGIN = '<span style="background-color: #cccccc;">'
+            SPAN_END = '</span>'
+        if rank is None:
+            # „# POHÁR“ = '12M', '% POHÁR' = '–' (nedává smysl)
+            avg_out = f"{avg:.2f}%" if avg is not None else "–"
+            only_log(
+                f"{SPAN_BEGIN}{i:>3} | {
+                    '-':>8} | {
+                    name:<35} | {
+                    '–':>10} | {
+                    races:>7} | {
+                    avg_out:>9}{SPAN_END}")
+        else:
+            # sem se nedostaneme; rank je u 12M vždy None
+            pass
+        i += 1
+
+
+def pohar(URL_z, page, zahrnout_do_12m=False):  # ### CHANGED: nový parametr
     # pohar
-
     page.goto(URL_z)
     page.click(SELECTOR_DIVIZE_POHAR)
 
@@ -253,34 +310,29 @@ def pohar(URL_z, page):
         except BaseException:
             return None
 
-    # jen aktivní (viditelný) panel
     visible_panel = page.locator(
         f'div[role="tabpanel"]#division-{DIVIZE_V_POHARU[DIVIZE]}:visible')
+
+    date_re = re.compile(r'(\d{1,2}\.\s*[\u00A0]?\d{1,2}\.\s*[\u00A0]?\d{4})')
 
     for name in jmena:
         if " (MZ)" in name:
             continue
-        # přesná shoda jména (viditelná buňka)
+
         name_re = re.compile(rf'^\s*{re.escape(name)}\s*$', re.IGNORECASE)
-        name_cell = visible_panel.locator(
-            "div.w-36:visible", has_text=name_re).first
+        name_cell = visible_panel.locator("div.w-36:visible", has_text=name_re).first
         if name_cell.count() == 0:
             vysledky.append((None, name, None, 0, None))
             continue
 
-        # řádek s rankem/jménem/procenty
-        row = name_cell.locator(
-            "xpath=ancestor::div[contains(@class,'border-gray-400')][1]").first
+        row = name_cell.locator("xpath=ancestor::div[contains(@class,'border-gray-400')][1]").first
 
-        # pořadí
-        rank_txt = row.locator(
-            "div.w-5:visible").first.text_content().strip().rstrip(".")
+        rank_txt = row.locator("div.w-5:visible").first.text_content().strip().rstrip(".")
         try:
             rank = int(rank_txt)
         except BaseException:
             rank = None
 
-        # procenta v poháru
         pct_loc = name_cell.locator(
             "xpath=following-sibling::div[contains(@class,'w-20') and contains(@class,'text-right')][1]"
         )
@@ -289,25 +341,47 @@ def pohar(URL_z, page):
         pct_raw = pct_loc.text_content().strip() if pct_loc.count() > 0 else ""
         pct = _clean_percent(pct_raw)
 
-        # všechny závody – procenta z každého zeleného boxu
-        next_row = row.locator(
-            "+ div.flex.flex-row.gap-x-1.justify-center:visible")
+        next_row = row.locator("+ div.flex.flex-row.gap-x-1.justify-center:visible")
         race_percents = []
         if next_row.count() > 0:
-            for box in next_row.locator(
-                    "div.border.rounded-md.p-1.w-20.cursor-help:visible").all():
-                val_raw = box.locator(
-                    "div.text-center").first.text_content().strip()
+            for box in next_row.locator("div.border.rounded-md.p-1.w-20.cursor-help:visible").all():
+                # procento závodu
+                val_raw = box.locator("div.text-center").first.text_content().strip()
                 val = _clean_percent(val_raw)
+
+                # datum závodu – vezmeme z celého boxu (pod procenty)
+                datum = None
+                try:
+                    sources = [
+                        box.inner_text() or "",
+                        box.text_content() or "",
+                        box.get_attribute("title") or "",
+                        box.get_attribute("aria-label") or "",
+                    ]
+                    for src in sources:
+                        m = date_re.search(src)
+                        if m:
+                            date_str = m.group(1).replace(" ", "").replace("\u00A0", "")
+                            datum = datetime.strptime(date_str, "%d.%m.%Y").date()
+                            break
+                except BaseException:
+                    datum = None
+
                 if val is not None:
                     race_percents.append(val)
 
+                    # agregace do „posledních 12M“ pokud:
+                    # - je požadováno zahrnutí za tento pohár
+                    # - a máme detekovaný datum v okně posledních 12 měsíců
+                    if zahrnout_do_12m and (datum is not None) and (datum >= CUTOFF_12M):
+                        s, c = LAST12_SUMS.get(name, (0.0, 0))
+                        LAST12_SUMS[name] = (s + val, c + 1)
+
         race_count = len(race_percents)
-        avg = round(
-            sum(race_percents) / race_count,
-            2) if race_count > 0 else None
+        avg = round(sum(race_percents) / race_count, 2) if race_count > 0 else None
 
         vysledky.append((rank, name, pct, race_count, avg))
+
 
 
 def muj_prumer() -> float:
