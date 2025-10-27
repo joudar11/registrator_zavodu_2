@@ -233,7 +233,7 @@ def vypis(pohar: str, pohar_url: str):
     global vysledky
     global HEADER_LEN
     print_konzole(f"{'Hodnocené období:':<18}{pohar} - {pohar_url}")
-    only_log(f'{'Hodnocené období:':<18}<a href="{pohar_url}">{pohar}</a>')
+    only_log(f'{'Hodnocené období:':<18}<a href="{pohar_url}">Pohár {pohar}</a>')
     print_and_log("")
 # seřazení od nejlepšího
     vysledky.sort(key=lambda x: (
