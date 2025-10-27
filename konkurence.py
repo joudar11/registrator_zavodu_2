@@ -1,16 +1,22 @@
 import re
 import os
 from datetime import datetime, date, timedelta
-import subprocess
 import webbrowser
 from pathlib import Path
 import sys
+from ftplib import FTP_TLS
 
 from playwright.sync_api import sync_playwright
 
 from data import (
     JMENO, DIVIZE, URL, LOGIN, HESLO
 )
+
+ftp_script = Path(__file__).parent / "ftp_konkurence.py"
+if ftp_script.exists():
+    from ftp_konkurence import(
+        host, username, password, remote_dir, visit
+    )
 
 if len(sys.argv) == 4:
     JMENO = sys.argv[1]
@@ -62,6 +68,52 @@ SELECTOR_DIVIZE_POHAR = f"#division-{DIVIZE_V_POHARU[DIVIZE]}-tab"
 
 jmena = []
 vysledky = []
+
+def upload_ftps(host: str, username: str, password: str, remote_dir: str) -> None:
+    """
+    Nahraje hotový HTML soubor na FTPS server (FTP přes TLS).
+
+    Args:
+        host: adresa FTP serveru (např. "ftp.krystofklika.cz")
+        username: uživatelské jméno
+        password: heslo
+        remote_dir: vzdálený adresář (např. "/public_html/konkurence")
+    """
+
+    local_path = Path(f"{FOLDER}/{LOGNAME}.html").resolve()
+    if not local_path.exists():
+        print(f"❌ Soubor {local_path} neexistuje – upload zrušen.")
+        return
+
+    print(f"🔗 Připojuji se k FTPS serveru {host} ...")
+    try:
+        ftps = FTP_TLS()
+        ftps.connect(host, 21, timeout=15)  # port 990 pro implicitní FTPS
+        ftps.auth()
+        ftps.login(username, password)
+        ftps.prot_p()  # přepne přenos do šifrovaného režimu
+
+        try:
+            ftps.cwd(remote_dir)
+        except Exception:
+            # vytvoření složky pokud neexistuje
+            dirs = remote_dir.strip("/").split("/")
+            path = ""
+            for d in dirs:
+                path += f"/{d}"
+                try:
+                    ftps.cwd(path)
+                except Exception:
+                    ftps.mkd(path)
+                    ftps.cwd(path)
+
+        with open(local_path, "rb") as f:
+            ftps.storbinary(f"STOR {local_path.name}", f)
+
+        print(f"✅ Soubor {local_path.name} byl úspěšně nahrán na {host}:{remote_dir}")
+        ftps.quit()
+    except Exception as e:
+        print(f"❌ Chyba při uploadu přes FTPS: {e}")
 
 
 def smazat_log() -> None:
@@ -476,10 +528,19 @@ def run() -> None:
     statistika()
     with open(f"{FOLDER}/{LOGNAME}.html", "a", encoding="utf-8") as f:
         f.write(f'</pre>')
-    webbrowser.open(Path(f"{FOLDER}/{LOGNAME}.html").resolve().as_uri())
-#    if input(f"\nPřeješ si registrovat? (Y/N): ") == "Y".lower():
-#        print("Spouštím registrační skript...")
-#        subprocess.Popen(["start", "cmd", "/k", "python main.py"], shell=True)
+    if ftp_script.exists():
+        try:
+            upload_ftps(
+                host,
+                username,
+                password,
+                remote_dir
+            )
+            webbrowser.open(f"{visit}{LOGNAME}.html")
+        except Exception as e:
+            print(f"Chyba FTP: {e}")
+    else:
+        webbrowser.open(Path(f"{FOLDER}/{LOGNAME}.html").resolve().as_uri())
 
 
 if __name__ == "__main__":
