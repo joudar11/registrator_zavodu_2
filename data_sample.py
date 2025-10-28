@@ -45,3 +45,4 @@ INTERVAL = 1800
 # V jakém intervalu v sekundách se má kontrolovat volné místo na plném závodě (s tímto údajem se pracuje pouze v plny_zavod.py)
 EMAIL_PROVIDER = "PROTON"
 # Poskytovatel emailových služeb. Možnosti jsou buď "PROTON" (S nainstalovaným Proton Bridge) nebo "GMAIL" (S specifickým Google apps password)
+
