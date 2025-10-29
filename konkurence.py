@@ -272,7 +272,10 @@ def vypis(pohar: str, pohar_url: str):
             koeficient = 100/avg
             projekce = 100
         if name == JMENO:
-            SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
+            if races == 0:
+                SPAN_BEGIN = '<span style="background-color: #ffeaa7; color: #b0b0b0;">'
+            else:
+                SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
             SPAN_END = '</span>'
         elif (rank in range(1, 4)):
             if not (i % 2 == 0):
@@ -365,7 +368,10 @@ def vypis_poslednich_12_mesicu():
         SPAN_BEGIN = ''
         SPAN_END = ''
         if name == JMENO:
-            SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
+            if races == 0:
+                SPAN_BEGIN = '<span style="background-color: #ffeaa7; color: #b0b0b0;">'
+            else:
+                SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
             SPAN_END = '</span>'
         elif (races == 0):
             SPAN_BEGIN = '<span style="color: #b0b0b0;">'
