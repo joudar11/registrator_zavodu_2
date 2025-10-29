@@ -286,14 +286,16 @@ def vypis(pohar: str, pohar_url: str):
                     name:<35} | {
                     '–':>10} | {
                     races:>7} | {
-                    '–':>9}")
+                    '–':>9} | {
+                    '–':>11}")
             only_log(
                 f"{SPAN_BEGIN}{'-':>3} | {
                     '–':>8} | {
                     name:<35} | {
                     '–':>10} | {
                     races:>7} | {
-                    '–':>9}{SPAN_END}")
+                    '–':>9} | {
+                    '–':>11}{SPAN_END}")
         else:
             projekce = avg*koeficient
             pct_out = f"{pct:.2f}%" if pct is not None else "–"
