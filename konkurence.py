@@ -158,6 +158,7 @@ def statistika() -> None:
             if JMENO:
                 only_log(f'<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
             only_log("")
+            print_and_log(f"{"#":<18}Pořadí - řazeno dle průměrných výsledků v hodnoceném období\n{"# POHÁR":<18}Pořadí ve vybraném poháru\n{"% POHÁR":<18}Procenta dosažená ve vybraném poháru\n{"ZÁVODY":<18}Počet pohárových závodů, kterých se závodník v hodnoceném období zúčastnil\n{"PRŮMĚR %":<18}Průměrný výsledek závodníka ve všech pohárových závodech v hodnoceném období\n{"PROJEKCE %":<18}Předpokládaný procentní zisk, pokud všichni závodníci podají svůj průměrný výkon")
         else:
             print_and_log("=" * HEADER_LEN)
             print_and_log("")
