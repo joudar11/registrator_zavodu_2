@@ -153,10 +153,10 @@ def statistika() -> None:
             only_log(f'{'Závod:':<18}<a target="_blank" href="{URL}">{page.title()}</a>')
             print_and_log(f"{'Divize:':<18}{DIVIZE}")
             print_and_log(f"{'Vytvořeno:':<18}{vytvoreno_f}\n")
-            only_log(f'<span style="color: #b0b0b0;">Závodník, který se nezůčastnil žádného pohárovéno závodu v hodnoceném období</span>')
-            only_log(f'<span style="background-color: #fab1a0;">Závodník, který se v poháru ve vybrané sezoně umístil na jednom z prvních 3 míst</span>')
+            only_log(f'{" " * 18}<span style="color: #b0b0b0;">Závodník, který se nezůčastnil žádného pohárovéno závodu v hodnoceném období</span>')
+            only_log(f'{" " * 18}<span style="background-color: #fab1a0;">Závodník, který se v poháru ve vybrané sezoně umístil na jednom z prvních 3 míst</span>')
             if JMENO:
-                only_log(f'<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
+                only_log(f'{" " * 18}<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
             only_log("")
             print_and_log(f"{"#":<18}Pořadí - řazeno dle průměrných výsledků v hodnoceném období\n{"# POHÁR":<18}Pořadí ve vybraném poháru\n{"% POHÁR":<18}Procenta dosažená ve vybraném poháru\n{"ZÁVODY":<18}Počet pohárových závodů, kterých se závodník v hodnoceném období zúčastnil\n{"PRŮMĚR %":<18}Průměrný výsledek závodníka ve všech pohárových závodech v hodnoceném období\n{"PROJEKCE %":<18}Předpokládaný procentní zisk, pokud všichni závodníci podají svůj průměrný výkon")
         else:
