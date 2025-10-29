@@ -236,6 +236,7 @@ def statistika() -> None:
 def vypis(pohar: str, pohar_url: str):
     global vysledky
     global HEADER_LEN
+    koeficient = float(0)
     print_konzole(f"{'Hodnocené období:':<18}{pohar} - {pohar_url}")
     only_log(f'{'Hodnocené období:':<18}<a href="{pohar_url}">Pohár {pohar}</a>')
     print_and_log("")
@@ -249,7 +250,8 @@ def vypis(pohar: str, pohar_url: str):
         'JMÉNO':<35} | {
         '% POHÁR':>10} | {
             'ZÁVODY':>7} | {
-                'PRŮMĚR %':>9}"
+                'PRŮMĚR %':>9} | {
+                'PROJEKCE %':>11}"
     print_and_log(header)
     print_and_log("-" * len(header))
     HEADER_LEN = len(header)
@@ -258,6 +260,9 @@ def vypis(pohar: str, pohar_url: str):
     for rank, name, pct, races, avg in vysledky:
         SPAN_BEGIN = ''
         SPAN_END = ''
+        if i == 1:
+            koeficient = 100/avg
+            projekce = 100
         if name == JMENO:
             SPAN_BEGIN = '<span style="background-color: #ffeaa7;">'
             SPAN_END = '</span>'
@@ -290,22 +295,26 @@ def vypis(pohar: str, pohar_url: str):
                     races:>7} | {
                     '–':>9}{SPAN_END}")
         else:
+            projekce = avg*koeficient
             pct_out = f"{pct:.2f}%" if pct is not None else "–"
             avg_out = f"{avg:.2f}%" if avg is not None else "–"
+            projekce_out = f"{projekce:.2f}%" if projekce is not None else "–"
             print_konzole(
                 f"{i:>3} | {
                     rank:>8} | {
                     name:<35} | {
                     pct_out:>10} | {
                     races:>7} | {
-                    avg_out:>9}")
+                    avg_out:>9} | {
+                    projekce_out:>11}")
             only_log(
                 f"{SPAN_BEGIN}{i:>3} | {
                     rank:>8} | {
                     name:<35} | {
                     pct_out:>10} | {
                     races:>7} | {
-                    avg_out:>9}{SPAN_END}")
+                    avg_out:>9} | {
+                    projekce_out:>11}{SPAN_END}")
         i += 1
     pass
 
@@ -313,6 +322,7 @@ def vypis_poslednich_12_mesicu():
     """Vytiskne '12M' tabulku: souhrn všech procent z posledních 12 měsíců přes aktuální a minulý pohár."""
     global vysledky
     global jmena
+    koeficient = float(0)
     # připrav výsledky: (rank, name, pct, races, avg) — rank i pct nejsou relevantní → None
     vysledky = []
     for name in jmena:
@@ -327,7 +337,8 @@ def vypis_poslednich_12_mesicu():
     header = f"{'#':>3} | {
         'JMÉNO':<35} | {
             'ZÁVODY':>7} | {
-                'PRŮMĚR %':>9}"
+                'PRŮMĚR %':>9} | {
+                'PROJEKCE %':>11}"
     print_and_log("")
     print_and_log(f"{"=" * len(header)}{"\n\n"}")
     print_konzole(f'{'Hodnocené období:':<18} {CUTOFF_12M:%d. %m. %Y} - {date.today():%d. %m. %Y}')
@@ -338,6 +349,9 @@ def vypis_poslednich_12_mesicu():
 
     i = 1
     for rank, name, pct, races, avg in vysledky:
+        if i == 1:
+            koeficient = 100/float(avg)
+            projekce = 100
         SPAN_BEGIN = ''
         SPAN_END = ''
         if name == JMENO:
@@ -351,12 +365,18 @@ def vypis_poslednich_12_mesicu():
             SPAN_END = '</span>'
         if rank is None:
             # „# POHÁR“ = '12M', '% POHÁR' = '–' (nedává smysl)
+            if i == 1:
+                projekce = 100
+            else:
+                projekce = (avg * koeficient) if (avg is not None and koeficient is not None and i != 1) else None
+            projekce_out = f"{projekce:.2f}%" if projekce is not None else "–"
             avg_out = f"{avg:.2f}%" if avg is not None else "–"
             only_log(
                 f"{SPAN_BEGIN}{i:>3} | {
                     name:<35} | {
                     races:>7} | {
-                    avg_out:>9}{SPAN_END}")
+                    avg_out:>9} | {
+                    projekce_out:>11}{SPAN_END}")
         else:
             # sem se nedostaneme; rank je u 12M vždy None
             pass
