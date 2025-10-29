@@ -12,6 +12,7 @@ from data import (
     JMENO, DIVIZE, URL, LOGIN, HESLO
 )
 
+
 ftp_script = Path(__file__).parent / "ftp_konkurence.py"
 if ftp_script.exists():
     from ftp_konkurence import(
@@ -154,7 +155,8 @@ def statistika() -> None:
             print_and_log(f"{'Vytvořeno:':<18}{vytvoreno_f}\n")
             only_log(f'<span style="color: #b0b0b0;">Závodník, který se nezůčastnil žádného pohárovéno závodu v hodnoceném období</span>')
             only_log(f'<span style="background-color: #fab1a0;">Závodník, který se v poháru ve vybrané sezoně umístil na jednom z prvních 3 míst</span>')
-            only_log(f'<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
+            if JMENO:
+                only_log(f'<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
             only_log("")
         else:
             print_and_log("=" * HEADER_LEN)
@@ -186,10 +188,11 @@ def statistika() -> None:
             name = raw_name.replace("\u00A0", " ").replace("\u200b", "")
             name = " ".join(name.split())
 
-            if name and (name != JMENO):
+            if name:
                 jmena.append(name)
 
-        jmena.append(JMENO)
+        if JMENO and (JMENO not in jmena):
+            jmena.append(JMENO)
         pohar(URL_CUP1, page, zahrnout_do_12m=True)
         vypis(POHAR1, URL_CUP1)
         try:
@@ -484,6 +487,8 @@ def muj_prumer() -> float:
 
 
 def porovnat(M12 = False) -> None:
+    if not JMENO:
+        return
     global FIRST_RUN
     if FIRST_RUN or M12:
         singular = "je"
