@@ -373,8 +373,9 @@ def vypis_poslednich_12_mesicu():
                 projekce = (avg * koeficient) if (avg is not None and koeficient is not None and i != 1) else None
             projekce_out = f"{projekce:.2f}%" if projekce is not None else "–"
             avg_out = f"{avg:.2f}%" if avg is not None else "–"
+            rank = "–" if avg is None else i
             only_log(
-                f"{SPAN_BEGIN}{i:>3} | {
+                f"{SPAN_BEGIN}{rank:>3} | {
                     name:<35} | {
                     races:>7} | {
                     avg_out:>9} | {
