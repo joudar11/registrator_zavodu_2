@@ -13,6 +13,7 @@ from data import (
 )
 
 
+
 ftp_script = Path(__file__).parent / "ftp_konkurence.py"
 if ftp_script.exists():
     from ftp_konkurence import(
@@ -23,6 +24,9 @@ if len(sys.argv) == 4:
     JMENO = sys.argv[1]
     DIVIZE = sys.argv[2]
     URL = sys.argv[3]
+    
+if JMENO == "None":
+    JMENO = None
 
 CREATE = True
 FOLDER = "konkurence"
@@ -156,7 +160,7 @@ def statistika() -> None:
             only_log(f'{" " * 18}<span style="color: #b0b0b0;">Závodník, který se nezůčastnil žádného pohárovéno závodu v hodnoceném období</span>')
             only_log(f'{" " * 18}<span style="background-color: #fab1a0;">Závodník, který se v poháru ve vybrané sezoně umístil na jednom z prvních 3 míst</span>')
             if JMENO:
-                only_log(f'{" " * 18}<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO} </span>')
+                only_log(f'{" " * 18}<span style="background-color: #ffeaa7;">Vybraný závodník - {JMENO}</span>')
             only_log("")
             print_and_log(f"{"#":<18}Pořadí - řazeno dle průměrných výsledků v hodnoceném období\n{"# POHÁR":<18}Pořadí ve vybraném poháru\n{"% POHÁR":<18}Procenta dosažená ve vybraném poháru\n{"ZÁVODY":<18}Počet pohárových závodů, kterých se závodník v hodnoceném období zúčastnil\n{"PRŮMĚR %":<18}Průměrný výsledek závodníka ve všech pohárových závodech v hodnoceném období\n{"PROJEKCE %":<18}Předpokládaný procentní zisk, pokud všichni závodníci podají svůj průměrný výkon")
         else:
@@ -192,7 +196,7 @@ def statistika() -> None:
             if name:
                 jmena.append(name)
 
-        if JMENO and (JMENO not in jmena):
+        if JMENO is not None and (JMENO not in jmena):
             jmena.append(JMENO)
         pohar(URL_CUP1, page, zahrnout_do_12m=True)
         vypis(POHAR1, URL_CUP1)
