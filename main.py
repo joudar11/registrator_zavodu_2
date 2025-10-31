@@ -252,18 +252,18 @@ def registrace(pokus: int) -> bool:
         try:
             page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU, timeout=3000)
             if CLENSKE_ID:
-                page.check(SELECTOR_CHECKBOX_CLEN)
-                page.fill(SELECTOR_INPUT_CLENSKE_ID, CLENSKE_ID)
+                page.check(SELECTOR_CHECKBOX_CLEN, timeout=3000)
+                page.fill(SELECTOR_INPUT_CLENSKE_ID, CLENSKE_ID, timeout=3000)
             if POZNAMKA:
-                page.fill(SELECTOR_INPUT_POZNAMKA, POZNAMKA)
+                page.fill(SELECTOR_INPUT_POZNAMKA, POZNAMKA, timeout=3000)
             if ROZHODCI:
-                page.check(SELECTOR_CHECKBOX_ROZHODCI)
+                page.check(SELECTOR_CHECKBOX_ROZHODCI, timeout=3000)
             if ZACATECNIK:
-                page.check(SELECTOR_CHECKBOX_ZACATECNIK)
+                page.check(SELECTOR_CHECKBOX_ZACATECNIK), timeout=3000
             if MZ and not page.locator(SELECTOR_CHECKBOX_MZ).is_checked():
-                page.check(SELECTOR_CHECKBOX_MZ)
+                page.check(SELECTOR_CHECKBOX_MZ, timeout=3000)
             if STAVITEL:
-                page.check(SELECTOR_CHECKBOX_STAVITEL)
+                page.check(SELECTOR_CHECKBOX_STAVITEL, timeout=3000)
         except Exception as e:
             print_and_log(
                 f"❌ Nepodařilo se vyplnit registrační formulář:\n{e}")
