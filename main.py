@@ -190,7 +190,7 @@ def registrace(pokus: int) -> bool:
                     print_and_log(
                         "❌ Nepodařilo se odeslat zahajovací email. Pokračuji.")
 
-            print_and_log(f"ℹ️ Čekám na čas přihlášení: {cas_prihlaseni}")
+            # print_and_log(f"ℹ️ Čekám na čas přihlášení: {cas_prihlaseni}")
 
             if cas_registrace - datetime.now() > timedelta(minutes=60):
                 while datetime.now() < cas_notifikace:
@@ -207,10 +207,8 @@ def registrace(pokus: int) -> bool:
             while datetime.now() < cas_prihlaseni:
                 time.sleep(0.1)
 
-            # Přihlášení
-            print_and_log("ℹ️ Přihlašuji se...")
-            if not prihlasit(page):
-                return False
+            # Přihlášení bylo původně zde
+
 
             # Uspání skriptu, dokud nenastane čas spuštění registrace
             cilovy_cas = cas_registrace + timedelta(seconds=SEKUND)
@@ -218,16 +216,20 @@ def registrace(pokus: int) -> bool:
             while datetime.now() < cilovy_cas:
                 time.sleep(0.05)
 
-            # Refresh po spuštění registrace, aby se zobrazily prvky formuláře
-            print_and_log("ℹ️ Refreshuji stránku...")
-            try:
-                page.goto(URL, wait_until="domcontentloaded", timeout=2000)
-                time.sleep(0.1)
-                page.goto(URL, wait_until="domcontentloaded", timeout=2000)
-            except TimeoutError:
-                print_and_log(
-                    "❌ Timeout při refreshi stránky – pokračuji dál.")
+            print_and_log("ℹ️ Přihlašuji se...")
+            if not prihlasit(page):
                 return False
+
+
+
+            # Refresh po spuštění registrace, aby se zobrazily prvky formuláře
+            # print_and_log("ℹ️ Refreshuji stránku...")
+            # try:
+            #     page.goto(URL, wait_until="domcontentloaded", timeout=2000)
+            # except TimeoutError:
+            #     print_and_log(
+            #         "❌ Timeout při refreshi stránky – pokračuji dál.")
+            #     return False
 
             # Čekání na načtení stránky po refreshi
             try:
@@ -261,7 +263,7 @@ def registrace(pokus: int) -> bool:
             if ROZHODCI:
                 page.check(SELECTOR_CHECKBOX_ROZHODCI, timeout=3000)
             if ZACATECNIK:
-                page.check(SELECTOR_CHECKBOX_ZACATECNIK), timeout=3000
+                page.check(SELECTOR_CHECKBOX_ZACATECNIK, timeout=3000)
             if MZ and not page.locator(SELECTOR_CHECKBOX_MZ).is_checked():
                 page.check(SELECTOR_CHECKBOX_MZ, timeout=3000)
             if STAVITEL:
