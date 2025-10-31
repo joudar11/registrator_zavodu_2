@@ -204,8 +204,8 @@ def registrace(pokus: int) -> bool:
                     print_and_log(
                         "❌ Nepodařilo se odeslat pokračovací email. Pokračuji.")
 
-            while datetime.now() < cas_prihlaseni:
-                time.sleep(0.1)
+            # while datetime.now() < cas_prihlaseni:
+            #     time.sleep(0.1)
 
             # Přihlášení bylo původně zde
 
