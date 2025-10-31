@@ -222,6 +222,8 @@ def registrace(pokus: int) -> bool:
             print_and_log("ℹ️ Refreshuji stránku...")
             try:
                 page.goto(URL, wait_until="domcontentloaded", timeout=2000)
+                time.sleep(0.1)
+                page.goto(URL, wait_until="domcontentloaded", timeout=2000)
             except TimeoutError:
                 print_and_log(
                     "❌ Timeout při refreshi stránky – pokračuji dál.")
