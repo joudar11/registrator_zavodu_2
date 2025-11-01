@@ -5,6 +5,7 @@ import random
 import smtplib
 from datetime import datetime, timedelta
 from email.message import EmailMessage
+import re
 
 # --- Externí knihovny ---
 from playwright.sync_api import sync_playwright, TimeoutError
@@ -12,7 +13,7 @@ from playwright.sync_api import sync_playwright, TimeoutError
 # --- Lokální moduly ---
 from data import (
     JMENO, CISLO_DOKLADU, CLENSKE_ID, DIVIZE, URL,
-    LOGIN, HESLO, DATUM_CAS_REGISTRACE, SQUAD,
+    LOGIN, HESLO, SQUAD,
     EMAIL_P, EMAIL_U, MZ, ZACATECNIK, STAVITEL,
     ROZHODCI, POZNAMKA, PRITELKYNE, JMENO_PRITELKYNE, RANDOM_WAIT, EMAIL_PROVIDER
 )
@@ -26,6 +27,8 @@ nazev_zavodu = None  # Sem se následně uloží název závodu (pro odeslání 
 SEKUND = 2.2  # Jak dlouho po nastání času registrace má skript refreshnout stránku
 ics_file = None
 STALE_BEZI_MINUT = 45 #Kolik minut před registrací poslat potvrzovací email, že skript stále běží
+REGISTRACE_STAV = None
+DATUM_CAS_REGISTRACE = None
 
 fatal_error = False
 
@@ -132,6 +135,67 @@ def prihlasit(page) -> None:
         return False
     return True
 
+def nacti_text_ze_stranky(page, label_text: str) -> str:
+    """Vrátí text hodnoty z páru 'label : value'."""
+    label = page.locator(f"xpath=//div[normalize-space()='{label_text}']").first
+    value = label.locator("xpath=following-sibling::div[1]")
+    value.wait_for(timeout=5000)
+    return value.inner_text().strip()
+
+def parse_registrace_text(text: str) -> str | None:
+    global REGISTRACE_STAV
+
+    # mapa českých měsíců -> čísla
+    mesiace = {
+        "ledna": "01",
+        "února": "02",
+        "brezna": "03",
+        "března": "03",
+        "dubna": "04",
+        "května": "05",
+        "cervna": "06",
+        "června": "06",
+        "cervence": "07",
+        "července": "07",
+        "srpna": "08",
+        "září": "09",
+        "zari": "09",
+        "října": "10",
+        "rijna": "10",
+        "listopadu": "11",
+        "prosince": "12",
+    }
+
+    text_l = text.lower()
+
+    # stav registrace
+    if "registrace skončila" in text_l:
+        REGISTRACE_STAV = "skoncila"
+        return None
+
+    if "registrace začne" in text_l:
+        REGISTRACE_STAV = "zacne"
+    elif "registrace skončí" in text_l:
+        REGISTRACE_STAV = "probiha"
+    else:
+        REGISTRACE_STAV = None
+
+    # regex na zachycení data (např. 12. listopadu 2025 23:00)
+    m = re.search(r"(\d{1,2})\. ([a-záéěíóúůýžščřďťň]+) (\d{4}) (\d{1,2}:\d{2})", text_l)
+    if not m:
+        return None
+
+    den, mesic_text, rok, cas = m.groups()
+
+    # převede český měsíc na číslo
+    mesic_text = mesic_text.replace("ě", "e").replace("š", "s").replace("č", "c").replace("ř", "r").replace("ů", "u").replace("ž", "z").replace("á","a").replace("í","i").replace("ý","y").replace("ď","d").replace("ť","t").replace("ň","n").replace("ó","o").replace("ú","u").replace("é","e")
+
+    mesic = mesiace.get(mesic_text)
+    if not mesic:
+        return None
+
+    datum = f"{rok}-{mesic}-{int(den):02d} {cas}:00"
+    return datum
 
 def registrace(pokus: int) -> bool:
     """Hlavní část programu. Funkce obsahuje časování, volání přihlášení, volání funkcí pro doesílání emailů, verifikaci importovaných konstant, ochrany proti padnutí programu a fallbacky."""
@@ -142,6 +206,7 @@ def registrace(pokus: int) -> bool:
     global finished
     global fatal_error
     global ics_file
+    global DATUM_CAS_REGISTRACE
 
     # Shrnutí načtených údajů
     if pokus == 1:
@@ -165,9 +230,14 @@ def registrace(pokus: int) -> bool:
                 f"❌❌❌ Stránka závodu {URL} nebyla nalezena - 404 ❌❌❌")
             fatal_error = True
             return False
+        
+            
+        datum_registrace_extrahovat = (nacti_text_ze_stranky(page, "Registrace:"))
+        datum_registrace_extrahovano = parse_registrace_text(datum_registrace_extrahovat)
+        DATUM_CAS_REGISTRACE = datum_registrace_extrahovano
 
         # Pokud je čas zadán → časovaný režim
-        if DATUM_CAS_REGISTRACE and pokus == 1:
+        if DATUM_CAS_REGISTRACE and pokus == 1 and REGISTRACE_STAV == "zacne":
             try:
                 cas_registrace = datetime.strptime(
                     DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S")
@@ -188,13 +258,15 @@ def registrace(pokus: int) -> bool:
                     informuj_o_zacatku()
                 except Exception as e:
                     print_and_log(
-                        "❌ Nepodařilo se odeslat zahajovací email. Pokračuji.")
+                        f"❌ Nepodařilo se odeslat zahajovací email. Pokračuji. {e}")
 
             # print_and_log(f"ℹ️ Čekám na čas přihlášení: {cas_prihlaseni}")
-
+            
             if cas_registrace - datetime.now() > timedelta(minutes=60):
+                print_and_log(f"ℹ️ Čekám do {cas_notifikace} na odeslání potvrzovacího e-mailu, "
+              f"následně do {cas_registrace} na registraci.")
                 while datetime.now() < cas_notifikace:
-                    time.sleep(1)
+                    time.sleep(60)
 
                 try:
                     stale_bezi()
@@ -238,11 +310,18 @@ def registrace(pokus: int) -> bool:
                 print_and_log("❌ Stránku registrace se nepodařilo načíst.")
                 return False
 
-        else:
+        elif REGISTRACE_STAV == "probiha":
             # Režim bez časování → rovnou přihlášení
             print_and_log("ℹ️ Přihlašuji se a rovnou registruji...")
             if not prihlasit(page):
                 return False
+        else:
+            if REGISTRACE_STAV == "skoncila":
+                print_and_log("❌ Registrace již skončila.")
+            else:
+                print_and_log("❌ Neočekávaná chyba při rozhodování o stavu registrace.")
+                fatal_error = True
+            return False
 
         # try:
         #     page.wait_for_selector(SELECTOR_TLACITKO_REGISTRACE, timeout=4000)

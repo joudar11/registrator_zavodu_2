@@ -12,6 +12,7 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 - Pokud zvolená divize nebyla v závodě otevřena, skript automaticky zvolí první možnou. Závodník tak nepřijde o místo a následně registraci může upravit.
 - Pokud je zvolený squad plný, skript automaticky zkusí zvolit první volný squad v rozsahu 1 - 100.
 - Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru - skript je možno nechat běžet bez dohledu a neselže.
+- Automatické načítání informací o stavu registrace, případně datu jejího spuštění.
 ### Registrace na plný závod (plny_zavod.py)
 - Pokud závodník prosral začátek registrace a závod je plný, lze spustit soubor plny_zavod.py, který každých 30 minut kontroluje obsazenost a v případě volného místa spouští registrační skript <code>main.py</code>.
 ### Analýza konkurence (konkurence.py)
@@ -48,8 +49,6 @@ LOGIN = "jan.novak"
 # Email pro přihlášení i notifikace
 HESLO = "tajneheslo123"
 # Heslo do systému LOS Lex
-DATUM_CAS_REGISTRACE = "2025-06-15 20:00:00"
-# Datum otevření registrace. Formát musí být RRRR-MM-DD HH:MM:SS
 SQUAD = 1
 # Číslo squadu, nebo r (v uvozovkách pro squad ROZHODČÍ)
 EMAIL_P = "tajneheslo123"

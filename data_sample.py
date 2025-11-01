@@ -14,8 +14,6 @@ LOGIN = "jan.novak@email.com"
 # Email pro přihlášení i notifikace
 HESLO = "tajneheslo123"
 # Heslo do systému LOS Lex
-DATUM_CAS_REGISTRACE = "2025-06-15 20:00:00"
-# Datum otevření registrace. Formát musí být RRRR-MM-DD HH:MM:SS
 SQUAD = 1
 # Číslo squadu, nebo r (v uvozovkách pro squad ROZHODČÍ)
 EMAIL_P = "tajne-EMAILOVE-heslo123"
