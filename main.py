@@ -209,8 +209,7 @@ def registrace(pokus: int) -> bool:
     global DATUM_CAS_REGISTRACE
 
     # Shrnutí načtených údajů
-    if pokus == 1:
-        print(divider, get_summary(), divider, sep="\n")
+
 
     # Zahájení práce s prohlížečem
     with sync_playwright() as p:
@@ -235,6 +234,9 @@ def registrace(pokus: int) -> bool:
         datum_registrace_extrahovat = (nacti_text_ze_stranky(page, "Registrace:"))
         datum_registrace_extrahovano = parse_registrace_text(datum_registrace_extrahovat)
         DATUM_CAS_REGISTRACE = datum_registrace_extrahovano
+
+        if pokus == 1:
+            print(divider, get_summary(), divider, sep="\n")
 
         # Pokud je čas zadán → časovaný režim
         if DATUM_CAS_REGISTRACE and pokus == 1 and REGISTRACE_STAV == "zacne":
