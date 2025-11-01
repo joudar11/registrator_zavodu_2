@@ -90,7 +90,7 @@ remote_dir=r"/domena.cz/web/public/prehledy" #FTPS složka, kam nahrát skript
 visit=r"https://domena.cz/public/prehledy/" #URL ke složce, kam se nahrává - tato cesta musí být přístupná http nebo https protokolem
 ```
 
-## ▶️ Instalace a spuštění
+## ▶️ Instalace a spuštění - Windows
 
 ### Prvotní instalace před spuštěním:
 
@@ -150,7 +150,7 @@ např:
 ```bash
 python konkurence.py "Jan Novák" "Pistole" "https://www.loslex.cz/contest/313"
 ```
-(Tato funkcionalita podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude implementována.)
+(Skrtipt <code>konkurence.py</code> podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude nikdy implementována.)
 
 ### Aktualizace na poslední verzi
 ```bash
@@ -159,3 +159,60 @@ git reset --hard HEAD
 git pull
 ```
 nebo spuštěním souboru <code>update.bat</code>
+
+
+## ▶️ Instalace a spuštění - Linux
+
+### Prvotní instalace před spuštěním:
+
+Před tímto krokem je nutné mít nainstalovaný Python a Git. Toto provedeš následujícími příkazy v terminálu:<br>
+``` bash
+sudo apt update
+sudo apt install -y git python3 python3-venv python3-pip
+```
+Stáhni a spusť soubor <code>install.sh</code> příkazem 
+``` bash
+bash install.sh
+```
+<br>
+Registrátor se ti nainstaluje do <code>/home/USER/Documents</code>
+
+### 🏁 Použití po instalaci:
+#### Vytvoření konfigurace:
+Přejmenuj soubor <code>data_sample.py</code> na <code>data.py</code> (toto automaticky dělá instalační skript <code>install.sh</code>) a vyplň ho.
+
+#### Pokud registrace ještě nezačala:
+- spustit soubor <code>run.sh</code> příkazem 
+```bash
+bash run.sh
+```
+<br>
+
+#### Pokud registrace běží, ale závod je plný:
+- spustit soubor <code>plny_zavod.sh</code> příkazem 
+```bash
+bash plny_zavod.sh
+```
+<br>
+
+#### Pokud závod ještě nebyl vyhlášen, registrace už je spuštěna a závodník chce analýzu konkurence:
+- spustit soubor <code>konkurence.sh</code> příkazem 
+```bash
+bash konkurence.sh
+```
+<br>
+
+- Je možné spustit s argumenty JMÉNO DIVIZE URL pro přepsání dat o závodě a závodníkovi v souboru <code>data.py</code>. I zde je však potřeba mít vyplněný soubor data.py, aby se skript mohl na webu LOSu přihlásit a zobrazit si celá jména.<br>
+např:
+```bash
+python3 konkurence.py "Jan Novák" "Pistole" "https://www.loslex.cz/contest/313"
+```
+(Skrtipt <code>konkurence.py</code> podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude nikdy implementována.)
+
+### Aktualizace na poslední verzi
+```bash
+git fetch --all
+git reset --hard HEAD
+git pull
+```
+nebo spuštěním souboru <code>update.sh</code>
