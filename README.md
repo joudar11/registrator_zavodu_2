@@ -95,7 +95,7 @@ visit=r"https://domena.cz/public/prehledy/" #URL ke složce, kam se nahrává - 
 ### Prvotní instalace před spuštěním:
 
 Před tímto krokem je nutné mít nainstalovaný [Python](https://www.python.org/downloads/) a [Git](https://git-scm.com/install/).<br>
-Spusť v příkazovém řádku následující příkazy, nebo si stáhni a spusť <code>install.bat</code>.<br>
+Spusť v příkazovém řádku následující příkazy, nebo si stáhni a spusť <code>install.bat</code>.<br> (Pro instalaci a spouštění bez virtuálního prostředí použij soubory s příponou _*_GLOBAL*_.)<br>
 Registrátor se ti nainstaluje do <code>C:\Users\TVUJ_USERNAME\AppData\Roaming</code>
 ```bash
 cd %appdata%
