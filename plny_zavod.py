@@ -11,8 +11,10 @@ from playwright.sync_api import sync_playwright, TimeoutError
 
 # --- Lokální moduly ---
 from data import (
-    EMAIL_P, EMAIL_U, LOGIN, URL, INTERVAL
+    EMAIL_P, EMAIL_U, LOGIN, URL, INTERVAL, EMAIL_PROVIDER
 )
+
+EMAIL_PROVIDERS = ("PROTON", "GMAIL")
 
 LIMIT = 336  # kolikrát maximálně kontrolovat
 
@@ -84,9 +86,25 @@ def poslat_informaci() -> None:
 
 Toto je automatizovaný email."""
     )
-    with smtplib.SMTP('127.0.0.1', 1025) as smtp:
-        smtp.login(EMAIL_U, EMAIL_P)
-        smtp.send_message(msg)
+    odeslat(msg)
+
+
+def odeslat(msg: str) -> bool:
+    if EMAIL_PROVIDER not in EMAIL_PROVIDERS:
+        print(f"❌ Poskytovatel emailových služeb {EMAIL_PROVIDER} není implementován. Email nebyl odeslán.")
+        return False
+    if EMAIL_PROVIDER == "PROTON":
+        with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+            smtp.login(EMAIL_U, EMAIL_P)
+            smtp.send_message(msg)
+        return True
+    elif EMAIL_PROVIDER == "GMAIL":
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(EMAIL_U, EMAIL_P)
+            smtp.send_message(msg)
+        return True
+    else:
+        return False
 
 if __name__ == "__main__":
     run()
