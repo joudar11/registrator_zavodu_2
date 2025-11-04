@@ -39,8 +39,8 @@ LAST12_SUMS = {}        # ### NEW: jméno -> (součet_procent, počet_závodů)
 CUTOFF_12M = date.today() - timedelta(days=365)  # ### NEW: hranice 12 měsíců
 
 DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
-                   "PDW": "PDW"}  # Převod z divize DATA na tento skript
-DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW"}
+                   "PDW": "PDW", "Malá pistole": "MPi"}  # Převod z divize DATA na tento skript
+DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW", "MPi": "MPi"}
 
 DIVIZE = DIVIZE_KONVERZE[DIVIZE]
 
@@ -74,7 +74,6 @@ SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main 
 
 jmena = []
 vysledky = []
-
 def upload_ftps(host: str, username: str, password: str, remote_dir: str) -> None:
     """
     Nahraje hotový HTML soubor na FTPS server (FTP přes TLS).
