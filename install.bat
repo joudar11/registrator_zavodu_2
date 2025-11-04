@@ -5,7 +5,7 @@ python -m venv .venv
 set VIRTUAL_ENV_DISABLE_PROMPT=
 call .venv\Scripts\activate.bat
 python -m pip install --upgrade pip
-pip install -r requirements.txt
-playwright install
+python -m pip install -r requirements.txt
+python -m playwright install
 call .venv\Scripts\deactivate.bat
-if exist data_sample.py ren data_sample.py data.py
+IF NOT EXIST data.py copy data_sample.py data.py

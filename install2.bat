@@ -29,7 +29,7 @@ set VIRTUAL_ENV_DISABLE_PROMPT=
 
 rem === 4) Instalace balicku ===
 python -m pip install --upgrade pip || (echo [ERROR] Upgrade pip selhal. & exit /b 1)
-pip install -r requirements.txt || (echo [ERROR] Instalace requirements selhala. & exit /b 1)
+python -m pip install -r requirements.txt || (echo [ERROR] Instalace requirements selhala. & exit /b 1)
 
 rem Pokud by v requirements nebyl playwright, doinstaluj:
 python -c "import pkgutil,sys; sys.exit(0 if pkgutil.find_loader('playwright') else 1)" || pip install playwright || (echo [ERROR] Instalace playwright selhala. & exit /b 1)

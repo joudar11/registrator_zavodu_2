@@ -28,11 +28,11 @@ STAVITEL = False
 # Stavitel
 ROZHODCI = False
 # Rozhodčí
-POZNAMKA = "..."
+POZNAMKA = None
 # Poznámka (volitelné) - Může být None
-# POZNAMKA = None
+# POZNAMKA = "Lorem ipsum"
 PRITELKYNE = "jana.novakova@pm.me"
-# Email přítelkyně (None, pokud jsi single)
+# Email přítelkyně (None, pokud jsi single):
 # PRITELKYNE = None
 JMENO_PRITELKYNE = "Jana"
 # Křestní jméno přítelkyně v prvním pádu
