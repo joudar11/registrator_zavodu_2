@@ -70,6 +70,7 @@ SELECTOR_LOGIN_BUTTON = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\
 SELECTOR_USER = r"#login"
 SELECTOR_PASS = r"#password"
 SELECTOR_DIVIZE_POHAR = f"#division-{DIVIZE_V_POHARU[DIVIZE]}-tab"
+SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.grid.grid-cols-auto.lg\:grid-cols-fitfirst.gap-x-2.lg\:gap-x-4.gap-y-2 > div:nth-child(10)"
 
 jmena = []
 vysledky = []
@@ -150,12 +151,14 @@ def statistika() -> None:
         print_and_log("")
         if FIRST_RUN:
             vytvoreno = datetime.now()
+            datum_zavodu = page.inner_text(SELECTOR_DATUM, timeout=2000)
             vytvoreno_f = vytvoreno.strftime("%d. %m. %Y %H:%M")
             if ftp_script.exists():
                 only_log(f'{"Přehled:":<18}<a target="_blank" href="{visit}">{visit}</a>')
             print_konzole(f'{'Závod:':<18}{page.title()} - {URL}')
             only_log(f'{'Závod:':<18}<a target="_blank" href="{URL}">{page.title()}</a>')
             print_and_log(f"{'Divize:':<18}{DIVIZE}")
+            print_and_log(f"{'Datum závodu:':<18}{datum_zavodu}")
             print_and_log(f"{'Vytvořeno:':<18}{vytvoreno_f}\n")
             only_log(f'{" " * 18}<span style="color: #b0b0b0;">Závodník, který se nezůčastnil žádného pohárovéno závodu v hodnoceném období</span>')
             only_log(f'{" " * 18}<span style="background-color: #fab1a0;">Závodník, který se v poháru ve vybrané sezoně umístil na jednom z prvních 3 míst</span>')
