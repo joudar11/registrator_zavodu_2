@@ -4,6 +4,7 @@ import smtplib
 from datetime import datetime
 from email.message import EmailMessage
 import subprocess
+import sys
 
 # --- Externí knihovny ---
 from playwright.sync_api import sync_playwright, TimeoutError
@@ -14,6 +15,14 @@ from data import (
 )
 
 LIMIT = 336 # Limit kolikrát se má kontrola zopakovat.
+
+if len(sys.argv) == 2:
+    if sys.argv[1] == "global":
+        global_env = True
+    else:
+        global_env = False
+else:
+    global_env = False
 
 def run() -> None:
     print("")
@@ -49,7 +58,10 @@ def run() -> None:
                 if pocet < kapacita:
                     print("Volné místo!")
                     poslat_informaci()
-                    subprocess.Popen(["start", "cmd", "/k", "python main.py"], shell=True)
+                    if global_env:
+                        subprocess.Popen(["start", "cmd", "/k", "run_GLOBAL.bat"], shell=True)
+                    else:
+                        subprocess.Popen(["start", "cmd", "/k", "run.bat"], shell=True)
                     return True
                 else:
                     print(datetime.now().strftime("%H:%M:%S"))

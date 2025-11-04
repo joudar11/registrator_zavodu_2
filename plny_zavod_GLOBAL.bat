@@ -1,2 +1,2 @@
-python plny_zavod.py
+python plny_zavod.py "global"
 @PAUSE
