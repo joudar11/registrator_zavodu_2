@@ -54,7 +54,7 @@ def run() -> None:
 
                     if pocet < kapacita:
                         print("✅ Volné místo!")
-                        # poslat_informaci()
+                        poslat_informaci()
                         if global_env:
                             subprocess.Popen(["start", "cmd", "/k", "run_GLOBAL.bat"], shell=True)
                         else:
