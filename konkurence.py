@@ -28,21 +28,23 @@ if len(sys.argv) == 4:
 if JMENO == "None":
     JMENO = None
 
-CREATE = True
-FOLDER = "konkurence"
-TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
-LOGNAME = f"konkurence-{URL.split("/")[-1]}-{JMENO}"
-KONZOLE = False
-FIRST_RUN = True
-HEADER_LEN = None
-LAST12_SUMS = {}        # ### NEW: jméno -> (součet_procent, počet_závodů)
-CUTOFF_12M = date.today() - timedelta(days=365)  # ### NEW: hranice 12 měsíců
 
 DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
                    "PDW": "PDW", "Malá pistole": "MPi"}  # Převod z divize DATA na tento skript
 DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW", "MPi": "MPi"}
 
 DIVIZE = DIVIZE_KONVERZE[DIVIZE]
+
+CREATE = True
+FOLDER = "konkurence"
+TIME = datetime.now().replace(microsecond=0).strftime("%Y-%m-%d_%H-%M-%S")
+LOGNAME = f"konkurence-{URL.split("/")[-1]}-{JMENO}-{DIVIZE}"
+KONZOLE = False
+FIRST_RUN = True
+HEADER_LEN = None
+LAST12_SUMS = {}        # ### NEW: jméno -> (součet_procent, počet_závodů)
+CUTOFF_12M = date.today() - timedelta(days=365)  # ### NEW: hranice 12 měsíců
+
 
 
 today = date.today()
@@ -73,6 +75,7 @@ SELECTOR_DIVIZE_POHAR = f"#division-{DIVIZE_V_POHARU[DIVIZE]}-tab"
 SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.grid.grid-cols-auto.lg\:grid-cols-fitfirst.gap-x-2.lg\:gap-x-4.gap-y-2 > div:nth-child(10)"
 
 jmena = []
+extra_jmena=[]
 vysledky = []
 def upload_ftps(host: str, username: str, password: str, remote_dir: str) -> None:
     """
@@ -130,6 +133,15 @@ def smazat_log() -> None:
         os.remove(path)
         print(f"Soubor '{path}' byl smazán.")
     return
+
+
+def pridat_extra_jmena():
+    if extra_jmena == []:
+        return
+    global jmena
+    for extra_jmeno in extra_jmena:
+        if extra_jmeno not in jmena:
+            jmena.append(extra_jmeno)
 
 
 def print_konzole(content: str) -> None:
@@ -200,6 +212,7 @@ def statistika() -> None:
 
         if JMENO is not None and (JMENO not in jmena):
             jmena.append(JMENO)
+        pridat_extra_jmena()
         pohar(URL_CUP1, page, zahrnout_do_12m=True)
         vypis(POHAR1, URL_CUP1)
         try:
