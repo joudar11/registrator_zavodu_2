@@ -14,15 +14,9 @@ from data import (
     EMAIL_P, EMAIL_U, LOGIN, URL, INTERVAL
 )
 
-LIMIT = 336 # Limit kolikrát se má kontrola zopakovat.
+LIMIT = 336  # kolikrát maximálně kontrolovat
 
-if len(sys.argv) == 2:
-    if sys.argv[1] == "global":
-        global_env = True
-    else:
-        global_env = False
-else:
-    global_env = False
+global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
 
 def run() -> None:
     print("")
@@ -33,46 +27,52 @@ def run() -> None:
             try:
                 page.goto(URL, timeout=10000, wait_until="domcontentloaded")
             except Exception as e:
-                print(f"❌ Nelze načíst stránku závodu. Server buď neodpovídá, nebo nejsi připojen k internetu.\n\n{e}")
-                return False
-            while True:
+                print(f"❌ Nelze načíst stránku závodu. {e}")
+                return
+
+            attempts = 0
+            while attempts < LIMIT:
+                attempts += 1
                 try:
-                    page.reload(wait_until="domcontentloaded", timeout=15000)
-                except TimeoutError:
-                    print("⚠️ Timeout při reloadu, zkouším dál…")
-                    return False
-                try:
+                    try:
+                        page.reload(wait_until="domcontentloaded", timeout=15000)
+                    except TimeoutError:
+                        print("⚠️ Timeout při reloadu, zkouším po pauze…")
+                        time.sleep(INTERVAL)
+                        continue
+
                     label = page.locator("xpath=//div[normalize-space()='Počet registrovaných:']").first
                     value_div = label.locator("xpath=following-sibling::div[1]")
                     value_div.wait_for(timeout=5000)
                     pocet_text = value_div.inner_text().strip()
-                    
-                except Exception as e:
-                    print(f"Chyba {e}. Opakuji.")
-                    return False
 
-                left, right = pocet_text.split("/", 1)
-                pocet = int(left.strip())
-                kapacita = int(right.strip().split()[0])
+                    left, right = pocet_text.split("/", 1)
+                    pocet = int(left.strip())
+                    kapacita = int(right.strip().split()[0])
 
-                if pocet < kapacita:
-                    print("Volné místo!")
-                    poslat_informaci()
-                    if global_env:
-                        subprocess.Popen(["start", "cmd", "/k", "run_GLOBAL.bat"], shell=True)
-                    else:
-                        subprocess.Popen(["start", "cmd", "/k", "run.bat"], shell=True)
-                    return True
-                else:
+                    if pocet < kapacita:
+                        print("✅ Volné místo!")
+                        # poslat_informaci()
+                        if global_env:
+                            subprocess.Popen(["start", "cmd", "/k", "run_GLOBAL.bat"], shell=True)
+                        else:
+                            subprocess.Popen(["start", "cmd", "/k", "run.bat"], shell=True)
+                        return
+
                     print(datetime.now().strftime("%H:%M:%S"))
-                    print(f"Závod je plně obsazen ({pocet} z {kapacita}). Další kontrola za {int(INTERVAL/60)} minut.")
-                    print(f"Jakmile se uvolní místo, budu informovat {LOGIN}.")
-                    print("")
+                    print(f"Závod je plně obsazen ({pocet} z {kapacita}). "
+                          f"Další kontrola za {int(INTERVAL/60)} minut.")
+                    print(f"Jakmile se uvolní místo, budu informovat {LOGIN}.\n")
+                    time.sleep(INTERVAL)
 
-                time.sleep(INTERVAL)
+                except Exception as e:
+                    print(f"⚠️ Chyba: {e}. Opakuji po pauze…")
+                    time.sleep(INTERVAL)
+                    continue
 
+            print(f"⏹️ Konec po {LIMIT} pokusech bez volného místa.")
     except Exception as e:
-        return False
+        print(f"❌ Neošetřená chyba v run(): {e}")
 
 def poslat_informaci() -> None:
     msg = EmailMessage()
@@ -80,17 +80,13 @@ def poslat_informaci() -> None:
     msg['From'] = EMAIL_U
     msg['To'] = LOGIN
     msg.set_content(
-    f"""Ve sledovaném závodě {URL} se uvolnilo místo! Byl spuštěn registrační skript.
-    
-Toto je automatizovaný email."""
-)
+        f"""Ve sledovaném závodě {URL} se uvolnilo místo! Byl spuštěn registrační skript.
 
-    # Odeslání e-mailu
+Toto je automatizovaný email."""
+    )
     with smtplib.SMTP('127.0.0.1', 1025) as smtp:
         smtp.login(EMAIL_U, EMAIL_P)
         smtp.send_message(msg)
 
 if __name__ == "__main__":
-    while True:
-        if run():
-            break
+    run()
