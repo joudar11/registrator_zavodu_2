@@ -156,6 +156,18 @@ python konkurence.py "Jan Novák" "Pistole" "https://www.loslex.cz/contest/313"
 ```
 (Skrtipt <code>konkurence.py</code> podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude nikdy implementována.)
 
+#### Pokud závod již skončil a čekáš na výsledky:
+- spustit soubor <code>vysledky_zverejneny.bat</code> (doporučeno)<br>
+- nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
+```bash
+.venv\Scripts\Activate.ps1
+python vysledky_zverejneny.py
+```
+- Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
+```bash
+python vysledky_zverejneny.py
+```
+
 ### Aktualizace na poslední verzi
 ```bash
 git fetch --all
@@ -212,6 +224,13 @@ např:
 python3 konkurence.py "Jan Novák" "Pistole" "https://www.loslex.cz/contest/313"
 ```
 (Skrtipt <code>konkurence.py</code> podporuje divize Pi, Opt a PDW. Ostatní divize autor jakožto zbytečné neuznává, proto jejich podpora nebude nikdy implementována.)
+
+#### Pokud závod již skončil a čekáš na výsledky:
+- spustit soubor <code>vysledky_zverejneny.sh</code> příkazem 
+```bash
+bash vysledky_zverejneny.sh
+```
+<br>
 
 ### Aktualizace na poslední verzi
 ```bash
