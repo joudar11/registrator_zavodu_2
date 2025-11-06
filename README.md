@@ -190,6 +190,12 @@ Stáhni a spusť soubor <code>install.sh</code> příkazem
 ``` bash
 bash install.sh
 ```
+případně jednoduše tímto příkazem rovnou instaluj:
+
+``` bash
+curl -fsSL https://los.krystofklika.cz/install.sh | bash
+
+``` bash
 <br>
 Registrátor se ti nainstaluje do <code>/home/USER/Documents</code>
 
