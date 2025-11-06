@@ -14,7 +14,7 @@ from data import (
     EMAIL_P, EMAIL_U, LOGIN, URL, INTERVAL, EMAIL_PROVIDER
 )
 
-EMAIL_PROVIDERS = ("PROTON", "GMAIL")
+from main import EMAIL_PROVIDERS
 
 LIMIT = 336  # kolikrát maximálně kontrolovat
 
