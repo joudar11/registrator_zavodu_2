@@ -23,6 +23,10 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 - Data si skript bere vždy z aktuálního poháru a vypisuje ještě 2 předešlé poháry.
 - Výstupem je .html přehled. Vzor je v souboru konkurence_sample.html.
 - Pokud existuje soubor <code>ftp_konkurence.py</code>, skript automaticky nahraje přehled na FTP a otevře jeho umístění na webu.
+### Kontrola zveřejněných výsledků (vysledky_zverejneny.py)
+- Ideální ke spuštění na závodě při čekání na zveřejnění výsledků.
+- Skript závodníka upozorní emailem, že byly zveřejněny výsledky.
+- Kontrola každých 10 sekund.
 
 
 ## 📦 Požadavky
