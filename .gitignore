@@ -12,3 +12,4 @@ konkurence/
 konkurence2.py
 ftp_konkurence.py
 .venv
+*.log

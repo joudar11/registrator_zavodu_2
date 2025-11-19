@@ -144,6 +144,7 @@ def nacti_text_ze_stranky(page, label_text: str) -> str:
 
 def parse_registrace_text(text: str) -> str | None:
     global REGISTRACE_STAV
+    global fatal_error
 
     # mapa českých měsíců -> čísla
     mesiace = {
@@ -171,6 +172,7 @@ def parse_registrace_text(text: str) -> str | None:
     # stav registrace
     if "registrace skončila" in text_l:
         REGISTRACE_STAV = "skoncila"
+        fatal_error = True
         return None
 
     if "registrace začne" in text_l:
