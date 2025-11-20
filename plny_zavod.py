@@ -5,6 +5,7 @@ from datetime import datetime
 from email.message import EmailMessage
 import subprocess
 import sys
+import platform
 
 # --- Externí knihovny ---
 from playwright.sync_api import sync_playwright, TimeoutError
@@ -55,10 +56,13 @@ def run() -> None:
                     if pocet < kapacita:
                         print("✅ Volné místo!")
                         poslat_informaci()
-                        if global_env:
-                            subprocess.Popen(["start", "cmd", "/k", "run_GLOBAL.bat"], shell=True)
+                        if platform.system() == "Linux":
+                            subprocess.Popen(["./run.sh"], shell=True)
                         else:
-                            subprocess.Popen(["start", "cmd", "/k", "run.bat"], shell=True)
+                            if global_env:
+                                subprocess.Popen(["start", "cmd", "/k", "run_GLOBAL.bat"], shell=True)
+                            else:
+                                subprocess.Popen(["start", "cmd", "/k", "run.bat"], shell=True)
                         return
 
                     print(datetime.now().strftime("%H:%M:%S"))
