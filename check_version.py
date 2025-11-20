@@ -4,7 +4,7 @@ import subprocess
 import platform
 import os
 
-def zkontroluj_a_aktualizuj():
+def zkontroluj_a_aktualizuj(global_env = False):
     url_s_verzi = "https://los.krystofklika.cz/manifest.txt" 
     aktualni_verze_str = "02.01"
     """
@@ -37,7 +37,10 @@ def zkontroluj_a_aktualizuj():
         operacni_system = platform.system()
         
         # Cesta ke skriptům [Inference] Předpokládám, že leží vedle tohoto skriptu
-        win_script = "update.bat"
+        if global_env:
+            win_script = "update_GLOBAL.bat"
+        else:
+            win_script = "update.bat"
         lin_script = "./update.sh"
 
         if operacni_system == "Windows":
