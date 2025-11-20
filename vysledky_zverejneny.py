@@ -3,6 +3,9 @@ from playwright.sync_api import sync_playwright, TimeoutError
 from data import URL, EMAIL_U, LOGIN
 import time
 from email.message import EmailMessage
+from check_version import zkontroluj_a_aktualizuj
+
+zkontroluj_a_aktualizuj()
 
 SELECTOR_VYSLEDKY_NADPIS = r"#anresults"
 INTERVAL = 10

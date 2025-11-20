@@ -6,6 +6,9 @@ from email.message import EmailMessage
 import subprocess
 import sys
 import platform
+from check_version import zkontroluj_a_aktualizuj
+
+zkontroluj_a_aktualizuj()
 
 # --- Externí knihovny ---
 from playwright.sync_api import sync_playwright, TimeoutError

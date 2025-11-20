@@ -5,6 +5,9 @@ import webbrowser
 from pathlib import Path
 import sys
 from ftplib import FTP_TLS
+from check_version import zkontroluj_a_aktualizuj
+
+zkontroluj_a_aktualizuj()
 
 from playwright.sync_api import sync_playwright
 
