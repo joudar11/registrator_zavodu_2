@@ -3,6 +3,7 @@
 Vylepšený skript, který automaticky provádí registraci na závod LOS Lex pomocí knihovny Playwright. Nevyžaduje žádné zadávání údajů v konzoli – vše si načítá z konfiguračního souboru `data.py`.
 
 ## Součástí je:
+- Automatická kontrola verze a pripadné spuštění aktualizace
 ### Časovaná registrace (main.py)
 - Automatické přihlášení do systému
 - Odeslání potvrzovacího e-mailu s .ics událostí
