@@ -69,6 +69,17 @@ SELECTOR_NAZEV = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main 
 SELECTOR_SPATNE_UDAJE = r"body > div.fixed.inset-0.overflow-y-auto.px-4.py-6.sm\:px-0.z-2000 > div.mb-6.bg-white.dark\:bg-gray-800.rounded-lg.overflow-hidden.shadow-xl.transform.transition-all.sm\:w-full.sm\:max-w-md.sm\:mx-auto > div > form > div:nth-child(3) > ul"
 
 
+if JMENO == "Kryštof Klika":
+    PRITELKYNE_INSERT_1 = "svým úžasným Python skriptem "
+    PRITELKYNE_INSERT_2 = "\nMiluju tě. ❤️"
+    PRITELKYNE_INSERT_3 = ""
+else:
+    PRITELKYNE_INSERT_1 = ""
+    PRITELKYNE_INSERT_2 = ""
+    PRITELKYNE_INSERT_3 = "\nK registraci použil skript od Kryštofa Kliky: https://github.com/joudar11/registrator_zavodu_2"
+
+
+
 def get_summary() -> str:
     """Vytiskne do konzole shrnutí údajů použitých při registraci"""
     summary = f"""\nÚdaje použité při registraci:\n
@@ -558,7 +569,7 @@ def informuj_pritelkyni() -> None:
     msg['From'] = EMAIL_U
     msg['To'] = PRITELKYNE
     msg.set_content(
-        f"""Tvůj kluk se svým úžasným Python skriptem právě přihlásil na závod {nazev_zavodu} ({URL}), který proběhne {datum_zavodu}.\n\nBude potřebovat držet palce.\n\nMiluju tě. ❤️\n\n\n(Automaticky generovaný email)""")
+        f"""Tvůj kluk se {PRITELKYNE_INSERT_1}právě přihlásil na závod {nazev_zavodu} ({URL}), který proběhne {datum_zavodu}.\n\nBude potřebovat držet palce.\n{PRITELKYNE_INSERT_2}\n{PRITELKYNE_INSERT_3}\n\n(Automaticky generovaný email)""")
 
     # Odeslání e-mailu
 
