@@ -665,5 +665,23 @@ def run():
             print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
 
 
+def opravit_konfiguraci():
+    if CLENSKE_ID == "None":
+        CLENSKE_ID = None
+    if isinstance(SQUAD, str):
+        try:
+            SQUAD = int(SQUAD)
+        except Exception as e:
+            print_and_log("❌ Nepodařilo se převést SQUAD na INT.")
+    if PRITELKYNE == "None":
+        PRITELKYNE = None
+    if POZNAMKA == "None":
+        POZNAMKA = None
+
+
 if __name__ == "__main__":
-    run()
+    try:
+        opravit_konfiguraci()
+        run()
+    except Exception as e:
+        print(f"❌ Neočekávaná chyba - Prosím, pošli screenshot na debug@krystofklika.cz \n {e}")
