@@ -477,7 +477,7 @@ def registrace(pokus: int) -> bool:
         while not page.url.startswith(REG_URL):
             if page.url.endswith(r"#regform"):
                 fatal_error = True
-                print_and_log(f"❌ V konfiguračním souboru data.py je pravděpodobně chyba. Zkontroluj, zda například slova None, True a False nejsou v uvozovkách.")
+                print_and_log(f"❌ V konfiguračním souboru data.py je pravděpodobně chyba. Web LOS se po kliknutí na tlačítko registrace vrací zpět na formulář a registraci nepotvrzuje. Zkontroluj, zda například hodnoty None, True a False nejsou v uvozovkách.")
                 return False
             if time.time() - start_time > max_wait:
                 print_and_log(
