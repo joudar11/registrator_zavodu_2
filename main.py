@@ -230,7 +230,7 @@ def registrace(pokus: int) -> bool:
 
     # Zahájení práce s prohlížečem
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
         # Pokud je server LOSu down, operace selže, funkce se ukončí a jede se od začátku, dokud server nebude odpovídat
