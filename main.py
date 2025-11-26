@@ -8,8 +8,9 @@ from email.message import EmailMessage
 import re
 import sys
 from check_version import zkontroluj_a_aktualizuj
-global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
-zkontroluj_a_aktualizuj(global_env)
+if __name__ == "__main__":
+    global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
+    zkontroluj_a_aktualizuj(global_env)
 
 # --- Externí knihovny ---
 from playwright.sync_api import sync_playwright, TimeoutError
@@ -229,7 +230,7 @@ def registrace(pokus: int) -> bool:
 
     # Zahájení práce s prohlížečem
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         page = browser.new_page()
 
         # Pokud je server LOSu down, operace selže, funkce se ukončí a jede se od začátku, dokud server nebude odpovídat
@@ -408,6 +409,7 @@ def registrace(pokus: int) -> bool:
 
                     print_and_log(f"⚠️ Zkouším zvolit squad {squad_oprava}.")
                     loc.click()
+                    page.click(f"#squad-{squad_oprava}")
                     # krátké čekání na propsání stavu
                     page.wait_for_timeout(50)
 
