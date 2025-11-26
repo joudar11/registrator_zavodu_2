@@ -475,6 +475,10 @@ def registrace(pokus: int) -> bool:
         max_wait = 8  # vteřin
         start_time = time.time()
         while not page.url.startswith(REG_URL):
+            if page.url.endswith(r"#regform"):
+                fatal_error = True
+                print_and_log(f"❌ V konfiguračním souboru data.py je pravděpodobně chyba. Zkontroluj, zda například slova None, True a False nejsou v uvozovkách.")
+                return False
             if time.time() - start_time > max_wait:
                 print_and_log(
                     f"❌ Registrace pravděpodobně selhala – URL se nezměnila do {max_wait} sekund.\nAktuální URL: {page.url}")
