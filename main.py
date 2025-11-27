@@ -666,6 +666,11 @@ def run():
 
 
 def opravit_konfiguraci():
+    global CLENSKE_ID
+    global PRITELKYNE
+    global POZNAMKA
+    global SQUAD
+    
     if CLENSKE_ID == "None":
         CLENSKE_ID = None
     if isinstance(SQUAD, str):
