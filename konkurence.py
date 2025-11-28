@@ -599,6 +599,8 @@ def run() -> None:
                 remote_dir
             )
             smazat_log()
+            if not os.listdir(FOLDER):
+                os.rmdir(FOLDER)
             webbrowser.open(f"{visit}{LOGNAME}.html")
         except Exception as e:
             print(f"Chyba FTP: {e}")
