@@ -44,7 +44,7 @@ DIVIZE_local = DIVIZE
 SQUAD_local = str(SQUAD)
 POKUS_TIME = None  # Čas zahájení pokusu o registraci (pro název log souboru)
 
-EMAIL_PROVIDERS = ("PROTON", "GMAIL")
+EMAIL_PROVIDERS = ("PROTON", "GMAIL", "PROTON-TOKEN")
 
 # Selectory pro login
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
@@ -622,6 +622,11 @@ def odeslat(msg: str) -> bool:
         return False
     if EMAIL_PROVIDER == "PROTON":
         with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+            smtp.login(EMAIL_U, EMAIL_P)
+            smtp.send_message(msg)
+        return True
+    if EMAIL_PROVIDER == "PROTON-TOKEN":
+        with smtplib.SMTP('smtp.protonmail.ch', 587) as smtp:
             smtp.login(EMAIL_U, EMAIL_P)
             smtp.send_message(msg)
         return True
