@@ -135,7 +135,7 @@ def smazat_log() -> None:
     path = os.path.join(FOLDER, filename)
     if os.path.isfile(path):
         os.remove(path)
-        print(f"Soubor '{path}' byl smazán.")
+        print(f"✅ Soubor '{path}' byl smazán.")
     return
 
 
