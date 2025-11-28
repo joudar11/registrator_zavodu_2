@@ -600,7 +600,11 @@ def run() -> None:
             )
             smazat_log()
             if not os.listdir(FOLDER):
-                os.rmdir(FOLDER)
+                try:
+                    os.rmdir(FOLDER)
+                    print(f"✅ Prázdná složka {FOLDER} byla smazána.")
+                except Exception as e:
+                    print(f"Chyba {e}")
             webbrowser.open(f"{visit}{LOGNAME}.html")
         except Exception as e:
             print(f"Chyba FTP: {e}")
