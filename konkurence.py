@@ -185,7 +185,7 @@ def statistika() -> None:
             print_and_log("=" * HEADER_LEN)
             print_and_log("")
         print_and_log("")
-
+        print("ℹ️ Přihlašuji se...")
         page.click(SELECTOR_LOGIN_FORM)
         page.wait_for_selector(SELECTOR_USER)
         page.wait_for_selector(SELECTOR_PASS)
@@ -217,6 +217,7 @@ def statistika() -> None:
         if JMENO is not None and (JMENO not in jmena):
             jmena.append(JMENO)
         pridat_extra_jmena()
+        print(f"ℹ️ Hodnotím závod {URL_CUP1}")
         pohar(URL_CUP1, page, zahrnout_do_12m=True)
         vypis(POHAR1, URL_CUP1)
         try:
@@ -228,6 +229,7 @@ def statistika() -> None:
         print_and_log("")
         print_and_log("=" * HEADER_LEN)
         print_and_log("")
+        print(f"ℹ️ Hodnotím závod {URL_CUP2}")
         pohar(URL_CUP2, page, zahrnout_do_12m=True)
         print_and_log("")
         vypis(POHAR2, URL_CUP2)
@@ -239,6 +241,7 @@ def statistika() -> None:
         print_and_log("")
         print_and_log("=" * HEADER_LEN)
         print_and_log("")
+        print(f"ℹ️ Hodnotím závod {URL_CUP3}")
         pohar(URL_CUP3, page)
         print_and_log("")
         vypis(POHAR3, URL_CUP3)
@@ -248,6 +251,7 @@ def statistika() -> None:
             pass
 
         vynuluj()
+        print(f"ℹ️ Hodnotím posledních 12 měsíců")
 
         vypis_poslednich_12_mesicu()
         try:
@@ -261,6 +265,7 @@ def statistika() -> None:
 
 
 def vypis(pohar: str, pohar_url: str):
+    print(f"ℹ️ Zapisuji výsledky poháru {pohar} do tabulky")
     global vysledky
     global HEADER_LEN
     koeficient = float(0)
