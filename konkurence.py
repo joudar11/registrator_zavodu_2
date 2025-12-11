@@ -357,7 +357,7 @@ def vypis(pohar: str, pohar_url: str):
 
 def vypis_poslednich_12_mesicu():
     """Vytiskne '12M' tabulku: souhrn všech procent z posledních 12 měsíců přes aktuální a minulý pohár."""
-    print(f"ℹ️¨Zapisuji posledních 12 měsíců do tabulky")
+    print(f"ℹ️ Zapisuji posledních 12 měsíců do tabulky")
     global vysledky
     global jmena
     koeficient = float(0)
