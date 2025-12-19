@@ -113,4 +113,9 @@ def odeslat(msg: str) -> bool:
         return False
 
 if __name__ == "__main__":
-    run()
+    try:
+        run()
+    except KeyboardInterrupt:
+        print("\nProgram ukončen uživatelem.")
+    except Exception as e:
+        print(f"Neočekávaná chyba: {e}")

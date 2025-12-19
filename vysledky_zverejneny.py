@@ -44,5 +44,7 @@ def informuj_o_vysledcich() -> None:
 if __name__ == "__main__":
     try:
         run()
+    except KeyboardInterrupt:
+        print("\nProgram ukončen uživatelem.")
     except Exception as e:
-        print(f"Chyba {e}")
+        print(f"Neočekávaná chyba: {e}")
