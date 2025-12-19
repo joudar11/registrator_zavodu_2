@@ -34,7 +34,7 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 
 - Python 3.12.6
 - playwright
-- Běžící Proton Bridge nebo Gmail účet se specifickým Google App Password (lze nastavit [zde](https://myaccount.google.com/apppasswords)) 
+- Běžící Proton Bridge, nakonfigurovaný Proton token, nebo Gmail účet se specifickým Google App Password (lze nastavit [zde](https://myaccount.google.com/apppasswords)) 
 - Konfigurační soubor <code>data.py</code> s následujícím obsahem:
 
 ```python
@@ -82,7 +82,7 @@ RANDOM_WAIT = False
 INTERVAL = 1800
 # V jakém intervalu v sekundách se má kontrolovat volné místo na plném závodě (s tímto údajem se pracuje pouze v plny_zavod.py)
 EMAIL_PROVIDER = "PROTON"
-# Poskytovatel emailových služeb. Možnosti jsou buď "PROTON" (S nainstalovaným Proton Bridge) nebo "GMAIL" (S specifickým Google apps password)
+# Poskytovatel emailových služeb. Možnosti jsou buď "PROTON" (S nainstalovaným Proton Bridge), "PROTON-TOKEN" (S nakonfigurovaným tokenem pro Proton mail), nebo "GMAIL" (S specifickým Google apps password)
 ```
 
 - Volitelně konfigurační soubor <code>ftp_konkurence.py</code>:

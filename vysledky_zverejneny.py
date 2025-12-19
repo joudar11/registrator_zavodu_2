@@ -5,8 +5,9 @@ import time
 from email.message import EmailMessage
 import sys
 from check_version import zkontroluj_a_aktualizuj
-global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
-zkontroluj_a_aktualizuj(global_env)
+if __name__ == "__main__":
+    global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
+    zkontroluj_a_aktualizuj(global_env)
 
 SELECTOR_VYSLEDKY_NADPIS = r"#anresults"
 INTERVAL = 10

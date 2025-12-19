@@ -7,8 +7,9 @@ import subprocess
 import sys
 import platform
 from check_version import zkontroluj_a_aktualizuj
-global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
-zkontroluj_a_aktualizuj(global_env)
+if __name__ == "__main__":
+    global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
+    zkontroluj_a_aktualizuj(global_env)
 
 # --- Externí knihovny ---
 from playwright.sync_api import sync_playwright, TimeoutError

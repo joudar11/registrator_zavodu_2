@@ -6,7 +6,11 @@ import os
 
 def zkontroluj_a_aktualizuj(global_env = False):
     url_s_verzi = "https://los.krystofklika.cz/manifest.txt" 
+<<<<<<< HEAD
     aktualni_verze_str = "02.04"
+=======
+    aktualni_verze_str = "02.13"
+>>>>>>> 594aa82a6e83938201ea421e81b0df106bd60c2f
     """
     Stáhne verzi z URL, porovná ji číselně s lokální verzí.
     Pokud je na serveru novější, spustí update skript a ukončí tento program.

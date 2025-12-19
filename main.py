@@ -8,8 +8,9 @@ from email.message import EmailMessage
 import re
 import sys
 from check_version import zkontroluj_a_aktualizuj
-global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
-zkontroluj_a_aktualizuj(global_env)
+if __name__ == "__main__":
+    global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
+    zkontroluj_a_aktualizuj(global_env)
 
 # --- Externí knihovny ---
 from playwright.sync_api import sync_playwright, TimeoutError
@@ -43,7 +44,7 @@ DIVIZE_local = DIVIZE
 SQUAD_local = str(SQUAD)
 POKUS_TIME = None  # Čas zahájení pokusu o registraci (pro název log souboru)
 
-EMAIL_PROVIDERS = ("PROTON", "GMAIL")
+EMAIL_PROVIDERS = ("PROTON", "GMAIL", "PROTON-TOKEN")
 
 # Selectory pro login
 SELECTOR_TLACITKO_PRIHLASIT = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > nav > div.max-w-7xl.mx-auto.px-4.md\:px-6.lg\:px-8 > div > div.hidden.space-x-1.items-center.md\:-my-px.md\:ml-10.md\:flex > button.inline-flex.items-center.px-1.border-b-2.border-transparent.text-sm.font-medium.leading-5.text-gray-500.dark\:text-gray-400.hover\:text-gray-700.dark\:hover\:text-gray-300.hover\:border-gray-300.dark\:hover\:border-gray-700.focus\:outline-none.focus\:text-gray-700.dark\:focus\:text-gray-300.focus\:border-gray-300.dark\:focus\:border-gray-700.transition.duration-150.ease-in-out"  # tlačítko pro zobrazení login formuláře
@@ -408,6 +409,7 @@ def registrace(pokus: int) -> bool:
 
                     print_and_log(f"⚠️ Zkouším zvolit squad {squad_oprava}.")
                     loc.click()
+                    page.click(f"#squad-{squad_oprava}")
                     # krátké čekání na propsání stavu
                     page.wait_for_timeout(50)
 
@@ -473,6 +475,10 @@ def registrace(pokus: int) -> bool:
         max_wait = 8  # vteřin
         start_time = time.time()
         while not page.url.startswith(REG_URL):
+            if page.url.endswith(r"#regform"):
+                fatal_error = True
+                print_and_log(f"❌ V konfiguračním souboru data.py je pravděpodobně chyba. Web LOS se po kliknutí na tlačítko registrace vrací zpět na formulář a registraci nepotvrzuje. Zkontroluj, zda například hodnoty None, True a False nejsou v uvozovkách.")
+                return False
             if time.time() - start_time > max_wait:
                 print_and_log(
                     f"❌ Registrace pravděpodobně selhala – URL se nezměnila do {max_wait} sekund.\nAktuální URL: {page.url}")
@@ -616,6 +622,12 @@ def odeslat(msg: str) -> bool:
         return False
     if EMAIL_PROVIDER == "PROTON":
         with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+              smtp.login(EMAIL_U, EMAIL_P)
+              smtp.send_message(msg)
+        return True
+    if EMAIL_PROVIDER == "PROTON-TOKEN":
+        with smtplib.SMTP('smtp.protonmail.ch', 587) as smtp:
+            smtp.starttls()
             smtp.login(EMAIL_U, EMAIL_P)
             smtp.send_message(msg)
         return True
@@ -659,10 +671,36 @@ def run():
             print_and_log(f"❌ Nepodařilo se poslat shrnutí na email:\n{e}")
 
 
+def opravit_konfiguraci():
+    global CLENSKE_ID
+    global PRITELKYNE
+    global POZNAMKA
+    global SQUAD
+    
+    if CLENSKE_ID == "None":
+        CLENSKE_ID = None
+    if isinstance(SQUAD, str):
+        try:
+            SQUAD = int(SQUAD)
+        except Exception as e:
+            print_and_log("❌ Nepodařilo se převést SQUAD na INT.")
+    if PRITELKYNE == "None":
+        PRITELKYNE = None
+    if POZNAMKA == "None":
+        POZNAMKA = None
+
+
 if __name__ == "__main__":
     try:
+<<<<<<< HEAD
         run()
     except KeyboardInterrupt:
         print("\nProgram ukončen uživatelem.")
     except Exception as e:
         print(f"Neočekávaná chyba: {e}")
+=======
+        opravit_konfiguraci()
+        run()
+    except Exception as e:
+        print(f"❌ Neočekávaná chyba - Prosím, pošli screenshot na debug@krystofklika.cz \n {e}")
+>>>>>>> 594aa82a6e83938201ea421e81b0df106bd60c2f

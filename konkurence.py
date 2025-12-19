@@ -6,8 +6,9 @@ from pathlib import Path
 import sys
 from ftplib import FTP_TLS
 from check_version import zkontroluj_a_aktualizuj
-global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
-zkontroluj_a_aktualizuj(global_env)
+if __name__ == "__main__":
+    global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
+    zkontroluj_a_aktualizuj(global_env)
 
 from playwright.sync_api import sync_playwright
 
@@ -134,7 +135,7 @@ def smazat_log() -> None:
     path = os.path.join(FOLDER, filename)
     if os.path.isfile(path):
         os.remove(path)
-        print(f"Soubor '{path}' byl smazán.")
+        print(f"✅ Soubor '{path}' byl smazán.")
     return
 
 
@@ -184,7 +185,7 @@ def statistika() -> None:
             print_and_log("=" * HEADER_LEN)
             print_and_log("")
         print_and_log("")
-
+        print("ℹ️ Přihlašuji se...")
         page.click(SELECTOR_LOGIN_FORM)
         page.wait_for_selector(SELECTOR_USER)
         page.wait_for_selector(SELECTOR_PASS)
@@ -216,6 +217,7 @@ def statistika() -> None:
         if JMENO is not None and (JMENO not in jmena):
             jmena.append(JMENO)
         pridat_extra_jmena()
+        print(f"ℹ️ Hodnotím pohár {URL_CUP1}")
         pohar(URL_CUP1, page, zahrnout_do_12m=True)
         vypis(POHAR1, URL_CUP1)
         try:
@@ -227,6 +229,7 @@ def statistika() -> None:
         print_and_log("")
         print_and_log("=" * HEADER_LEN)
         print_and_log("")
+        print(f"ℹ️ Hodnotím pohár {URL_CUP2}")
         pohar(URL_CUP2, page, zahrnout_do_12m=True)
         print_and_log("")
         vypis(POHAR2, URL_CUP2)
@@ -238,6 +241,7 @@ def statistika() -> None:
         print_and_log("")
         print_and_log("=" * HEADER_LEN)
         print_and_log("")
+        print(f"ℹ️ Hodnotím pohár {URL_CUP3}")
         pohar(URL_CUP3, page)
         print_and_log("")
         vypis(POHAR3, URL_CUP3)
@@ -247,6 +251,7 @@ def statistika() -> None:
             pass
 
         vynuluj()
+        print(f"ℹ️ Hodnotím posledních 12 měsíců")
 
         vypis_poslednich_12_mesicu()
         try:
@@ -260,6 +265,7 @@ def statistika() -> None:
 
 
 def vypis(pohar: str, pohar_url: str):
+    print(f"ℹ️ Zapisuji výsledky poháru {pohar} do tabulky")
     global vysledky
     global HEADER_LEN
     koeficient = float(0)
@@ -351,6 +357,7 @@ def vypis(pohar: str, pohar_url: str):
 
 def vypis_poslednich_12_mesicu():
     """Vytiskne '12M' tabulku: souhrn všech procent z posledních 12 měsíců přes aktuální a minulý pohár."""
+    print(f"ℹ️ Zapisuji posledních 12 měsíců do tabulky")
     global vysledky
     global jmena
     koeficient = float(0)
@@ -597,6 +604,13 @@ def run() -> None:
                 password,
                 remote_dir
             )
+            smazat_log()
+            if not os.listdir(FOLDER):
+                try:
+                    os.rmdir(FOLDER)
+                    print(f"✅ Prázdná složka {FOLDER} byla smazána.")
+                except Exception as e:
+                    print(f"Chyba {e}")
             webbrowser.open(f"{visit}{LOGNAME}.html")
         except Exception as e:
             print(f"Chyba FTP: {e}")
