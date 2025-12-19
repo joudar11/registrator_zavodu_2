@@ -692,15 +692,9 @@ def opravit_konfiguraci():
 
 if __name__ == "__main__":
     try:
-<<<<<<< HEAD
+        opravit_konfiguraci()
         run()
     except KeyboardInterrupt:
         print("\nProgram ukončen uživatelem.")
     except Exception as e:
-        print(f"Neočekávaná chyba: {e}")
-=======
-        opravit_konfiguraci()
-        run()
-    except Exception as e:
         print(f"❌ Neočekávaná chyba - Prosím, pošli screenshot na debug@krystofklika.cz \n {e}")
->>>>>>> 594aa82a6e83938201ea421e81b0df106bd60c2f
