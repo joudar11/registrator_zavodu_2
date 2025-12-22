@@ -85,7 +85,7 @@ EMAIL_PROVIDER = "PROTON"
 # Poskytovatel emailových služeb. Možnosti jsou buď "PROTON" (S nainstalovaným Proton Bridge), "PROTON-TOKEN" (S nakonfigurovaným tokenem pro Proton mail), nebo "GMAIL" (S specifickým Google apps password)
 ```
 
-- Volitelně konfigurační soubor <code>ftp_konkurence.py</code>:
+- Volitelně konfigurační soubor <code>ftp_konkurence.py</code> k nahrání souborů na FTP:
 
 ```python
 host=r"255.255.255.255" #FTPS host
