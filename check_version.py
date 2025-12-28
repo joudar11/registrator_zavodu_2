@@ -14,14 +14,12 @@ def zkontroluj_a_aktualizuj(global_env = False):
     print(f"ℹ️ Ověřuji aktualizace na: {url_s_verzi}")
 
     try:
-        # Timeout 3 sekundy, ať to nebrzdí start, pokud server neodpovídá
         with urllib.request.urlopen(url_s_verzi, timeout=3) as response:
             server_verze_str = response.read().decode('utf-8').strip()
     except Exception as e:
         print(f"❌ Chyba při kontrole verze (pokračuji bez update): {e}")
         return
 
-    # Převedeme "02.00" na (2, 0) pro korektní matematické porovnání
     try:
         lokalni_tuple = tuple(map(int, aktualni_verze_str.split('.')))
         server_tuple = tuple(map(int, server_verze_str.split('.')))
@@ -36,7 +34,6 @@ def zkontroluj_a_aktualizuj(global_env = False):
         
         operacni_system = platform.system()
         
-        # Cesta ke skriptům [Inference] Předpokládám, že leží vedle tohoto skriptu
         if global_env:
             win_script = "update_GLOBAL.bat"
         else:
