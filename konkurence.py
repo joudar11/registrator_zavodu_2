@@ -194,7 +194,13 @@ def statistika() -> None:
         page.wait_for_selector(SELECTOR_LOGIN_BUTTON)
         page.click(SELECTOR_LOGIN_BUTTON)
 
-        page.wait_for_selector(f'[title="{DIVIZE}"]')
+
+        print("ℹ️ Načítám závodníky...")
+        try:
+            page.wait_for_selector(f'[title="{DIVIZE}"]', timeout=5000)
+        except Exception as e:
+             print(f"Chyba - ukončuji\n\n{e}")
+             sys.exit()
         els = page.locator(f'div[title="{DIVIZE}"]:visible')
 
         for i in range(els.count()):
