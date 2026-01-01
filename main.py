@@ -352,7 +352,7 @@ def registrace(pokus: int) -> bool:
 
         # Společná část registrace
         try:
-            page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU, timeout=3000)
+            # page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU, timeout=3000) - odstraneno kvuli novele 2026. Predpokladam odstraneni i z loslex.cz
             if CLENSKE_ID:
                 page.check(SELECTOR_CHECKBOX_CLEN, timeout=3000)
                 page.fill(SELECTOR_INPUT_CLENSKE_ID, CLENSKE_ID, timeout=3000)
