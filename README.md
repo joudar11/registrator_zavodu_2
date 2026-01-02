@@ -14,7 +14,7 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 - Pokud je zvolený squad plný, skript automaticky zkusí zvolit první volný squad v rozsahu 1 - 100.
 - Ošetření většiny možných chyb od neodpovídajícího serveru po selhání emailového serveru - skript je možno nechat běžet bez dohledu a neselže.
 - Automatické načítání informací o stavu registrace, případně datu jejího spuštění.
-- **Pozor - skript předpokládá, že závodník je držitelem zbrojního oprávvnění a automaticky zaškrtává při registraci pole "Držitel zbrojního oprávnění"!**
+- **Pozor - skript předpokládá, že závodník je držitelem zbrojního oprávnění a automaticky zaškrtává při registraci pole "Držitel zbrojního oprávnění"!**
 ### Registrace na plný závod (plny_zavod.py)
 - Pokud závodník prosral začátek registrace a závod je plný, lze spustit soubor plny_zavod.py, který každých 30 minut kontroluje obsazenost a v případě volného místa spouští registrační skript <code>main.py</code>.
 ### Analýza konkurence (konkurence.py)
