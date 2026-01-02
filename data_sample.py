@@ -1,7 +1,7 @@
 JMENO = "Jan Novák"
 # Celé jméno závodníka
-CISLO_DOKLADU = "AL123456"
-# Číslo ZP
+CISLO_DOKLADU = "123456789"
+# Číslo OP/EZP
 CLENSKE_ID = "ABcdEfGh"
 # LEX ID (volitelné - pokud nemáš, napiš None)
 # CLENSKE_ID = None

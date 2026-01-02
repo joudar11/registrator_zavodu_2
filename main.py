@@ -67,6 +67,7 @@ SELECTOR_INPUT_POZNAMKA = r"#note"
 SELECTOR_CHECKBOX_ROZHODCI = r"#referee"
 SELECTOR_CHECKBOX_STAVITEL = r"#builder"
 SELECTOR_CHECKBOX_ZACATECNIK = r"#rookie"
+SELECTOR_ZBROJNI_OPRAVNENI = r"#has_falicence"
 
 # Selectory pro scrapnutí dat
 SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main > div.py-4 > div > div > div > div:nth-child(1) > div.grid.grid-cols-auto.lg\:grid-cols-fitfirst.gap-x-2.lg\:gap-x-4.gap-y-2 > div:nth-child(10)"
@@ -94,7 +95,7 @@ def get_summary() -> str:
     Číslo ZP: {CISLO_DOKLADU}\n
     LEX ID: {CLENSKE_ID}\n
     Login: {LOGIN}\n
-    Datum a čas registrace: {DATUM_CAS_REGISTRACE}\n\n
+    Datum a čas registrace (nebo jejího konce, pokud již běží): {DATUM_CAS_REGISTRACE}\n\n
     Mimo závod: {MZ}\n
     Rozhodčí: {ROZHODCI}\n
     Začátečník: {ZACATECNIK}\n
@@ -227,7 +228,6 @@ def registrace(pokus: int) -> bool:
 
     # Shrnutí načtených údajů
 
-
     # Zahájení práce s prohlížečem
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -251,7 +251,7 @@ def registrace(pokus: int) -> bool:
         datum_registrace_extrahovat = (nacti_text_ze_stranky(page, "Registrace:"))
         datum_registrace_extrahovano = parse_registrace_text(datum_registrace_extrahovat)
         DATUM_CAS_REGISTRACE = datum_registrace_extrahovano
-
+        print(f"Stav registrace: {REGISTRACE_STAV}")
         if pokus == 1:
             print(divider, get_summary(), divider, sep="\n")
 
@@ -352,7 +352,8 @@ def registrace(pokus: int) -> bool:
 
         # Společná část registrace
         try:
-            # page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU, timeout=3000) - odstraneno kvuli novele 2026. Predpokladam odstraneni i z loslex.cz
+            page.fill(SELECTOR_INPUT_DOKLAD, CISLO_DOKLADU, timeout=3000)
+            page.check(SELECTOR_ZBROJNI_OPRAVNENI, timeout=3000)
             if CLENSKE_ID:
                 page.check(SELECTOR_CHECKBOX_CLEN, timeout=3000)
                 page.fill(SELECTOR_INPUT_CLENSKE_ID, CLENSKE_ID, timeout=3000)
