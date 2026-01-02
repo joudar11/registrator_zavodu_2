@@ -92,7 +92,7 @@ def get_summary() -> str:
     Divize: {DIVIZE_local}\n
     Squad: {SQUAD_local}\n
     URL závodu: {URL}\n\n
-    Číslo ZP: {CISLO_DOKLADU}\n
+    Číslo OP/EZP: {CISLO_DOKLADU}\n
     LEX ID: {CLENSKE_ID}\n
     Login: {LOGIN}\n
     Datum a čas registrace (nebo jejího konce, pokud již běží): {DATUM_CAS_REGISTRACE}\n\n
