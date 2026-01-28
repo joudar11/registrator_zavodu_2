@@ -579,7 +579,7 @@ def informuj_pritelkyni() -> None:
     msg['From'] = EMAIL_U
     msg['To'] = PRITELKYNE
     msg.set_content(
-        f"""Tvůj kluk se {PRITELKYNE_INSERT_1}právě přihlásil na závod {nazev_zavodu} ({URL}), který proběhne {datum_zavodu}.\n\nBude potřebovat držet palce.\n{PRITELKYNE_INSERT_2}\n{PRITELKYNE_INSERT_3}\n\n(Automaticky generovaný email)""")
+        f"""Tvůj kluk se {PRITELKYNE_INSERT_1}právě přihlásil na závod {nazev_zavodu} ({URL}). Datum závodu: {datum_zavodu}.\n\nBude potřebovat držet palce.\n{PRITELKYNE_INSERT_2}\n{PRITELKYNE_INSERT_3}\n\n(Automaticky generovaný email)""")
 
     # Odeslání e-mailu
 
