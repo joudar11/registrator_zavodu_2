@@ -37,9 +37,18 @@ def ziskej_data(page):
     datum_raw = nacti_text_ze_stranky(page, "Datum závodu:")
     strelnice = nacti_text_ze_stranky(page, "Střelnice:")
 
-    den_str, mesic_str, rok_str = datum_raw.split()
+    # 1. Odstraníme čárky (v "2026, sobota" by dělala neplechu)
+    cisty_text = datum_raw.replace(",", "")
+    
+    # 2. Rozdělíme a vezmeme jen první 3 prvky, zbytek (den v týdnu) ignorujeme pomocí *_
+    casti = cisty_text.split()
+    if len(casti) < 3:
+        raise ValueError(f"Neočekávaný formát data: {datum_raw}")
+        
+    den_str, mesic_str, rok_str = casti[0], casti[1], casti[2]
+    
     den = int(den_str.replace(".", ""))
-    mesic = MESICE[mesic_str]
+    mesic = MESICE[mesic_str.lower()] # Přidáno .lower() pro jistotu
     rok = int(rok_str)
 
     datum = datetime(rok, mesic, den)
