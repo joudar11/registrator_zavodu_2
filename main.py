@@ -166,10 +166,12 @@ def parse_registrace_text(text: str) -> str | None:
     mesiace = {
         "ledna": "01",
         "února": "02",
+        "unora": "02",
         "brezna": "03",
         "března": "03",
         "dubna": "04",
         "května": "05",
+        "kvetna": "05",
         "cervna": "06",
         "června": "06",
         "cervence": "07",
