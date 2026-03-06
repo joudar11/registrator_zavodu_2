@@ -21,7 +21,7 @@ from data import (
 
 from main import EMAIL_PROVIDERS
 
-LIMIT = 336  # kolikrát maximálně kontrolovat
+LIMIT = 10000  # kolikrát maximálně kontrolovat
 
 
 def run() -> None:
@@ -43,8 +43,8 @@ def run() -> None:
                     try:
                         page.reload(wait_until="domcontentloaded", timeout=15000)
                     except TimeoutError:
-                        print("⚠️ Timeout při reloadu, zkouším po pauze…")
-                        time.sleep(INTERVAL)
+                        print("⚠️ Timeout při reloadu, zkouším po pauze 30s…")
+                        time.sleep(30)
                         continue
 
                     label = page.locator("xpath=//div[normalize-space()='Počet registrovaných:']").first
@@ -100,8 +100,14 @@ def odeslat(msg: str) -> bool:
     if EMAIL_PROVIDER not in EMAIL_PROVIDERS:
         print(f"❌ Poskytovatel emailových služeb {EMAIL_PROVIDER} není implementován. Email nebyl odeslán.")
         return False
-    if EMAIL_PROVIDER == "PROTON":
+    elif EMAIL_PROVIDER == "PROTON":
         with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+            smtp.login(EMAIL_U, EMAIL_P)
+            smtp.send_message(msg)
+        return True
+    elif EMAIL_PROVIDER == "PROTON-TOKEN":
+        with smtplib.SMTP('smtp.protonmail.ch', 587) as smtp:
+            smtp.starttls()
             smtp.login(EMAIL_U, EMAIL_P)
             smtp.send_message(msg)
         return True

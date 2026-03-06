@@ -623,12 +623,12 @@ def odeslat(msg: str) -> bool:
     if EMAIL_PROVIDER not in EMAIL_PROVIDERS:
         print_and_log(f"❌ Poskytovatel emailových služeb {EMAIL_PROVIDER} není implementován. Email nebyl odeslán.")
         return False
-    if EMAIL_PROVIDER == "PROTON":
+    elif EMAIL_PROVIDER == "PROTON":
         with smtplib.SMTP('127.0.0.1', 1025) as smtp:
               smtp.login(EMAIL_U, EMAIL_P)
               smtp.send_message(msg)
         return True
-    if EMAIL_PROVIDER == "PROTON-TOKEN":
+    elif EMAIL_PROVIDER == "PROTON-TOKEN":
         with smtplib.SMTP('smtp.protonmail.ch', 587) as smtp:
             smtp.starttls()
             smtp.login(EMAIL_U, EMAIL_P)
