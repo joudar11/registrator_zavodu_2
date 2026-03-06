@@ -620,26 +620,30 @@ def stale_bezi() -> None:
 
 
 def odeslat(msg: str) -> bool:
-    if EMAIL_PROVIDER not in EMAIL_PROVIDERS:
-        print_and_log(f"❌ Poskytovatel emailových služeb {EMAIL_PROVIDER} není implementován. Email nebyl odeslán.")
-        return False
-    elif EMAIL_PROVIDER == "PROTON":
-        with smtplib.SMTP('127.0.0.1', 1025) as smtp:
-              smtp.login(EMAIL_U, EMAIL_P)
-              smtp.send_message(msg)
-        return True
-    elif EMAIL_PROVIDER == "PROTON-TOKEN":
-        with smtplib.SMTP('smtp.protonmail.ch', 587) as smtp:
-            smtp.starttls()
-            smtp.login(EMAIL_U, EMAIL_P)
-            smtp.send_message(msg)
-        return True
-    elif EMAIL_PROVIDER == "GMAIL":
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login(EMAIL_U, EMAIL_P)
-            smtp.send_message(msg)
-        return True
-    else:
+    try:
+        if EMAIL_PROVIDER not in EMAIL_PROVIDERS:
+            print_and_log(f"❌ Poskytovatel emailových služeb {EMAIL_PROVIDER} není implementován. Email nebyl odeslán.")
+            return False
+        elif EMAIL_PROVIDER == "PROTON":
+            with smtplib.SMTP('127.0.0.1', 1025) as smtp:
+                smtp.login(EMAIL_U, EMAIL_P)
+                smtp.send_message(msg)
+            return True
+        elif EMAIL_PROVIDER == "PROTON-TOKEN":
+            with smtplib.SMTP('smtp.protonmail.ch', 587) as smtp:
+                smtp.starttls()
+                smtp.login(EMAIL_U, EMAIL_P)
+                smtp.send_message(msg)
+            return True
+        elif EMAIL_PROVIDER == "GMAIL":
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                smtp.login(EMAIL_U, EMAIL_P)
+                smtp.send_message(msg)
+            return True
+        else:
+            return False
+    except Exception as e:
+        print_and_log(f"Chyba: {e}")
         return False
 
 
