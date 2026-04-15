@@ -6,6 +6,9 @@ from pathlib import Path
 import sys
 from ftplib import FTP_TLS
 from check_version import zkontroluj_a_aktualizuj
+import io
+import ftplib
+import ssl
 if __name__ == "__main__":
     global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
     zkontroluj_a_aktualizuj(global_env)
@@ -81,52 +84,45 @@ SELECTOR_DATUM = r"body > div.min-h-screen.bg-gray-100.dark\:bg-gray-900 > main 
 jmena = []
 extra_jmena=[]
 vysledky = []
+
 def upload_ftps(host: str, username: str, password: str, remote_dir: str) -> None:
-    """
-    Nahraje hotový HTML soubor na FTPS server (FTP přes TLS).
-
-    Args:
-        host: adresa FTP serveru (např. "ftp.krystofklika.cz")
-        username: uživatelské jméno
-        password: heslo
-        remote_dir: vzdálený adresář (např. "/public_html/konkurence")
-    """
-
     local_path = Path(f"{FOLDER}/{LOGNAME}.html").resolve()
+    
     if not local_path.exists():
-        print(f"❌ Soubor {local_path} neexistuje – upload zrušen.")
+        print(f"❌ Soubor {local_path} neexistuje.")
         return
 
-    print(f"🔗 Připojuji se k FTPS serveru {host} ...")
+    print(f"🔗 Připojuji se k FTP serveru {host} (standardní režim)...")
     try:
-        ftps = FTP_TLS()
-        ftps.connect(host, 21, timeout=15)  # port 990 pro implicitní FTPS
-        ftps.auth()
-        ftps.login(username, password)
-        ftps.prot_p()  # přepne přenos do šifrovaného režimu
-
-        try:
-            ftps.cwd(remote_dir)
-        except Exception:
-            # vytvoření složky pokud neexistuje
-            dirs = remote_dir.strip("/").split("/")
-            path = ""
-            for d in dirs:
-                path += f"/{d}"
-                try:
-                    ftps.cwd(path)
-                except Exception:
-                    ftps.mkd(path)
-                    ftps.cwd(path)
-
+        # Načtení obsahu do BytesIO
         with open(local_path, "rb") as f:
-            ftps.storbinary(f"STOR {local_path.name}", f)
+            bio = io.BytesIO(f.read())
 
+        # Použijeme ftplib.FTP místo FTP_TLS
+        with ftplib.FTP(host) as ftp:
+            ftp.login(user=username, passwd=password)
+            ftp.set_pasv(True)
+            
+            # Navigace do adresáře / vytvoření
+            try:
+                ftp.cwd(remote_dir)
+            except Exception:
+                dirs = remote_dir.strip("/").split("/")
+                path = ""
+                for d in dirs:
+                    path += f"/{d}"
+                    try:
+                        ftp.cwd(path)
+                    except Exception:
+                        ftp.mkd(path)
+                        ftp.cwd(path)
+            
+            # Nahrání souboru
+            ftp.storbinary(f"STOR {local_path.name}", bio)
+            
         print(f"✅ Soubor {local_path.name} byl úspěšně nahrán na {host}:{remote_dir}")
-        ftps.quit()
     except Exception as e:
-        print(f"❌ Chyba při uploadu přes FTPS: {e}")
-
+        print(f"❌ Chyba při nahrávání na FTP: {e}")
 
 def smazat_log() -> None:
     global FOLDER
