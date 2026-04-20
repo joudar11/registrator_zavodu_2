@@ -313,6 +313,8 @@ def registrace(pokus: int) -> bool:
             if not prihlasit(page):
                 return False
 
+            page.goto(URL, wait_until="networkidle")
+
 
 
             # Refresh po spuštění registrace, aby se zobrazily prvky formuláře
