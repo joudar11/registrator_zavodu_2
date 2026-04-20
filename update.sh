@@ -17,6 +17,7 @@ source "$SCRIPT_DIR/.venv/bin/activate"
 
 echo "📦 Instalace Python závislostí..."
 pip install -r requirements.txt
+pip install --upgrade pip
 
 echo "✅ Hotovo."
 read -p "Stiskni Enter pro ukončení..."
