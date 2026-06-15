@@ -128,7 +128,7 @@ def export_to_csv(data, filename):
         "Celkova_Procenta_Pohar", 
         "Datum_Zavodu", 
         "Nazev_Zavodu", 
-        "Dozazena_Procenta_Zavod", 
+        "Dosazena_Procenta_Zavod", 
         "Zapocitany_Do_Poharu"
     ]
     
