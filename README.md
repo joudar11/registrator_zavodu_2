@@ -29,6 +29,8 @@ Vylepšený skript, který automaticky provádí registraci na závod LOS Lex po
 - Ideální ke spuštění na závodě při čekání na zveřejnění výsledků.
 - Skript závodníka upozorní emailem, že byly zveřejněny výsledky.
 - Kontrola každých 10 sekund.
+### Stažení výsledků posledních 3 pohárů v CSV pro analýzu konkurence
+- Stáhne všechny výslůedky v poháru pro datovou analýzu.
 
 
 ## 📦 Požadavky
@@ -237,6 +239,12 @@ python3 konkurence.py "Jan Novák" "Pistole" "https://www.loslex.cz/contest/313"
 - spustit soubor <code>vysledky_zverejneny.sh</code> příkazem 
 ```bash
 bash vysledky_zverejneny.sh
+```
+
+#### Pokud chceš vygenerovat CSV soubor s výsledky poháru:
+- spustit soubor <code>csv.sh</code> příkazem 
+```bash
+bash csv.sh
 ```
 <br>
 
