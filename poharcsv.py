@@ -1,9 +1,15 @@
 import re
 import os
 import csv
+import sys
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
+
+from check_version import zkontroluj_a_aktualizuj
+if __name__ == "__main__":
+    global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
+    zkontroluj_a_aktualizuj(global_env)
 
 # Import autentizace ze souboru data.py
 from data import LOGIN, HESLO
