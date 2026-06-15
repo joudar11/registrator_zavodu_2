@@ -2,8 +2,8 @@ import re
 import os
 import csv
 from datetime import datetime
-from pathlib import Path
 from playwright.sync_api import sync_playwright
+from bs4 import BeautifulSoup
 
 # Import autentizace ze souboru data.py
 from data import LOGIN, HESLO
@@ -12,158 +12,181 @@ from konkurence import (
     DIVIZE_V_POHARU, URL_CUP1, URL_CUP2, URL_CUP3,
     POHAR1, POHAR2, POHAR3,
     SELECTOR_LOGIN_FORM, SELECTOR_USER, SELECTOR_PASS,
-    SELECTOR_LOGIN_BUTTON, SELECTOR_DIVIZE_POHAR,
-    FOLDER, DIVIZE
+    SELECTOR_LOGIN_BUTTON,
+    FOLDER,
 )
 
-def parsuj_data_poharu(page, url_cup, pohar_rok):
+# Regulární výraz pro parsování českého formátu data – kompilujeme jednou globálně
+DATE_RE = re.compile(r'(\d{1,2})\.[\s\u00A0]*(\d{1,2})\.[\s\u00A0]*(\d{4})')
+
+
+def parsuj_panel_bs(html: str, divize_klic: str, pohar_rok: str) -> list[list]:
     """
-    Kompletně projde vybranou divizi v poháru a vytáhne podrobná historická data
-    všech jednotlivých závodů pro každého střelce.
+    Parsuje HTML jednoho panelu divize pomocí BeautifulSoup – žádné round-tripy
+    do prohlížeče, vše v čistém Pythonu.
     """
-    print(f"📊 Stahuji detailní data z poháru {pohar_rok} ({url_cup})...")
-    page.goto(url_cup)
-    page.click(SELECTOR_DIVIZE_POHAR)
-    
-    # Hlídáme striktně pouze tvoji divizi nastavenou v data.py
-    target_div = DIVIZE_V_POHARU[DIVIZE]
-    visible_panel = page.locator(f'div[role="tabpanel"]#division-{target_div}:visible')
-    
-    # Regulární výraz pro spolehlivé parsování českého formátu data
-    date_re = re.compile(r'(\d{1,2}\.\s*[\u00A0]?\d{1,2}\.\s*[\u00A0]?\d{4})')
-    
-    # Najdeme všechny řádky se jmény v dané divizi
-    name_cells = visible_panel.locator("div.w-36:visible").all()
-    print(f"   -> Nalezeno {len(name_cells)} střelců v divizi {DIVIZE}")
-    
-    pohar_rows = []
-    
-    for cell in name_cells:
-        raw_name = cell.text_content().strip()
-        lines = raw_name.splitlines()
-        name = lines[0].strip() if lines else ""
-        
-        # Ignorujeme závodníky mimo hodnocení (mimo závod)
-        if " (MZ)" in name or not name:
+    soup = BeautifulSoup(html, "html.parser")
+    rows = []
+
+    # Každý střelec je reprezentován dvojicí sousedních div.border-gray-400 + div.flex.gap-x-1
+    # Najdeme všechny kontejnery střelců
+    shooter_containers = soup.select("div.border.border-gray-400.bg-gray-100")
+
+    for container in shooter_containers:
+        # --- Pořadí ---
+        rank_div = container.select_one("div.w-5")
+        try:
+            pohar_rank = int(rank_div.get_text(strip=True).rstrip(".")) if rank_div else ""
+        except ValueError:
+            pohar_rank = ""
+
+        # --- Jméno ---
+        name_div = container.select_one("div.w-36")
+        if not name_div:
             continue
-            
+        name = name_div.get_text(separator=" ", strip=True)
         name = name.replace("\u00A0", " ").replace("\u200b", "")
         name = " ".join(name.split())
-        
-        # Najdeme nadřazený kontejner střelce pro přístup k celkovému pořadí a procentům
-        row = cell.locator("xpath=ancestor::div[contains(@class,'border-gray-400')][1]").first
-        
-        rank_txt = row.locator("div.w-5:visible").first.text_content().strip().rstrip(".")
-        try:
-            pohar_rank = int(rank_txt)
-        except:
-            pohar_rank = ""
-            
-        pct_loc = cell.locator("xpath=following-sibling::div[contains(@class,'w-20') and contains(@class,'text-right')][1]")
-        if pct_loc.count() == 0:
-            pct_loc = row.locator("div.w-20.text-right:visible").first
-        pohar_pct_raw = pct_loc.text_content().strip() if pct_loc.count() > 0 else ""
-        pohar_total_pct = pohar_pct_raw.replace("%", "").strip()
-        
-        # Pod řádkem střelce leží kontejner s jednotlivými boxy závodů
-        next_row = row.locator("+ div.flex.flex-row.gap-x-1.justify-center:visible")
-        
-        if next_row.count() > 0:
-            boxes = next_row.locator("div.border.rounded-md.p-1.w-20.cursor-help:visible").all()
-            for box in boxes:
-                # 1. Získání procent z daného závodu
-                val_raw = box.locator("div.text-center").first.text_content().strip()
-                pct_zavod = val_raw.replace("%", "").strip()
-                
-                # Zjišťujeme, zda je box započítaný (zelený) nebo škrtnutý (šedý)
-                class_attr = box.get_attribute("class") or ""
-                zapocitany = "Ano" if "border-green-400" in class_attr or "bg-green-100" in class_attr else "Ne"
-                
-                # 2. Získání názvu závodu a přesného data z odkazu/atributů
-                link_el = box.locator("a").first
-                title_zavod = link_el.get_attribute("title") if link_el.count() > 0 else ""
-                if not title_zavod:
-                    title_zavod = box.get_attribute("title") or ""
-                
-                datum_zavod = ""
-                sources = [
-                    box.inner_text() or "",
-                    box.text_content() or "",
-                    title_zavod
-                ]
-                for src in sources:
-                    m = date_re.search(src)
-                    if m:
-                        date_str = m.group(1).replace(" ", "").replace("\u00A0", "")
-                        try:
-                            # Převedeme na ISO formát (YYYY-MM-DD), který je ideální pro řazení a grafy
-                            datum_zavod = datetime.strptime(date_str, "%d.%m.%Y").strftime("%Y-%m-%d")
-                        except:
-                            datum_zavod = date_str
-                        break
-                
-                # Uložíme plochou strukturu dat: jeden řádek = jeden výsledek
-                pohar_rows.append([
-                    pohar_rok,
-                    pohar_rank,
-                    name,
-                    pohar_total_pct,
-                    datum_zavod,
-                    title_zavod,
-                    pct_zavod,
-                    zapocitany
-                ])
-                
-    return pohar_rows
+        if not name or "(MZ)" in name:
+            continue
 
-def export_to_csv(data, filename):
+        # --- Celková % poháru ---
+        total_pct_div = container.select_one("div.w-20.text-right")
+        pohar_total_pct = total_pct_div.get_text(strip=True).replace("%", "").strip() if total_pct_div else ""
+
+        # --- Boxy závodů jsou v sousedním divu (next sibling) ---
+        boxes_container = container.find_next_sibling("div")
+        if not boxes_container:
+            continue
+
+        for box in boxes_container.select("div.border.rounded-md.p-1.w-20.cursor-help"):
+            # Procenta závodu
+            pct_div = box.select_one("div.text-center")
+            pct_zavod = pct_div.get_text(strip=True).replace("%", "").strip() if pct_div else ""
+
+            # Započítaný (zelený) vs. škrtnutý (šedý)
+            cls = box.get("class", [])
+            cls_str = " ".join(cls)
+            zapocitany = "Ano" if "border-green-400" in cls_str or "bg-green-100" in cls_str else "Ne"
+
+            # Název a datum závodu z odkazu
+            link = box.select_one("a")
+            title_zavod = (link.get("title") or "").strip() if link else ""
+
+            # Datum – hledáme v textu boxu
+            box_text = box.get_text(separator=" ")
+            datum_zavod = ""
+            m = DATE_RE.search(box_text)
+            if m:
+                d, mo, y = m.group(1), m.group(2), m.group(3)
+                try:
+                    datum_zavod = datetime.strptime(f"{d}.{mo}.{y}", "%d.%m.%Y").strftime("%Y-%m-%d")
+                except ValueError:
+                    datum_zavod = f"{d}.{mo}.{y}"
+
+            rows.append([
+                pohar_rok,
+                divize_klic,
+                pohar_rank,
+                name,
+                pohar_total_pct,
+                datum_zavod,
+                title_zavod,
+                pct_zavod,
+                zapocitany,
+            ])
+
+    return rows
+
+
+def parsuj_sezonu(page, url_cup: str, pohar_rok: str) -> list[list]:
+    """
+    Načte stránku sezóny JEDNOU a projde všechny divize přepínáním záložek.
+    HTML každého panelu stáhne jediným voláním inner_html() a předá BeautifulSoup.
+    """
+    print(f"\n📊 Sezóna: {pohar_rok}  →  {url_cup}")
+    page.goto(url_cup)
+    # Počkáme na načtení stránky – první záložka musí být viditelná
+    page.wait_for_selector('ul[role="tablist"]', timeout=15_000)
+
+    vsechny_radky = []
+
+    for divize_klic, divize_kod in DIVIZE_V_POHARU.items():
+        tab = page.locator(f'button[data-tabs-target="#division-{divize_kod}"]')
+        if tab.count() == 0:
+            print(f"  ⚠️  Divize '{divize_kod}' v této sezóně neexistuje, přeskakuji.")
+            continue
+
+        tab.click()
+        # Čekáme jen na konkrétní panel – ne na celou stránku
+        panel = page.locator(f'#division-{divize_kod}')
+        panel.wait_for(state="visible", timeout=8_000)
+
+        # Jediný round-trip: stáhneme celé HTML panelu
+        html = panel.inner_html()
+        radky = parsuj_panel_bs(html, divize_klic, pohar_rok)
+        print(f"  📋 {divize_klic:20s} → {len(radky):4d} řádků")
+        vsechny_radky.extend(radky)
+
+    return vsechny_radky
+
+
+def export_to_csv(data: list[list], filename: str) -> None:
     """Zapíše sebraná data do přehledného CSV souboru."""
     os.makedirs(FOLDER, exist_ok=True)
     full_path = f"{FOLDER}/{filename}"
-    
+
     headers = [
-        "Sezona", 
-        "Celkove_Poradi_Pohar", 
-        "Jmeno", 
-        "Celkova_Procenta_Pohar", 
-        "Datum_Zavodu", 
-        "Nazev_Zavodu", 
-        "Dosazena_Procenta_Zavod", 
-        "Zapocitany_Do_Poharu"
+        "Sezona",
+        "Divize",
+        "Celkove_Poradi_Pohar",
+        "Jmeno",
+        "Celkova_Procenta_Pohar",
+        "Datum_Zavodu",
+        "Nazev_Zavodu",
+        "Dosazena_Procenta_Zavod",
+        "Zapocitany_Do_Poharu",
     ]
-    
-    with open(full_path, "w", newline="", encoding="utf-8") as csv_file:
-        writer = csv.writer(csv_file, delimiter=";")
+
+    with open(full_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f, delimiter=";")
         writer.writerow(headers)
         writer.writerows(data)
-        
-    print(f"💾 Výsledná časová řada úspěšně uložena do: {full_path}")
 
-def main():
-    print("🚀 Spouštím detailní datový export časových řad pro divizi:", DIVIZE)
+    print(f"\n💾 Uloženo: {full_path}  ({len(data)} řádků celkem)")
+
+
+def main() -> None:
+    print("🚀 Export všech divizí – optimalizovaná verze")
+
+    sezonove_konfigurace = [
+        (URL_CUP1, POHAR1),
+        (URL_CUP2, POHAR2),
+        (URL_CUP3, POHAR3),
+    ]
+
     vsechna_data = []
-    
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        
-        print("ℹ️ Přihlašuji se do systému LOS...")
+
+        print("ℹ️  Přihlašuji se...")
         page.goto(URL_CUP1)
         page.click(SELECTOR_LOGIN_FORM)
         page.fill(SELECTOR_USER, LOGIN)
         page.fill(SELECTOR_PASS, HESLO)
         page.click(SELECTOR_LOGIN_BUTTON)
-        
-        # Postupně stáhneme data ze všech tří sledovaných sezón
-        vsechna_data.extend(parsuj_data_poharu(page, URL_CUP1, POHAR1))
-        vsechna_data.extend(parsuj_data_poharu(page, URL_CUP2, POHAR2))
-        vsechna_data.extend(parsuj_data_poharu(page, URL_CUP3, POHAR3))
-        
+        page.wait_for_load_state("networkidle", timeout=15_000)
+
+        for url_cup, pohar_rok in sezonove_konfigurace:
+            vsechna_data.extend(parsuj_sezonu(page, url_cup, pohar_rok))
+
         browser.close()
-        
-    # Exportujeme vše do jednoho velkého master souboru
+
     export_to_csv(vsechna_data, "los_pohar_casova_rada.csv")
-    print("✅ Hotovo! Data jsou kompletně připravena pro analýzu a tvorbu grafů.")
+    print("✅ Hotovo!")
+
 
 if __name__ == "__main__":
     main()
