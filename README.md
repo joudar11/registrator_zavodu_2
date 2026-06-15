@@ -172,6 +172,22 @@ python vysledky_zverejneny.py
 python vysledky_zverejneny.py
 ```
 
+
+
+#### Pokud chceš vygenerovat CSV soubor s výsledky poháru:
+- spustit soubor <code>csv.bat</code> (doporučeno)<br>
+- nebo (pokud nepracuješ v okně, kde jsi prováděl instalaci):
+```bash
+.venv\Scripts\Activate.ps1
+python poharcsv.py
+```
+- Pokud pracuješ v okně, kde jsi prováděl instalaci, stačí:
+```bash
+python poharcsv.py
+```
+
+
+
 ### Aktualizace na poslední verzi
 ```bash
 git fetch --all
