@@ -38,7 +38,7 @@ if JMENO == "None":
 
 DIVIZE_KONVERZE = {"Pistole": "Pi", "Optik/Pistole": "OptPi",
                    "PDW": "PDW", "Malá pistole": "MPi"}  # Převod z divize DATA na tento skript
-DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW", "MPi": "MPi"}
+DIVIZE_V_POHARU = {"Pi": "Pi", "OptPi": "Opt", "PDW": "PDW", "MPi": "MPi", "KPi": "KPi"}
 
 DIVIZE = DIVIZE_KONVERZE[DIVIZE]
 
