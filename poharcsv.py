@@ -75,11 +75,12 @@ def parsuj_panel_bs(html: str, divize_klic: str, pohar_rok: str) -> list[list]:
             cls_str = " ".join(cls)
             zapocitany = "Ano" if "border-green-400" in cls_str or "bg-green-100" in cls_str else "Ne"
 
-            # Název a datum závodu z odkazu
+            # Název, odkaz a datum závodu z odkazu
             link = box.select_one("a")
             title_zavod = (link.get("title") or "").strip() if link else ""
+            link_zavod = (link.get("href") or "").strip() if link else ""
 
-            # Datum – hledáme v textu boxu
+           # Datum – hledáme v textu boxu
             box_text = box.get_text(separator=" ")
             datum_zavod = ""
             m = DATE_RE.search(box_text)
@@ -98,6 +99,7 @@ def parsuj_panel_bs(html: str, divize_klic: str, pohar_rok: str) -> list[list]:
                 pohar_total_pct,
                 datum_zavod,
                 title_zavod,
+                link_zavod,
                 pct_zavod,
                 zapocitany,
             ])
@@ -150,6 +152,7 @@ def export_to_csv(data: list[list], filename: str) -> None:
         "Celkova_Procenta_Pohar",
         "Datum_Zavodu",
         "Nazev_Zavodu",
+        "Odkaz_Zavodu",
         "Dosazena_Procenta_Zavod",
         "Zapocitany_Do_Poharu",
     ]
