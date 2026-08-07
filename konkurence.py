@@ -541,7 +541,7 @@ def porovnat(M12 = False) -> None:
     if MUJ_PRUMER is None:
         return
     print_and_log(
-        f"\nNejlepší závodník {singular} v průměru v hodnoceném období o {(float(vysledky[0][-1]) - MUJ_PRUMER):.2f} procentních bodů lepší než vybraný závodník.")
+        f"\nNejlepší závodník {singular} v průměru v hodnoceném období o {(float(vysledky[0][-1]) - MUJ_PRUMER):.2f} procentních bodů lepší než {JMENO}.")
     lepsich_zavodniku = 0
     for record in vysledky:
         if record[1] != JMENO:
@@ -549,7 +549,7 @@ def porovnat(M12 = False) -> None:
         else:
             break
     print_and_log(
-        f"Závodníků, kteří v hodnoceném období {plural} lepší průměrné výsledky než vybraný závodník: {lepsich_zavodniku}")
+        f"Závodníků, kteří v hodnoceném období {plural} lepší průměrné výsledky než {JMENO}: {lepsich_zavodniku}")
 
 
 def print_and_log(action: str) -> None:
