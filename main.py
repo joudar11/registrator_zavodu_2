@@ -8,6 +8,8 @@ from email.message import EmailMessage
 import re
 import sys
 from check_version import zkontroluj_a_aktualizuj
+from email.message import EmailMessage
+from email.utils import formataddr, make_msgid, formatdate
 if __name__ == "__main__":
     global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
     zkontroluj_a_aktualizuj(global_env)
@@ -520,7 +522,8 @@ def posli_email() -> None:
     """Pošle závodníkovi email se shrnutím úspěšné registrace."""
     msg = EmailMessage()
     msg['Subject'] = '✅ LOS Registrace proběhla'
-    msg['From'] = EMAIL_U
+    msg['From'] = formataddr(("Služebníček", EMAIL_U))
+    msg['Message-ID'] = make_msgid(domain=EMAIL_U.split('@')[1])
     msg['To'] = LOGIN
     msg.set_content(
         f"""Registrace na závod proběhla úspěšně. V příloze nalezneš záznam o průběhu registrace a .ics událost pro uložení do kalendáře.
@@ -554,7 +557,8 @@ def posli_error(pokusy: int) -> None:
     """Funkce pro odeslání oznámení o chybě na závodníkův email"""
     msg = EmailMessage()
     msg['Subject'] = '❌ LOS Registrace neproběhla'
-    msg['From'] = EMAIL_U
+    msg['From'] = formataddr(("Služebníček", EMAIL_U))
+    msg['Message-ID'] = make_msgid(domain=EMAIL_U.split('@')[1])
     msg['To'] = LOGIN
     msg.set_content(
         f"""❌ Registrace na závod neproběhla úspěšně.
@@ -580,7 +584,8 @@ def informuj_pritelkyni() -> None:
     """Informuje přřítelkyni o názvu a dni závodu a o citech, které pro ni závodník chová."""
     msg = EmailMessage()
     msg['Subject'] = '🔫 Tvůj kluk pojede na závod'
-    msg['From'] = EMAIL_U
+    msg['From'] = formataddr(("Služebníček", EMAIL_U))
+    msg['Message-ID'] = make_msgid(domain=EMAIL_U.split('@')[1])
     msg['To'] = PRITELKYNE
     msg.set_content(
         f"""Tvůj kluk se {PRITELKYNE_INSERT_1}právě přihlásil na závod {nazev_zavodu} ({URL}). Datum závodu: {datum_zavodu}.\n\nBude potřebovat držet palce.\n{PRITELKYNE_INSERT_2}\n{PRITELKYNE_INSERT_3}\n\n(Automaticky generovaný email)""")
@@ -595,7 +600,8 @@ def informuj_o_zacatku() -> None:
     """Informuje závodníka o začátku skriptu"""
     msg = EmailMessage()
     msg['Subject'] = '🔫 Registrační skript spuštěn'
-    msg['From'] = EMAIL_U
+    msg['From'] = formataddr(("Služebníček", EMAIL_U))
+    msg['Message-ID'] = make_msgid(domain=EMAIL_U.split('@')[1])
     msg['To'] = LOGIN
     msg.set_content(
         f"""Registrační skript na závod na závod {URL} byl spuštěn.\n\n{STALE_BEZI_MINUT} minut před začátkem registrace ({datetime.strptime(DATUM_CAS_REGISTRACE, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=STALE_BEZI_MINUT)}) očekávej potvrzovací email, že skript stále běží.\n\n\n(Automaticky generovaný email)""")
@@ -611,8 +617,10 @@ def stale_bezi() -> None:
     """Informuje závodníka o běhu skriptu."""
     msg = EmailMessage()
     msg['Subject'] = '🔫 Registrační skript stále běží'
-    msg['From'] = EMAIL_U
+    msg['From'] = formataddr(("Služebníček", EMAIL_U))
+    msg['Message-ID'] = make_msgid(domain=EMAIL_U.split('@')[1])
     msg['To'] = LOGIN
+    msg['Message-ID'] = make_msgid(domain=EMAIL_U.split('@')[1])
     msg.set_content(
         f"""Registrační skript na závod na závod {URL} v pořádku běží.\n\n\n(Automaticky generovaný email)""")
 
