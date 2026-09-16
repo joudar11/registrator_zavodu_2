@@ -6,9 +6,9 @@ from pathlib import Path
 import sys
 from ftplib import FTP_TLS
 from check_version import zkontroluj_a_aktualizuj
-import io
-import ftplib
-import ssl
+from urllib.parse import quote
+import subprocess
+
 if __name__ == "__main__":
     global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
     zkontroluj_a_aktualizuj(global_env)
@@ -85,6 +85,8 @@ jmena = []
 extra_jmena=[]
 vysledky = []
 
+
+
 def upload_ftps(host: str, username: str, password: str, remote_dir: str) -> None:
     local_path = Path(f"{FOLDER}/{LOGNAME}.html").resolve()
     
@@ -92,35 +94,28 @@ def upload_ftps(host: str, username: str, password: str, remote_dir: str) -> Non
         print(f"❌ Soubor {local_path} neexistuje.")
         return
 
-    print(f"🔗 Připojuji se k FTP serveru {host} (standardní režim)...")
+    print(f"🔗 Připojuji se k FTP serveru {host} (zabezpečený režim)...")
     try:
-        # Načtení obsahu do BytesIO
+        # Načtení obsahu souboru
         with open(local_path, "rb") as f:
-            bio = io.BytesIO(f.read())
+            file_data = f.read()
 
-        # Použijeme ftplib.FTP místo FTP_TLS
-        with ftplib.FTP(host) as ftp:
-            ftp.login(user=username, passwd=password)
-            ftp.set_pasv(True)
-            
-            # Navigace do adresáře / vytvoření
-            try:
-                ftp.cwd(remote_dir)
-            except Exception:
-                dirs = remote_dir.strip("/").split("/")
-                path = ""
-                for d in dirs:
-                    path += f"/{d}"
-                    try:
-                        ftp.cwd(path)
-                    except Exception:
-                        ftp.mkd(path)
-                        ftp.cwd(path)
-            
-            # Nahrání souboru
-            ftp.storbinary(f"STOR {local_path.name}", bio)
-            
+        clean_remote_dir = remote_dir.strip("/")
+        encoded_filename = quote(local_path.name)
+        target_path = f"{clean_remote_dir}/{encoded_filename}" if clean_remote_dir else encoded_filename
+        url = f"ftp://{host}/{target_path}"
+
+        result = subprocess.run(
+            ['curl', '--ssl-reqd', '--ftp-create-dirs', '-u', f"{username}:{password}", '-T', '-', url],
+            input=file_data,
+            capture_output=True,
+            check=True
+        )
+        
         print(f"✅ Soubor {local_path.name} byl úspěšně nahrán na {host}:{remote_dir}")
+    except subprocess.CalledProcessError as e:
+        error_message = e.stderr.decode('utf-8', errors='ignore') if e.stderr else str(e)
+        print(f"❌ Chyba při nahrávání přes curl: {error_message}")
     except Exception as e:
         print(f"❌ Chyba při nahrávání na FTP: {e}")
 
