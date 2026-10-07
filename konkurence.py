@@ -8,6 +8,7 @@ from ftplib import FTP_TLS
 from check_version import zkontroluj_a_aktualizuj
 from urllib.parse import quote
 import subprocess
+import shutil
 
 if __name__ == "__main__":
     global_env = (len(sys.argv) == 2 and sys.argv[1] == "global")
@@ -87,35 +88,67 @@ vysledky = []
 
 
 
+def _curl_cfg_escape(value: str) -> str:
+    """Escapuje hodnotu pro curl config uvnitř dvojitých uvozovek."""
+    return (
+        value.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t")
+    )
+
+
 def upload_ftps(host: str, username: str, password: str, remote_dir: str) -> None:
+    """
+    Nahraje log HTML na FTP server přes explicitní FTPS (AUTH TLS) pomocí curl.
+    Přihlašovací údaje jdou přes stdin (curl --config -), ne přes argumenty procesu.
+    """
     local_path = Path(f"{FOLDER}/{LOGNAME}.html").resolve()
-    
-    if not local_path.exists():
+
+    if not local_path.is_file():
         print(f"❌ Soubor {local_path} neexistuje.")
         return
 
+    if shutil.which("curl") is None:
+        print("❌ curl není nainstalován – upload zrušen.")
+        return
+
     print(f"🔗 Připojuji se k FTP serveru {host} (zabezpečený režim)...")
+
+    clean_remote_dir = remote_dir.strip("/")
+    encoded_dir = quote(clean_remote_dir, safe="/")
+    encoded_filename = quote(local_path.name)
+    target_path = f"{encoded_dir}/{encoded_filename}" if encoded_dir else encoded_filename
+    url = f"ftp://{host}/{target_path}"
+
+    # Credentials pouze ve stdin, nikdy v argv
+    curl_config = f'user = "{_curl_cfg_escape(f"{username}:{password}")}"\n'
+
     try:
-        # Načtení obsahu souboru
-        with open(local_path, "rb") as f:
-            file_data = f.read()
-
-        clean_remote_dir = remote_dir.strip("/")
-        encoded_filename = quote(local_path.name)
-        target_path = f"{clean_remote_dir}/{encoded_filename}" if clean_remote_dir else encoded_filename
-        url = f"ftp://{host}/{target_path}"
-
-        result = subprocess.run(
-            ['curl', '--ssl-reqd', '--ftp-create-dirs', '-u', f"{username}:{password}", '-T', '-', url],
-            input=file_data,
+        subprocess.run(
+            [
+                "curl",
+                "--silent", "--show-error",   # bez progress baru, chyby ano
+                "--ssl-reqd",                 # bez TLS = žádný přenos
+                "--ftp-create-dirs",
+                "--connect-timeout", "30",
+                "--config", "-",              # načte user:heslo ze stdin
+                "--upload-file", str(local_path),
+                url,
+            ],
+            input=curl_config.encode("utf-8"),
             capture_output=True,
-            check=True
+            check=True,
+            timeout=300,
         )
-        
         print(f"✅ Soubor {local_path.name} byl úspěšně nahrán na {host}:{remote_dir}")
+
     except subprocess.CalledProcessError as e:
-        error_message = e.stderr.decode('utf-8', errors='ignore') if e.stderr else str(e)
-        print(f"❌ Chyba při nahrávání přes curl: {error_message}")
+        err = e.stderr.decode("utf-8", errors="ignore").strip() if e.stderr else ""
+        print(f"❌ Chyba při nahrávání přes curl (exit {e.returncode}): {err or 'bez detailu'}")
+    except subprocess.TimeoutExpired:
+        print("❌ Upload vypršel (timeout 300 s).")
     except Exception as e:
         print(f"❌ Chyba při nahrávání na FTP: {e}")
 
