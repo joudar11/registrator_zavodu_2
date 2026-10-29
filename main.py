@@ -618,7 +618,6 @@ def stale_bezi() -> None:
     msg = EmailMessage()
     msg['Subject'] = '🔫 Registrační skript stále běží'
     msg['From'] = formataddr(("Služebníček", EMAIL_U))
-    msg['Message-ID'] = make_msgid(domain=EMAIL_U.split('@')[1])
     msg['To'] = LOGIN
     msg['Message-ID'] = make_msgid(domain=EMAIL_U.split('@')[1])
     msg.set_content(
